@@ -1,17 +1,101 @@
 package at.letto.plugindemojava.service;
 
+import at.letto.plugindemojava.config.PluginConfiguration;
 import at.letto.plugindemojava.dto.*;
+import at.letto.plugindemojava.tools.Datum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
 @Service
 public class PluginService implements PluginConnectionService {
 
+    @Autowired private ApplicationContext  applicationContext;
+    @Autowired private PluginConfiguration pluginConfiguration;
+    @Autowired private WebClient.Builder   webClientBuilder;
+
+    private Logger logger = LoggerFactory.getLogger(PluginService.class);
+
+    private static final String PLUGIN_NAME     = "DemoJava";
+    private static final String PLUGIN_VERSION  = "1.0";
+    private static final String PLUGIN_AUTHOR   = "LeTTo GmbH";
+    private static final String PLUGIN_LICENSE  = "OpenSource";
+
     /** registriert das Plugin am Setup-Service */
     public void registerPlugin() {
+        //RestSetupService setupService = lettoService.getSetupService();
+        HashMap<String,String> params = new HashMap<>();
 
+        ConfigServiceDto configServiceDto = new ConfigServiceDto(
+                PLUGIN_NAME,
+                PLUGIN_VERSION,
+                PLUGIN_AUTHOR,
+                PLUGIN_LICENSE,
+                pluginConfiguration.getBetriebssystem(),
+                pluginConfiguration.getIP(),
+                pluginConfiguration.getEncoding(),
+                pluginConfiguration.getJavaVersion(),
+                "letto-pluginuhr",
+                "letto-pluginuhr",
+                pluginConfiguration.getUriIntern(),
+                true,
+                pluginConfiguration.getUriExtern(),
+                true,
+                false,
+                true,
+                pluginConfiguration.getUserUserName(),
+                pluginConfiguration.getUserUserPassword(),
+                false,
+                Datum.toDateInteger(new Date(applicationContext.getStartupDate())),
+                Datum.nowDateInteger(),
+                params
+        );
+        String setupUri = pluginConfiguration.getSetupServiceUri();
+        //hier kommt die REST-Anfrage an den Server
+        RegisterServiceResultDto result=null;
+        try {
+            result = pluginConfiguration.getWebClientSetupUser()
+                    .post()
+                    .uri("/config/auth/user/registerplugin")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(configServiceDto)
+                    .retrieve()
+                    .onStatus(
+                            // Predicate: use a lambda that calls isError()
+                            status -> status.isError(),
+                            // Fehler-Handler: lies den Body als String (oder DTO) und erzeuge ein Mono<Throwable>
+                            resp -> resp.bodyToMono(String.class)
+                                    .flatMap(body -> Mono.error(new RuntimeException("Remote error: " + body)))
+                    )
+                    // Erfolgsfall: parse als DTO
+                    .bodyToMono(RegisterServiceResultDto.class)
+                    .block();
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage());
+        }
+
+        if (result==null) {
+            logger.error("setup service cannot be reached at "+setupUri);
+        } else if (!result.isRegistrationOK()) {
+            logger.error("setup service cannot register this plugin! -> "+result.getMsg());
+        } else {
+            int count = result.getRegistrationCounter();
+            boolean isnew = result.isNewRegistered();
+            logger.info("Plugin registered in setup-Service "+
+                    (isnew?"NEW":"UPDATED")+" "+
+                    (count>1?", "+count+" instances":""));
+        }
     }
 
     /**
