@@ -1,7 +1,6 @@
 package at.letto.plugindemojava.dto;
 
-import at.letto.plugins.enums.InputElement;
-import at.letto.tools.JavascriptLibrary;
+import at.letto.plugindemojava.enums.InputElement;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

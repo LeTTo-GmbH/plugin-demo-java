@@ -1,9 +1,6 @@
 package at.letto.plugindemojava.config;
 
-import at.letto.login.restclient.RestLoginService;
-import at.letto.setup.restclient.RestSetupService;
-import at.open.letto.plugin.service.ConnectionService;
-import at.open.letto.plugin.service.LettoService;
+import at.letto.plugindemojava.service.PluginService;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -13,25 +10,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class StartupConfiguration {
 
-    private final LettoService lettoService;
-    private final LoggingConfiguration loggingConfiguration;
-    private final MicroServiceConfiguration microServiceConfiguration;
-    private final ConnectionService connectionService;
+    private final PluginService pluginService;
 
-    public StartupConfiguration(LettoService lettoService,
-                                LoggingConfiguration loggingConfiguration,
-                                MicroServiceConfiguration microServiceConfiguration,
-                                ConnectionService connectionService) {
-        this.lettoService = lettoService;
-        this.loggingConfiguration = loggingConfiguration;
-        this.microServiceConfiguration = microServiceConfiguration;
-        this.connectionService = connectionService;
-        // Verbindung zu Setup und Login checken
-        RestSetupService setupService = lettoService.getSetupService();
-        RestLoginService loginService = lettoService.getLoginService();
-        // Plugin intern verbinden
+    public StartupConfiguration(PluginService pluginService) {
+        this.pluginService = pluginService;
 
         // Nun wird das Service am Setup registriert
-        connectionService.registerPlugin();
+        pluginService.registerPlugin();
     }
 }

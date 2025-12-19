@@ -1,5 +1,6 @@
 package at.letto.plugindemojava.dto;
 
+import at.letto.plugindemojava.enums.IMAGEUNIT;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

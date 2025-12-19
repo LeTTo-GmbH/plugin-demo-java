@@ -7,7 +7,13 @@ import java.util.List;
 import java.util.Vector;
 
 @Service
-public class PluginService extends PluginConnectionService {
+public class PluginService implements PluginConnectionService {
+
+    /** registriert das Plugin am Setup-Service */
+    public void registerPlugin() {
+
+    }
+
     /**
      * @return liefert eine Liste aller Plugins (Pluginnamen) , welche mit diesem Service verwaltet werden
      */
