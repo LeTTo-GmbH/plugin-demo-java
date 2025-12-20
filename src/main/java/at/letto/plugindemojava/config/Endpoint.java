@@ -5,11 +5,18 @@ public class Endpoint {
 
     //-------------------------- Endpoint-Verzeichnisse
 
-    public static final String servicepath  = "/pluginuhr";
+    public static final String servicepath  = "/plugindemojava";
     public static final String open         = servicepath+"/open";
     public static final String LOCAL_API    = "/open";
     public static final String EXTERN_API   = servicepath+"/auth/user";
     public static final String EXTERN_OPEN  = servicepath+"/api/open";
+
+    //-------------------------- Info Endpoints
+    public static final String ping         = "/ping";
+    public static final String pingopen     = open+"/ping";
+    public static final String INFO             = "/info";
+    public static final String INFO_OPEN        = open+INFO;
+    public static final String VERSION          = "/version";
 
     //-------------------------- Allgemeine Endpoints für alle Plugins -----------------
 

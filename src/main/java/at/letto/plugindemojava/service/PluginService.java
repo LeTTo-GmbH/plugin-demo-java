@@ -3,16 +3,15 @@ package at.letto.plugindemojava.service;
 import at.letto.plugindemojava.config.PluginConfiguration;
 import at.letto.plugindemojava.dto.*;
 import at.letto.plugindemojava.tools.Datum;
+import at.letto.plugindemojava.tools.ServerStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,14 +22,9 @@ public class PluginService implements PluginConnectionService {
 
     @Autowired private ApplicationContext  applicationContext;
     @Autowired private PluginConfiguration pluginConfiguration;
-    @Autowired private WebClient.Builder   webClientBuilder;
+    @Autowired private ServerStatus serverStatus;
 
     private Logger logger = LoggerFactory.getLogger(PluginService.class);
-
-    private static final String PLUGIN_NAME     = "DemoJava";
-    private static final String PLUGIN_VERSION  = "1.0";
-    private static final String PLUGIN_AUTHOR   = "LeTTo GmbH";
-    private static final String PLUGIN_LICENSE  = "OpenSource";
 
     /** registriert das Plugin am Setup-Service */
     public void registerPlugin() {
@@ -38,14 +32,14 @@ public class PluginService implements PluginConnectionService {
         HashMap<String,String> params = new HashMap<>();
 
         ConfigServiceDto configServiceDto = new ConfigServiceDto(
-                PLUGIN_NAME,
-                PLUGIN_VERSION,
-                PLUGIN_AUTHOR,
-                PLUGIN_LICENSE,
-                pluginConfiguration.getBetriebssystem(),
-                pluginConfiguration.getIP(),
-                pluginConfiguration.getEncoding(),
-                pluginConfiguration.getJavaVersion(),
+                PluginConfiguration.PLUGIN_NAME,
+                PluginConfiguration.PLUGIN_VERSION,
+                PluginConfiguration.PLUGIN_AUTHOR,
+                PluginConfiguration.PLUGIN_LICENSE,
+                serverStatus.getBetriebssystem(),
+                serverStatus.getIP(),
+                serverStatus.getEncoding(),
+                serverStatus.getJavaVersion(),
                 "letto-pluginuhr",
                 "letto-pluginuhr",
                 pluginConfiguration.getUriIntern(),

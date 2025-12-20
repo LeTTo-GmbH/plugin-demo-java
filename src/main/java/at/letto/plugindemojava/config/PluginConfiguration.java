@@ -1,24 +1,34 @@
 package at.letto.plugindemojava.config;
 
-import at.letto.plugindemojava.tools.IP;
+import at.letto.plugindemojava.dto.AdminInfoDto;
+import at.letto.plugindemojava.dto.ServiceInfoDTO;
+import at.letto.plugindemojava.tools.Datum;
+import at.letto.plugindemojava.tools.ServerStatus;
 import lombok.Getter;
+import org.apache.catalina.startup.Tomcat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.system.ApplicationHome;
+import org.springframework.boot.system.ApplicationPid;
+import org.springframework.boot.tomcat.TomcatWebServer;
+import org.springframework.boot.web.server.servlet.context.AnnotationConfigServletWebServerApplicationContext;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.SpringVersion;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.net.InetAddress;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Vector;
+import java.util.Date;
 
 @Configuration
 public class PluginConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(StartupConfiguration.class);
+
+    public static final String PLUGIN_NAME     = "DemoJava";
+    public static final String PLUGIN_VERSION  = "1.0";
+    public static final String PLUGIN_AUTHOR   = "LeTTo GmbH";
+    public static final String PLUGIN_LICENSE  = "OpenSource";
 
     @Value("${letto.setup.uri:http://localhost:8096}")
     @Getter
@@ -50,6 +60,15 @@ public class PluginConfiguration {
     @Autowired
     private WebClient.Builder   webClientBuilder;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private ServerStatus serverStatus;
+
+    private AdminInfoDto   adminInfoDto = null;
+    private ServiceInfoDTO serviceInfoDTO = null;
+
     public void init() {
         // Interne Uri welche ans Setup weitergegeben wird bestimmen
         uriIntern = System.getenv("letto.plugin.uri.intern");
@@ -73,115 +92,93 @@ public class PluginConfiguration {
                 .build();
     }
 
-    /** @return Liefert den Distributionsnamen der Linux Distribution wenn es sich um eine Linux-System handelt */
-    public static String getLinuxDistribution() {
-        if (isLinux()) try {
-            List<String> v = Files.readAllLines(Path.of("/etc/lsb-release"));
-            for (String s:v) {
-                String t[] = s.trim().split("=");
-                if (t[0].trim().equals("DISTRIB_ID")) {
-                    s = t[1].trim();
-                    if (s.startsWith("\"")) s=s.substring(1);
-                    if (s.endsWith("\""))   s=s.substring(0,s.length()-1);
-                    return s;
-                }
-            }
-        } catch (Exception e) { }
-        return "";
+    public AdminInfoDto getAdminInfoDto() {
+        if (adminInfoDto == null) adminInfoDto = calcAdminInfo();
+        return adminInfoDto;
     }
 
-    public static String getLinuxRelease() {
-        if (isLinux()) try {
-            List<String> v = Files.readAllLines(Path.of("/etc/lsb-release"));
-            for (String s:v) {
-                String t[] = s.trim().split("=");
-                if (t[0].trim().equals("DISTRIB_RELEASE")) {
-                    s = t[1].trim();
-                    if (s.startsWith("\"")) s=s.substring(1);
-                    if (s.endsWith("\""))   s=s.substring(0,s.length()-1);
-                    return s;
-                }
-            }
-        } catch (Exception e) { }
-        return "";
+    public ServiceInfoDTO getServiceInfoDto() {
+        if (serviceInfoDTO==null) serviceInfoDTO = calcServiceInfoDTO();
+        return serviceInfoDTO;
     }
 
-    public static String getLinuxDescription() {
-        if (isLinux()) try {
-            List<String> v = Files.readAllLines(Path.of("/etc/lsb-release"));
-            for (String s:v) {
-                String t[] = s.trim().split("=");
-                if (t[0].trim().equals("DISTRIB_DESCRIPTION")) {
-                    s = t[1].trim();
-                    if (s.startsWith("\"")) s=s.substring(1);
-                    if (s.endsWith("\""))   s=s.substring(0,s.length()-1);
-                    return s;
-                }
-            }
-        } catch (Exception e) { }
-        return "";
+    private ServiceInfoDTO calcServiceInfoDTO() {
+        AdminInfoDto adminInfoDto = getAdminInfoDto();
+        ServiceInfoDTO serviceInfoDTO = new ServiceInfoDTO(
+                applicationContext.getId(), // Name des Services
+                PLUGIN_VERSION, // Version des Services
+                PLUGIN_AUTHOR,               // Information über den Autor des Services
+                PLUGIN_LICENSE ,          // Information über die Lizenz des Services
+                "",                         // Information über die Endpoints des Services
+                serverStatus.getJarFileName(),
+                Datum.formatDateTime(new Date(applicationContext.getStartupDate())),
+                adminInfoDto,
+                null
+        );
+        return serviceInfoDTO;
     }
 
-    public static boolean isWindows() {
-        String bs = System.getProperty("os.name");
-        if (bs!=null && bs.toLowerCase().startsWith("windows")) return true;
-        return false;
-    }
-
-    public static boolean isLinux() {
-        String bs = System.getProperty("os.name");
-        if (bs!=null && bs.toLowerCase().startsWith("linux")) return true;
-        return false;
-    }
-
-    public static String getBetriebssystem() {
-        String ver = System.getProperty("os.version");
-        if (isWindows()) return "Windows "+ver;
-        if (isLinux())   return "Linux Kernel "+ver+" "+getLinuxDescription();
-        return System.getProperty("os.name")+" "+ver;
-    }
-
-    public static String getJavaVendor() {
-        String vendor="";
-        try { if (vendor==null || vendor.length()==0) vendor = System.getProperty("java.vendor"); } catch (Exception e) {};
-        try { if (vendor==null || vendor.length()==0) vendor = System.getProperty("java.vm.vendor"); } catch (Exception e) {};
-        try { if (vendor==null || vendor.length()==0) vendor = System.getProperty("java.vm.specification.vendor"); } catch (Exception e) {};
-        return vendor;
-    }
-
-    public static String getJavaVersionNumber() {
-        String nr="";
-        try { if (nr==null || nr.length()==0) nr = System.getProperty("java.runtime.version"); } catch (Exception e) {};
-        try { if (nr==null || nr.length()==0) nr = System.getProperty("java.version"); } catch (Exception e) {};
-        return nr;
-    }
-
-    public static String getJavaVersion() {
-        return getJavaVendor() + " " + getJavaVersionNumber();
-    }
-
-    public static String getEncoding() {
-        return System.getProperty("sun.jnu.encoding");
-    }
-
-    public static String getFileEncoding() {
-        return System.getProperty("file.encoding");
-    }
-
-    public static String getIP() {
-        return IP.getLocalIPString();
-    }
-
-    public static String getIPs() {
-        return IP.getLocalIPsString();
-    }
-
-    public static String getHostname() {
-        if (isWindows()) return System.getenv("COMPUTERNAME");
+    private AdminInfoDto calcAdminInfo() {
+        String pid = new ApplicationPid().toString();
+        String applicationname = applicationContext.getId();
+        String applicationhome = new ApplicationHome().toString();
+        long uptime = System.currentTimeMillis()-applicationContext.getStartupDate();
+        String serverversion = "";
+        String springBootCoreVersion = SpringVersion.getVersion();
+        String springBootStarterVersion = "";
         try {
-            String hostname = InetAddress.getLocalHost().getHostName();
-            if (hostname!=null && hostname.length()>0) return hostname;
+                springBootStarterVersion = ServerStatus.mainManifest.getMainAttributes().getValue("Spring-Boot-Version");
+
+                ApplicationContext context = ServerStatus.mainContext;
+                if (springBootStarterVersion==null)
+                    springBootStarterVersion = ((AnnotationConfigServletWebServerApplicationContext) context).getWebServer().getClass().getPackage().getImplementationVersion();
+                if (springBootStarterVersion==null) springBootStarterVersion="";
+
+                TomcatWebServer tomcatWebServer = (TomcatWebServer)((AnnotationConfigServletWebServerApplicationContext) context).getWebServer();
+                Tomcat tomcat = tomcatWebServer.getTomcat();
+                String state  = tomcat.getServer().getStateName();
+                String servername = tomcat.getService().getName();
+
+                String implementationVersion = serverStatus.getTomeeRevision();
+                serverversion = servername+" "+implementationVersion;
         } catch (Exception ex) {}
-        return System.getenv("HOSTNAME");
+        serverversion = "Spring-Boot Core:"+ springBootCoreVersion+", Starter: "+springBootStarterVersion+(serverversion!=null && serverversion.length()>0?", "+serverversion:"");
+        AdminInfoDto adminInfoDto = new AdminInfoDto(
+                applicationname,
+                pid,
+                applicationhome,
+                applicationContext.getStartupDate(),
+                uptime,
+                PLUGIN_VERSION,
+                Datum.formatDateTime(Datum.nowLocalDateTime()), // (new Date()).toString(),
+                serverStatus.getBetriebssystem(),
+                serverStatus.getIPs(),
+                serverStatus.getEncoding(),
+                serverStatus.getFileEncoding(),
+                serverStatus.getFileSeparator(),
+                serverStatus.getJavaSpecificationVersion(),
+                serverStatus.getJavaVendor(),
+                serverStatus.getJavaVersion(),
+                serverStatus.getJavaVersionNumber(),
+                serverStatus.getHostname(),
+                serverStatus.getLanguage(),
+                serverStatus.getLinuxDescription(),
+                serverStatus.getLinuxDistribution(),
+                serverStatus.getLinuxRelease(),
+                serverStatus.getServerUsername(),
+                serverversion,
+                serverStatus.getSystemHome(),
+                serverStatus.isLinux(),
+                serverStatus.isUbuntu(),
+                serverStatus.isWindows(),
+                0,0,0
+                /*
+                tomcatConfiguration.getHttpPort(),
+                tomcatConfiguration.getAjpPort(),
+                tomcatConfiguration.getHttpsPort()*/
+        );
+        return adminInfoDto;
     }
+
+
 }
