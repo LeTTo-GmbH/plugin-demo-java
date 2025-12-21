@@ -10,7 +10,7 @@
     </parent>
     <groupId>at.letto</groupId>
     <artifactId>plugin-demo-java</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <name>plugin-demo-java</name>
     <description>plugin-demo-java</description>
     <url/>

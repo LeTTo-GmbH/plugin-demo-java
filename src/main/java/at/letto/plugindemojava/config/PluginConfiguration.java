@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.boot.system.ApplicationPid;
 import org.springframework.boot.tomcat.TomcatWebServer;
+import org.springframework.boot.web.server.context.WebServerApplicationContext;
 import org.springframework.boot.web.server.servlet.context.AnnotationConfigServletWebServerApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -62,6 +63,9 @@ public class PluginConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private WebServerApplicationContext webServerAppCtxt;
 
     @Autowired
     private ServerStatus serverStatus;
@@ -171,11 +175,7 @@ public class PluginConfiguration {
                 serverStatus.isLinux(),
                 serverStatus.isUbuntu(),
                 serverStatus.isWindows(),
-                0,0,0
-                /*
-                tomcatConfiguration.getHttpPort(),
-                tomcatConfiguration.getAjpPort(),
-                tomcatConfiguration.getHttpsPort()*/
+                webServerAppCtxt.getWebServer().getPort(),0,0
         );
         return adminInfoDto;
     }

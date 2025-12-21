@@ -8,6 +8,7 @@ class PluginDemoJavaApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }
