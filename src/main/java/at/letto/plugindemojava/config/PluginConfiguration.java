@@ -4,6 +4,7 @@ import at.letto.plugindemojava.dto.AdminInfoDto;
 import at.letto.plugindemojava.dto.ConfigServiceDto;
 import at.letto.plugindemojava.dto.RegisterServiceResultDto;
 import at.letto.plugindemojava.dto.ServiceInfoDTO;
+import at.letto.plugindemojava.plugin.PluginService;
 import at.letto.plugindemojava.service.PluginConnectionServiceInterface;
 import at.letto.plugindemojava.tools.Datum;
 import at.letto.plugindemojava.tools.ServerStatus;
@@ -33,6 +34,7 @@ public class PluginConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(StartupConfiguration.class);
 
+    public static final String PLUGIN_NAME     = "letto-plugindemojava";
     public static final String PLUGIN_VERSION  = "1.0";
     public static final String PLUGIN_AUTHOR   = "LeTTo GmbH";
     public static final String PLUGIN_LICENSE  = "OpenSource";
@@ -87,9 +89,13 @@ public class PluginConfiguration {
     private ServiceInfoDTO serviceInfoDTO = null;
 
     /** Alle registrierten Plugins in einer Hashmap mit Pluginname und PluginConnectionService */
-    public HashMap<String, PluginConnectionServiceInterface> plugins = new HashMap<>();
+    public HashMap<String, PluginService> plugins = new HashMap<>();
+
+    /** statische Referenz auf die PluginConfiguration */
+    public static PluginConfiguration pluginConfiguration=null;
 
     public void init() {
+        pluginConfiguration = this;
         // Interne Uri welche ans Setup weitergegeben wird bestimmen
         uriIntern = System.getenv("letto.plugin.uri.intern");
         while (uriIntern!=null && uriIntern.endsWith("/")) uriIntern=uriIntern.substring(0,uriIntern.length()-1);
@@ -112,16 +118,20 @@ public class PluginConfiguration {
                 .build();
     }
 
+    public void insertPlugin(PluginService pluginService) {
+        plugins.put(pluginService.getName(),pluginService);
+    }
+
     /** registriert das Plugin am Setup-Service */
-    public void registerPlugin(String pluginName, PluginConnectionServiceInterface plugin) {
+    public void registerPluginInSetup() {
         //RestSetupService setupService = lettoService.getSetupService();
         HashMap<String,String> params = new HashMap<>();
 
         ConfigServiceDto configServiceDto = new ConfigServiceDto(
-                pluginName,
-                PluginConfiguration.PLUGIN_VERSION,
-                PluginConfiguration.PLUGIN_AUTHOR,
-                PluginConfiguration.PLUGIN_LICENSE,
+                PLUGIN_NAME,
+                PLUGIN_VERSION,
+                PLUGIN_AUTHOR,
+                PLUGIN_LICENSE,
                 serverStatus.getBetriebssystem(),
                 serverStatus.getIP(),
                 serverStatus.getEncoding(),
@@ -176,7 +186,6 @@ public class PluginConfiguration {
                     (isnew?"NEW":"UPDATED")+" "+
                     (count>1?", "+count+" instances":""));
         }
-        plugins.put(pluginName, plugin);
     }
 
     public AdminInfoDto getAdminInfoDto() {

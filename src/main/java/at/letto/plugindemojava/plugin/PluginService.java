@@ -1,8 +1,8 @@
-package at.letto.plugindemojava.service;
+package at.letto.plugindemojava.plugin;
 
 import at.letto.plugindemojava.dto.*;
 import at.letto.plugindemojava.enums.InputElement;
-import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Vector;
 
@@ -10,7 +10,6 @@ import java.util.Vector;
  * Interface für die Plugin-Programmierung<br>
  * Alle DTOs sind von LeTTo direkt unabhängig<br>
  */
-@Service
 public interface PluginService {
 
     /** @return Liefert den Namen der Wiki-Seite wenn eine Doku am LeTTo-Wiki vorliegt */

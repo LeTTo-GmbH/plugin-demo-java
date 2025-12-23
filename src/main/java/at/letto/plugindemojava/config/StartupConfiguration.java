@@ -27,8 +27,11 @@ public class StartupConfiguration {
         //Initialisierung der Plugin-Konfiguration
         pluginConfiguration.init();
 
+        // Registrierung der Plugins
+        pluginConfiguration.registerPlugin("Uhr", "at.open.letto.plugins.uhr.PluginUhr");
+
         // Nun wird das Plugin-Service am Setup registriert
-        this.pluginConnectionService.registerPlugin();
+        pluginConfiguration.registerPluginInSetup();
     }
 
 }

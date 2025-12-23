@@ -2,7 +2,7 @@ package at.letto.plugindemojava.plugin;
 
 import at.letto.plugindemojava.dto.*;
 import at.letto.plugindemojava.enums.*;
-import at.letto.plugindemojava.service.PluginService;
+import at.letto.plugindemojava.tools.CryptTools;
 import at.letto.plugindemojava.tools.HTMLtool;
 import at.letto.plugindemojava.tools.JSON;
 import at.letto.plugindemojava.tools.PluginResource;
@@ -351,7 +351,7 @@ public abstract class BasePlugin implements PluginService {
         if (params.startsWith("\"") && params.endsWith("\"")) params = params.substring(1,params.length()-1);
         // Bestimmung des aktuellen Prüfstrings des Bildes aus Parametern, Pluginname, Pluginversion und Plugindefinition
         String description = getPluginImageDescription(params,q);
-        String filename = ImageService.generateFilename(description,extension);
+        String filename = CryptTools.generateFilename(description,extension);
         // Berechnung des Bildes und speichern mit dem imageService
         BufferedImage image=null;
         if (filename.length()>0) {
@@ -445,6 +445,21 @@ public abstract class BasePlugin implements PluginService {
     }
 
     /**
+     * sucht alle Treffer vom Regex "pattern" im String s und gibt das
+     * Suchergebnis zurück
+     * @param pattern Regexp
+     * @param s       String
+     * @return        gefundene Treffer
+     */
+    public static Iterable<MatchResult> findMatches( String pattern, CharSequence s ) {
+        List<MatchResult> results = new ArrayList<MatchResult>();
+        for ( Matcher m = Pattern.compile(pattern,Pattern.DOTALL|Pattern.MULTILINE).matcher(s); m.find(); )
+            results.add( m.toMatchResult() );
+
+        return results;
+    }
+
+    /**
      * Liefert ein java.awt.BufferedImage Bild mit den angegebenen Parametern
      * @param   params   Parameter für die Bilderzeugung
      * @param q          Frage wo das Plugin eingebettet ist
@@ -454,7 +469,7 @@ public abstract class BasePlugin implements PluginService {
     public BufferedImage getAWTImage(String params, PluginQuestionDto q, PluginImageResultDto pluginImageResultDto) {
         // Bild erzeugen
         params = HTMLtool.XMLToString(params);
-        for (MatchResult m: RegExp.findMatches("\\s*\"(.*)\"", params))
+        for (MatchResult m: findMatches("\\s*\"(.*)\"", params))
             params = m.group(1);
         try {
             BufferedImage bi = new BufferedImage(width,height, BufferedImage.TYPE_INT_ARGB);
