@@ -1,10 +1,8 @@
 package at.letto.plugindemojava.config;
 
-import at.letto.plugindemojava.service.PluginService;
-import lombok.Getter;
+import at.letto.plugindemojava.service.PluginConnectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,19 +15,20 @@ public class StartupConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(StartupConfiguration.class);
 
-
-    private final PluginService      pluginService;
+    private final PluginConnectionService pluginConnectionService;
     private final ApplicationContext  applicationContext;
     private final PluginConfiguration pluginConfiguration;
 
-    public StartupConfiguration(PluginService pluginService, ApplicationContext applicationContext, PluginConfiguration pluginConfiguration) {
-        this.pluginService = pluginService;
+    public StartupConfiguration(PluginConnectionService pluginConnectionService, ApplicationContext applicationContext, PluginConfiguration pluginConfiguration) {
+        this.pluginConnectionService = pluginConnectionService;
         this.applicationContext = applicationContext;
         this.pluginConfiguration = pluginConfiguration;
 
+        //Initialisierung der Plugin-Konfiguration
         pluginConfiguration.init();
 
-        // Nun wird das Service am Setup registriert
-        this.pluginService.registerPlugin();
+        // Nun wird das Plugin-Service am Setup registriert
+        this.pluginConnectionService.registerPlugin();
     }
+
 }

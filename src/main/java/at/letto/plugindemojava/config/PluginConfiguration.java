@@ -1,7 +1,10 @@
 package at.letto.plugindemojava.config;
 
 import at.letto.plugindemojava.dto.AdminInfoDto;
+import at.letto.plugindemojava.dto.ConfigServiceDto;
+import at.letto.plugindemojava.dto.RegisterServiceResultDto;
 import at.letto.plugindemojava.dto.ServiceInfoDTO;
+import at.letto.plugindemojava.service.PluginConnectionServiceInterface;
 import at.letto.plugindemojava.tools.Datum;
 import at.letto.plugindemojava.tools.ServerStatus;
 import lombok.Getter;
@@ -18,22 +21,32 @@ import org.springframework.boot.web.server.servlet.context.AnnotationConfigServl
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.SpringVersion;
+import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
 import java.util.Date;
+import java.util.HashMap;
 
 @Configuration
 public class PluginConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(StartupConfiguration.class);
 
-    public static final String PLUGIN_NAME     = "DemoJava";
     public static final String PLUGIN_VERSION  = "1.0";
     public static final String PLUGIN_AUTHOR   = "LeTTo GmbH";
     public static final String PLUGIN_LICENSE  = "OpenSource";
 
+    /** address of plugin in docker-network nw-letto */
+    @Value("${network.letto.address:letto-plugindemojava}")
+    @Getter  private String networkLettoAddress;
+
+    /** name of the docker container */
+    @Value("${docker.container.name:letto-plugindemojava}")
+    @Getter  private String dockerName;
+
     @Value("${letto.setup.uri:http://localhost:8096}")
-    @Getter
-    private String setupServiceUri;
+    @Getter private String setupServiceUri;
 
     @Value("${letto.user.user.name:user}")
     @Getter  private String userUserName;
@@ -73,6 +86,9 @@ public class PluginConfiguration {
     private AdminInfoDto   adminInfoDto = null;
     private ServiceInfoDTO serviceInfoDTO = null;
 
+    /** Alle registrierten Plugins in einer Hashmap mit Pluginname und PluginConnectionService */
+    public HashMap<String, PluginConnectionServiceInterface> plugins = new HashMap<>();
+
     public void init() {
         // Interne Uri welche ans Setup weitergegeben wird bestimmen
         uriIntern = System.getenv("letto.plugin.uri.intern");
@@ -94,6 +110,73 @@ public class PluginConfiguration {
                 .baseUrl(setupServiceUri)
                 .defaultHeaders(h -> h.setBasicAuth(userUserName, userUserPassword))
                 .build();
+    }
+
+    /** registriert das Plugin am Setup-Service */
+    public void registerPlugin(String pluginName, PluginConnectionServiceInterface plugin) {
+        //RestSetupService setupService = lettoService.getSetupService();
+        HashMap<String,String> params = new HashMap<>();
+
+        ConfigServiceDto configServiceDto = new ConfigServiceDto(
+                pluginName,
+                PluginConfiguration.PLUGIN_VERSION,
+                PluginConfiguration.PLUGIN_AUTHOR,
+                PluginConfiguration.PLUGIN_LICENSE,
+                serverStatus.getBetriebssystem(),
+                serverStatus.getIP(),
+                serverStatus.getEncoding(),
+                serverStatus.getJavaVersion(),
+                networkLettoAddress,
+                dockerName,
+                getUriIntern(),
+                true,
+                getUriExtern(),
+                true,
+                false,
+                true,
+                getUserUserName(),
+                getUserUserPassword(),
+                false,
+                Datum.toDateInteger(new Date(applicationContext.getStartupDate())),
+                Datum.nowDateInteger(),
+                params
+        );
+        String setupUri = getSetupServiceUri();
+        //hier kommt die REST-Anfrage an den Server
+        RegisterServiceResultDto result=null;
+        try {
+            result = getWebClientSetupUser()
+                    .post()
+                    .uri("/config/auth/user/registerplugin")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(configServiceDto)
+                    .retrieve()
+                    .onStatus(
+                            // Predicate: use a lambda that calls isError()
+                            status -> status.isError(),
+                            // Fehler-Handler: lies den Body als String (oder DTO) und erzeuge ein Mono<Throwable>
+                            resp -> resp.bodyToMono(String.class)
+                                    .flatMap(body -> Mono.error(new RuntimeException("Remote error: " + body)))
+                    )
+                    // Erfolgsfall: parse als DTO
+                    .bodyToMono(RegisterServiceResultDto.class)
+                    .block();
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage());
+        }
+
+        if (result==null) {
+            logger.error("setup service cannot be reached at "+setupUri);
+        } else if (!result.isRegistrationOK()) {
+            logger.error("setup service cannot register this plugin! -> "+result.getMsg());
+        } else {
+            int count = result.getRegistrationCounter();
+            boolean isnew = result.isNewRegistered();
+            logger.info("Plugin registered in setup-Service "+
+                    (isnew?"NEW":"UPDATED")+" "+
+                    (count>1?", "+count+" instances":""));
+        }
+        plugins.put(pluginName, plugin);
     }
 
     public AdminInfoDto getAdminInfoDto() {

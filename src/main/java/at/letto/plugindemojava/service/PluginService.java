@@ -1,428 +1,288 @@
 package at.letto.plugindemojava.service;
 
-import at.letto.plugindemojava.config.PluginConfiguration;
 import at.letto.plugindemojava.dto.*;
-import at.letto.plugindemojava.tools.Datum;
-import at.letto.plugindemojava.tools.ServerStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.http.MediaType;
+import at.letto.plugindemojava.enums.InputElement;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * Interface für die Plugin-Programmierung<br>
+ * Alle DTOs sind von LeTTo direkt unabhängig<br>
+ */
 @Service
-public class PluginService implements PluginConnectionService {
+public interface PluginService {
 
-    @Autowired private ApplicationContext  applicationContext;
-    @Autowired private PluginConfiguration pluginConfiguration;
-    @Autowired private ServerStatus serverStatus;
+    /** @return Liefert den Namen der Wiki-Seite wenn eine Doku am LeTTo-Wiki vorliegt */
+    String getWikiHelp();
 
-    private Logger logger = LoggerFactory.getLogger(PluginService.class);
+    /** @return Liefert eine Hilfe-URL für die Beschreibung des Plugins */
+    String getHelpUrl();
 
-    /** registriert das Plugin am Setup-Service */
-    public void registerPlugin() {
-        //RestSetupService setupService = lettoService.getSetupService();
-        HashMap<String,String> params = new HashMap<>();
+    /** @return Gibt an ob die Standard-Plugin-Configuration verwendet werden soll */
+    boolean isDefaultPluginConfig();
 
-        ConfigServiceDto configServiceDto = new ConfigServiceDto(
-                PluginConfiguration.PLUGIN_NAME,
-                PluginConfiguration.PLUGIN_VERSION,
-                PluginConfiguration.PLUGIN_AUTHOR,
-                PluginConfiguration.PLUGIN_LICENSE,
-                serverStatus.getBetriebssystem(),
-                serverStatus.getIP(),
-                serverStatus.getEncoding(),
-                serverStatus.getJavaVersion(),
-                "letto-pluginuhr",
-                "letto-pluginuhr",
-                pluginConfiguration.getUriIntern(),
-                true,
-                pluginConfiguration.getUriExtern(),
-                true,
-                false,
-                true,
-                pluginConfiguration.getUserUserName(),
-                pluginConfiguration.getUserUserPassword(),
-                false,
-                Datum.toDateInteger(new Date(applicationContext.getStartupDate())),
-                Datum.nowDateInteger(),
-                params
-        );
-        String setupUri = pluginConfiguration.getSetupServiceUri();
-        //hier kommt die REST-Anfrage an den Server
-        RegisterServiceResultDto result=null;
-        try {
-            result = pluginConfiguration.getWebClientSetupUser()
-                    .post()
-                    .uri("/config/auth/user/registerplugin")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(configServiceDto)
-                    .retrieve()
-                    .onStatus(
-                            // Predicate: use a lambda that calls isError()
-                            status -> status.isError(),
-                            // Fehler-Handler: lies den Body als String (oder DTO) und erzeuge ein Mono<Throwable>
-                            resp -> resp.bodyToMono(String.class)
-                                    .flatMap(body -> Mono.error(new RuntimeException("Remote error: " + body)))
-                    )
-                    // Erfolgsfall: parse als DTO
-                    .bodyToMono(RegisterServiceResultDto.class)
-                    .block();
-        } catch (RuntimeException e) {
-            logger.error(e.getMessage());
-        }
-
-        if (result==null) {
-            logger.error("setup service cannot be reached at "+setupUri);
-        } else if (!result.isRegistrationOK()) {
-            logger.error("setup service cannot register this plugin! -> "+result.getMsg());
-        } else {
-            int count = result.getRegistrationCounter();
-            boolean isnew = result.isNewRegistered();
-            logger.info("Plugin registered in setup-Service "+
-                    (isnew?"NEW":"UPDATED")+" "+
-                    (count>1?", "+count+" instances":""));
-        }
-    }
+    /** @return Gibt an ob das Plugin Ergebnisse und VarHash als JSON-String verarbeiten kann */
+    boolean isMath();
 
     /**
-     * @return liefert eine Liste aller Plugins (Pluginnamen) , welche mit diesem Service verwaltet werden
+     * Liefert den Typ des Plugins
+     * @return Klasse des Plugins
      */
-    @Override
-    public List<String> getPluginList() {
-        return List.of();
-    }
+    String getPluginType();
+
+    /** @return Liefert die aktuelle Version eines Plugins, ändert sich diese, so ändert sich auch die Prüfsumme jedes Plugin Bildes */
+    String getPluginVersion();
+
+    /** @return Liefert den Konfigurationsstring des Plugins */
+    String getConfig();
+
+    /** @return Liefert den String welcher für die Definition des Plugins gespeichert wird [PI name typ "config"] */
+    String getTag();
+
+    /** Setzt den Namen des Plugins
+     *  @param name Pluginname        */
+    void setName(String name);
+
+    /** @return Liefert den Namen des Plugins     */
+    String getName();
+
+    /** @return Liefert die Bildbreite in Prozent der Seitenbreite für die Ausgabe */
+    int getImageWidthProzent();
+
+    /** @return Liefert eine HTML-Hilfe zu dem Plugin. */
+    String getHelp();
+
+    /** Liefert einen Angabestring für die MoodleText Angabe und erzeugt gegebenenfalls fehlende Datasets in der Datasetliste
+     * @param params  Parameter für die Einstellungen
+     * @return        String für das MoodleText-Feld
+     */
+    String getAngabe(String params);
+
+    /** @return Liefert alle Datensätze, welche für das Plugin in der Frage vorhanden sein sollten  */
+    List<PluginDatasetDto> generateDatasets();
 
     /**
-     * @return liefert eine Liste aller globalen Informationen über alle Plugins des verwalteten Services
+     * Liefert eine Liste aller Variablen welche als Dataset benötigt werden.
+     * @return Liste aller Variablen des Plugins
      */
-    @Override
-    public List<PluginGeneralInfo> getPluginGeneralInfoList() {
-        return List.of();
-    }
+    Vector<String> getVars();
 
-    /**
-     * @param typ Plugin Typ
-     * @return liefert die allgemeinen Konfigurationsinformationen zu einem Plugin
-     */
-    @Override
-    public PluginGeneralInfo getPluginGeneralInfo(String typ) {
-        return null;
-    }
+    /** @return liefert die Breite des Plugin-Bildes */
+    int getWidth();
+
+    /** @return liefert die Höhe des Plugin-Bildes */
+    int getHeight();
 
     /**
      * Berechnet den Fragetext für das Fragefeld des Webservers für die angegebenen Parameter für die Verwendung in einem PIT Tag
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
-     * @param params Parameter für die Antworterzeugung
-     * @param q      Frage wo das Plugin eingebettet ist
-     * @return HTML Text
+     * @param params  Parameter für die Antworterzeugung
+     * @param q       Frage wo das Plugin eingebettet ist
+     * @return        HTML Text
      */
-    @Override
-    public String getHTML(String typ, String name, String config, String params, PluginQuestionDto q) {
-        return "";
-    }
-
-    /**
-     * Liefert einen Angabestring für die MoodleText Angabe
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
-     * @param params Parameter für die Einstellungen
-     * @return String für das MoodleText-Feld
-     */
-    @Override
-    public String getAngabe(String typ, String name, String config, String params) {
-        return "";
-    }
-
-    /**
-     * Liefert alle Datensätze, welche für das Plugin in der Frage vorhanden sein sollten
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
-     * @return Liste der Datensatzdefinitionen welche vom Plugin in der Frage angefordert werden
-     */
-    @Override
-    public List<PluginDatasetDto> generateDatasets(String typ, String name, String config) {
-        return List.of();
-    }
+    String getHTML(String params, PluginQuestionDto q);
 
     /**
      * Liefert einen Maxima-Berechnungsstring für die Berechnung des Plugins
-     *
-     * @param typ                  Typ des Plugins
-     * @param name                 Name des Plugins in der Frage
-     * @param config               Konfigurationsstring des Plugins
-     * @param params               Parameter
-     * @param q                    Frage wo das Plugin eingebettet ist
+     * @param params Parameter
+     * @param q      Frage wo das Plugin eingebettet ist
      * @param pluginMaximaCalcMode Art der Berechnung
-     * @return Maxima Berechnungs-String
+     * @return       Maxima Berechnungs-String
      */
-    @Override
-    public String getMaxima(String typ, String name, String config, String params, PluginQuestionDto q, PluginMaximaCalcModeDto pluginMaximaCalcMode) {
-        return "";
-    }
+    String getMaxima(String params, PluginQuestionDto q, PluginMaximaCalcModeDto pluginMaximaCalcMode );
+
+    /**
+     * Wertet die Parameter für die Bild-Routinen aus
+     * @param params Parameter des Bild-Tags
+     * @param q      aktuelle Frage
+     * @param pluginImageResultDto Nimmt alle Fehlermeldungen auf, welche beim Rendern des Bildes entstehen
+     */
+    void parseDrawParams(String params,PluginQuestionDto q, PluginImageResultDto pluginImageResultDto);
 
     /**
      * Liefert ein Base64 codiertes Bild mit den angegebenen Parametern
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
-     * @param params Parameter für die Bilderzeugung
-     * @param q      Frage wo das Plugin eingebettet ist
-     * @return Base64 kodiertes Bild
+     * @param   params   Parameter für die Bilderzeugung
+     * @param   q        Frage wo das Plugin eingebettet ist
+     * @return           Base64 kodiertes Bild mit Bildinformationen
      */
-    @Override
-    public ImageBase64Dto getImage(String typ, String name, String config, String params, PluginQuestionDto q) {
-        return null;
-    }
+    ImageBase64Dto getImageDto(String params, PluginQuestionDto q);
 
     /**
-     * Liefert eine Url auf ein Bild mit den angegebenen Parametern
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
-     * @param params Parameter für die Bilderzeugung
-     * @param q      Frage wo das Plugin eingebettet ist
-     * @return Url auf das erstellte Bild
+     * Liefert eine öffentliche Url auf das gerenderte Bild
+     * @param   params   Parameter für die Bilderzeugung
+     * @param   q        Frage wo das Plugin eingebettet ist
+     * @return
      */
-    @Override
-    public ImageUrlDto getImageUrl(String typ, String name, String config, String params, PluginQuestionDto q) {
-        return null;
-    }
+    ImageUrlDto getImageUrl(String params, PluginQuestionDto q);
+
+    /**
+     * Liefert ein FileDTO mit dem Dateinamen des erzeugten Bildes, welches im Filesystem gespeichert wurde
+     * @param   params   Parameter für die Bilderzeugung
+     * @param   q        Frage wo das Plugin eingebettet ist
+     * @param   imageService  ImageService zum Erzeugen der Bilder
+     * @return  FileDTO des Bildes welches gefunden oder erzeugt wurde.
+     */
+    //FileDTO getImage(String params, PluginQuestionDto q, ImageService imageService);
 
     /**
      * Liefert eine Liste aller möglichen Varianten von Bildern
      * Element 0 : beschreibender Text
      * Element 1 : PIG Tag
      * Element 2 : Hilfetext
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
-     * @return Liefert eine Liste aller möglichen Varianten von Bildern
+     * @return  Liefert eine Liste aller möglichen Varianten von Bildern
      */
-    @Override
-    public Vector<String[]> getImageTemplates(String typ, String name, String config) {
-        return null;
-    }
+    Vector<String[]> getImageTemplates();
 
     /**
      * Wird verwendet wenn im Lösungsfeld die Funktion plugin("pluginname",p1,p2,p3) verwendet wird
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
      * @param vars   Alle Variablen der Frage
      * @param cp     Berechnungsparameter
      * @param p      Liste von CalcErgebnis-Werten, welche an das Plugin von der Question aus übergeben werden können
-     * @return Ergebnis der Funktion
+     * @return       Ergebnis der Funktion
      */
-    @Override
-    public CalcErgebnisDto parserPlugin(String typ, String name, String config, VarHashDto vars, CalcParamsDto cp, CalcErgebnisDto... p) {
-        return null;
-    }
+    //public CalcErgebnis parserPlugin(VarHash vars, CalcParams cp, CalcErgebnis ... p);
+    CalcErgebnisDto parserPlugin(VarHashDto vars, CalcParamsDto cp, CalcErgebnisDto ... p);
 
     /**
      * Bestimmt die Recheneinheit, welche bei der Methode parserPlugin als Ergebnis herauskomment wenn die Parameter die Einheiten wie in der Liste p haben
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
-     * @param p      Einheiten der Parameter als Recheneinheiten
-     * @return Recheneinheit des Ergebnisses
+     * @param p Einheiten der Parameter als Recheneinheiten
+     * @return  Recheneinheit des Ergebnisses
      */
-    @Override
-    public String parserPluginEinheit(String typ, String name, String config, String... p) {
-        return "";
-    }
+    String parserPluginEinheit(String ... p);
+
+//---------------------------------------------------- QuestionPluginJavaScript ---------------
+
+    /**
+     * @return Gibt an ob das Plugin eine Java-Script Schnittstelle bei der Beispieldarstellung hat<br>
+     * Im alten LeTTo als Interface QuestionPluginJavaScript
+     */
+    boolean isJavaScript();
+
+    /** @return Alle globalen Informationen des Plugins */
+    PluginGeneralInfo getPluginGeneralInfo();
+
+    /**
+     * Bestimmt einen eindeutigen String, welcher ein Plugin-Bild beschreibt um daraus den Dateinamen bestimmen zu können.
+     * @param imageParams Parameter des PIG-Tags
+     * @param q           Frage in der das Plugin eingebettet ist
+     * @return            eindeutiger String der das Plugin-Bild eindeutig beschreibt.
+     */
+    String getPluginImageDescription(String imageParams, PluginQuestionDto q);
+
+    /**
+     * Passt die Plugindefinition an die Eingabe aus dem Javascipt-Result an. zB: Interaktive Karte
+     * @param pluginDef	akt. Plugin-Definition
+     * @param jsResult	Rückgabe von Javascript
+     * @return	aktualiesierte Plugindefinition
+     */
+    String updatePluginstringJavascript(String pluginDef, String jsResult);
+
+    /**
+     * Liefert eine Liste von Javascript-Libraries,
+     * die im Header der HTML-Seite eingebunden werden müssen.
+     * Es muss die vollständige URL angegeben werden!
+     * @return	für das Plugin notwendige JS-Libraries
+     */
+    List<JavascriptLibrary> javascriptLibraries();
+
+    /**
+     * Liefert eine Liste von LOKALEN Javascript-Libraries,
+     * die im Header der HTML-Seite eingebunden werden müssen.
+     * Pfade werden relativ zum akt. Servernamen übergeben
+     * @return	für das Plugin notwendige JS-Libraries
+     */
+    List<JavascriptLibrary> javascriptLibrariesLocal();
+
+    /**
+     * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren Javascript - Bearbeitung
+     * @param params        Plugin-Parameter
+     * @param q             Question, in die das Plugin eingebettet ist
+     * @param nr            Laufende Nummer für alle PIG-Tags und Question-Plugins
+     * @return              PluginDto
+     */
+    PluginDto loadPluginDto(String params, PluginQuestionDto q, int nr);
+
+    /**
+     * Rendert ein Plugins für den Fragedruck als Latex-Sourcode
+     * @param pluginDto Das PluginDto welches am Webserver an das Java-Script des Plugins zum Rendern gesandt wird
+     * @param answer    Inhalt des Antwortfeldes welches der Schüler eingegeben hat
+     * @param mode      Druckmode
+     * @return          Latexsourcode und zugehörige Bilder in einer Hashmap
+     */
+    PluginRenderDto renderLatex(PluginDto pluginDto, String answer, String mode);
 
     /**
      * Prüft die Eingabe eines Schülers
-     *
-     * @param typ          Typ des Plugins
-     * @param name         Name des Plugins in der Frage
-     * @param config       Konfigurationsstring des Plugins
-     * @param pluginDto    PluginDto welches für die Java-Script aktive Eingabe aufbereitet wurde
-     * @param antwort      Antwort die der Schüler eingegeben hat
-     * @param toleranz     Toleranz für die Lösung
-     * @param varsQuestion Referenz auf VarHash, wird dynamisch nachgeladen
-     * @param answerDto    Antwort des Schülers
-     * @param grade        Maximale Punktanzahl für die richtige Antwort
-     * @return Bewertung
+     * @param pluginDto           PluginDto welches für die Java-Script aktive Eingabe aufbereitet wurde
+     * @param antwort             Antwort die der Schüler eingegeben hat
+     * @param toleranz            Toleranz für die Lösung
+     * @param varsQuestion        Referenz auf VarHash, wird dynamisch nachgeladen
+     * @param answerDto           Antwort des Schülers
+     * @param grade               Maximale Punktanzahl für die richtige Antwort
+     * @return                    Bewertung
      */
-    @Override
-    public PluginScoreInfoDto score(String typ, String name, String config, PluginDto pluginDto, String antwort, ToleranzDto toleranz, VarHashDto varsQuestion, PluginAnswerDto answerDto, double grade) {
-        return null;
-    }
-
-    /**
-     * Liefert eine Liste aller Variablen welche als Dataset benötigt werden.
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
-     * @return Liste aller Variablen des Plugins
-     */
-    @Override
-    public Vector<String> getVars(String typ, String name, String config) {
-        return null;
-    }
+    PluginScoreInfoDto score(PluginDto pluginDto, String antwort, ToleranzDto toleranz, VarHashDto varsQuestion, PluginAnswerDto answerDto, double grade);
 
     /**
      * verändert einen Angabetext, der in der Angabe in PI Tags eingeschlossen wurde<br>
      * Die Funktion wird vor dem Darstellen der Frage ausgeführt.
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
-     * @param text   Text der innerhalb der PI Tags gestanden ist
-     * @param q      Frage innerhalb der, der Text sich befindet, die Frage sollte vom Plugin nicht verändert werden!!
-     * @return veränderter Text
+     * @param text  Text der innerhalb der PI Tags gestanden ist
+     * @param q     Frage innerhalb der, der Text sich befindet, die Frage sollte vom Plugin nicht verändert werden!!
+     * @return      veränderter Text
      */
-    @Override
-    public String modifyAngabe(String typ, String name, String config, String text, PluginQuestionDto q) {
-        return "";
-    }
+    String modifyAngabe(String text, PluginQuestionDto q);
 
     /**
      * verändert den kompletten Angabetext der Frage. Dieser muss als Parameter übergeben werden!<br>
      * Die Funktion wird vor dem Darstellen der Frage ausgeführt.
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
-     * @param text   Angabetext der Frage
-     * @param q      Frage innerhalb der, der Text sich befindet, die Frage sollte vom Plugin nicht verändert werden!!
-     * @return veränderter AngabeText
+     * @param text  Angabetext der Frage
+     * @param q     Frage innerhalb der, der Text sich befindet, die Frage sollte vom Plugin nicht verändert werden!!
+     * @return      veränderter AngabeText
      */
-    @Override
-    public String modifyAngabeTextkomplett(String typ, String name, String config, String text, PluginQuestionDto q) {
-        return "";
-    }
+    String modifyAngabeTextkomplett(String text, PluginQuestionDto q);
 
     /**
-     * Passt die Plugindefinition an die Eingabe aus dem Javascipt-Result an. zB: Interaktive Karte
-     *
-     * @param typ       Typ des Plugins
-     * @param name      Name des Plugins in der Frage
-     * @param config    Konfigurationsstring des Plugins
-     * @param pluginDef akt. Plugin-Definition
-     * @param jsResult  Rückgabe von Javascript
-     * @return    aktualiesierte Plugindefinition
+     * Methode definiert das Eingabeelement der Subquestion, die das
+     * Plugin verwendet
+     * @return anzuzeigendes Eingabeelement, default: TextField
      */
-    @Override
-    public String updatePluginstringJavascript(String typ, String name, String config, String pluginDef, String jsResult) {
-        return "";
-    }
-
-    /**
-     * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren Javascript - Bearbeitung
-     *
-     * @param typ    Typ des Plugins
-     * @param name   Name des Plugins in der Frage
-     * @param config Konfigurationsstring des Plugins
-     * @param params Plugin-Parameter
-     * @param q      Question, in die das Plugin eingebettet ist
-     * @param nr     Laufende Nummer für alle PIG-Tags und Question-Plugins
-     * @return PluginDto
-     */
-    @Override
-    public PluginDto loadPluginDto(String typ, String name, String config, String params, PluginQuestionDto q, int nr) {
-        return null;
-    }
-
-    /**
-     * Rendert ein Plugins für den Fragedruck als Latex-Sourcode
-     *
-     * @param typ       Typ des Plugins
-     * @param name      Name des Plugins in der Frage
-     * @param config    Konfigurationsstring des Plugins
-     * @param pluginDto Das PluginDto welches am Webserver an das Java-Script des Plugins zum Rendern gesandt wird
-     * @param answer    Inhalt des Antwortfeldes welches der Schüler eingegeben hat
-     * @param mode      Druckmode
-     * @return Latexsourcode und zugehörige Bilder in einer Hashmap
-     */
-    @Override
-    public PluginRenderDto renderLatex(String typ, String name, String config, PluginDto pluginDto, String answer, String mode) {
-        return null;
-    }
+    InputElement getInputElement();
 
     /**
      * Rendert das Plugin inklusive der Schülereingabe und korrekter Lösung<br>
      * Es wird dabei entweder direkt ein HTML-Code oder LaTeX-Code erzeugt<br>
-     *
-     * @param typ          Typ des Plugins
-     * @param name         Name des Plugins in der Frage
-     * @param config       Konfigurationsstring des Plugins
-     * @param tex          true für LaTeX-Code, false für html-Code
-     * @param pluginDto    PluginDto welches für die Java-Script aktive Eingabe aufbereitet wurde
-     * @param antwort      Antwort die der Schüler eingegeben hat
-     * @param toleranz     Toleranz für die Lösung
-     * @param varsQuestion Referenz auf VarHash, wird dynamisch nachgeladen
-     * @param answerDto    Antwort des Schülers
-     * @param grade        Maximale Punktanzahl für die richtige Antwort
-     * @return HTML-Code oder LaTeX-Code mit Bildern
+     * @param tex                 true für LaTeX-Code, false für html-Code
+     * @param pluginDto           PluginDto welches für die Java-Script aktive Eingabe aufbereitet wurde
+     * @param antwort             Antwort die der Schüler eingegeben hat
+     * @param toleranz            Toleranz für die Lösung
+     * @param varsQuestion        Referenz auf VarHash, wird dynamisch nachgeladen
+     * @param answerDto           Antwort des Schülers
+     * @param grade               Maximale Punktanzahl für die richtige Antwort
+     * @return                    HTML-Code oder LaTeX-Code mit Bildern
      */
-    @Override
-    public PluginRenderDto renderPluginResult(String typ, String name, String config, boolean tex, PluginDto pluginDto, String antwort, ToleranzDto toleranz, VarHashDto varsQuestion, PluginAnswerDto answerDto, double grade) {
-        return null;
-    }
+    PluginRenderDto renderPluginResult(boolean tex, PluginDto pluginDto, String antwort, ToleranzDto toleranz, VarHashDto varsQuestion, PluginAnswerDto answerDto, double grade);
 
     /**
      * Liefert die Informationen welche notwendig sind um einen Konfigurationsdialog zu starten<br>
      * Ist die configurationID gesetzt wird eine Konfiguration gestartet und damit auch die restlichen Endpoints für die
      * Konfiguration aktiviert.
-     *
-     * @param typ             Typ des Plugins
-     * @param name            Name des Plugins in der Frage
-     * @param config          Konfigurationsstring des Plugins
-     * @param configurationID eindeutige ID welche für die Verbindung zwischen Edit-Service, Browser und Plugin-Konfiguration verwendet wird
-     * @param timeout         maximale Gültigkeit der Konfigurations-Verbindung in Sekunden ohne Verbindungsanfragen, Notwendig um bei Verbindungsabbruch die Daten am Plugin-Service auch wieder zu löschen
-     * @return alle notwendigen Konfig
+     * @param configurationID    eindeutige ID welche für die Verbindung zwischen Edit-Service, Browser und Plugin-Konfiguration verwendet wird
+     * @return                   alle notwendigen Konfig
      */
-    @Override
-    public PluginConfigurationInfoDto configurationInfo(String typ, String name, String config, String configurationID, long timeout) {
-        return null;
-    }
+    PluginConfigurationInfoDto configurationInfo(String configurationID);
 
     /**
      * Sendet alle notwendigen (im ConfigurationInfo) angeforderten Daten im Mode CONFIGMODE_URL an die Plugin-Konfiguration
-     *
-     * @param typ             Typ des Plugins
-     * @param configurationID zu verwendende Konfigurations-ID (muss am Plugin-Service zuvor angelegt worden sein  mit configurationInfo)
      * @param configuration   aktueller Konfigurations-String des Plugins
      * @param questionDto     Question-DTO mit Varhashes
-     * @return Liefert die Daten welche an JS weitergeleitet werden.
+     * @return                Liefert die Daten welche an JS weitergeleitet werden.
      */
-    @Override
-    public PluginConfigDto setConfigurationData(String typ, String configurationID, String configuration, PluginQuestionDto questionDto) {
-        return null;
-    }
+    PluginConfigDto setConfigurationData(String configuration, PluginQuestionDto questionDto);
 
     /**
      * Liefert die aktuelle Konfiguration eines Plugins welches sich gerade in einem CONFIGMODE_URL Konfigurationsdialog befindet
-     *
-     * @param typ             Typ des Plugins
-     * @param configurationID zu verwendende Konfigurations-ID
-     * @return Konfigurationsparameter oder "@ERROR: Meldung" wenn etwas nicht funktioniert hat
+     * @return                Konfigurationsparameter oder "@ERROR: Meldung" wenn etwas nicht funktioniert hat
      */
-    @Override
-    public String getConfiguration(String typ, String configurationID) {
-        return "";
-    }
+    String getConfiguration();
+
 }

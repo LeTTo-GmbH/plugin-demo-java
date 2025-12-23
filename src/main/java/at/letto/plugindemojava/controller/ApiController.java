@@ -1,8 +1,8 @@
 package at.letto.plugindemojava.controller;
 
 import at.letto.plugindemojava.config.Endpoint;
+import at.letto.plugindemojava.config.PluginConfiguration;
 import at.letto.plugindemojava.dto.*;
-import at.letto.plugindemojava.service.PluginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +16,12 @@ import java.util.Vector;
 @RequestMapping(Endpoint.LOCAL_API)
 public class ApiController {
 
-    @Autowired
-    PluginService pluginService;
+    @Autowired PluginConfiguration pluginConfiguration;
     
     /** @return liefert eine Liste aller Plugins (Pluginnamen) , welche mit diesem Service verwaltet werden */
     @GetMapping(Endpoint.getPluginList)
     public ResponseEntity<List<String>> pluginList() {
-        List<String> result = pluginService.getPluginList();
+        List<String> result = pluginConfiguration.getPluginList();
         return ResponseEntity.ok(result);
     }
 
