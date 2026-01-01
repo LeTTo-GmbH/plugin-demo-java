@@ -1,11 +1,9 @@
 package at.letto.plugindemojava.plugin;
 
+import at.letto.plugindemojava.config.PluginConfiguration;
 import at.letto.plugindemojava.dto.*;
 import at.letto.plugindemojava.enums.*;
-import at.letto.plugindemojava.tools.CryptTools;
-import at.letto.plugindemojava.tools.HTMLtool;
-import at.letto.plugindemojava.tools.JSON;
-import at.letto.plugindemojava.tools.PluginResource;
+import at.letto.plugindemojava.tools.*;
 import lombok.Getter;
 import lombok.Setter;
 import javax.imageio.ImageIO;
@@ -429,7 +427,7 @@ public abstract class BasePlugin implements PluginService {
         String url="";
         if (pImage.image!=null) {
             try {
-                ImageService imageService = ServerConfiguration.service.getPluginImageService();
+                BaseImageService imageService = PluginConfiguration.imageService;
                 pImage.error += imageService.saveImage(pImage.image,pImage.filename);
                 url = imageService.getURL(pImage.filename);
             } catch (final Exception ioe) {

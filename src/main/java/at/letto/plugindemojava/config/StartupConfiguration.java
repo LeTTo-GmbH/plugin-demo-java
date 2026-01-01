@@ -1,6 +1,5 @@
 package at.letto.plugindemojava.config;
 
-import at.letto.plugindemojava.service.PluginConnectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -15,12 +14,10 @@ public class StartupConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(StartupConfiguration.class);
 
-    private final PluginConnectionService pluginConnectionService;
     private final ApplicationContext  applicationContext;
     private final PluginConfiguration pluginConfiguration;
 
-    public StartupConfiguration(PluginConnectionService pluginConnectionService, ApplicationContext applicationContext, PluginConfiguration pluginConfiguration) {
-        this.pluginConnectionService = pluginConnectionService;
+    public StartupConfiguration(ApplicationContext applicationContext, PluginConfiguration pluginConfiguration) {
         this.applicationContext = applicationContext;
         this.pluginConfiguration = pluginConfiguration;
 

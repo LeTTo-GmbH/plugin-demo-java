@@ -1,7 +1,10 @@
 package at.letto.plugindemojava.tools;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,6 +89,23 @@ public class CryptTools {
         if (name.length() < 3) name = "file" + name;
         if (ext.length() < 1) ext = "ext";
         return name + "." + ext;
+    }
+
+    public static String loadFileAsBase64(File file) {
+        if (file!=null && file.exists()) {
+            String ImgString = "";
+            FileInputStream fis;
+            try {
+                fis = new FileInputStream(file);
+                byte fileContent[] = new byte[(int)file.length()];
+                fis.read(fileContent);
+                byte[] ret = Base64.getEncoder().encode(fileContent);
+                ImgString = new String(ret);
+                fis.close();
+                return ImgString;
+            } catch (Exception ignored) {}
+        }
+        return "";
     }
 
 }
