@@ -1,5 +1,6 @@
 @echo off
 
+rem verwendete Java-Version
 set JAVA_HOME=C:\Program Files\Java\jdk-21
 
 call mvn -version
@@ -19,34 +20,42 @@ goto LOOP1
 rem Workspace automatisch ermitteln
 set dir=%cd%
 
-cd %dir%\letto-pluginuhr
+cd %dir%
+rem öffentlicher Pfad des Plugins direkt nach dem DNS-Namen in der url - https://dns.name.at/urlpath/ - wird durch vars.bat überschrieben
+set urlpath=plugindemo
+echo Laden der des Plugin-namens
+call build\vars.bat
+
+rem Name des Docker-Images
+set image=lettohub/letto-service-%urlpath%:debug
+rem Bereinige den Build
 call mvn clean -DinteractiveMode=false -DskipTests
+rem erzeuge die JavaDOC
 call mvn javadoc:javadoc
-rmdir src\main\resources\static\pluginhuhr /s /q
-rmdir src\main\resources\static\pluginuhr\open\javadoc /s /q
-xcopy target\site\apidocs src\main\resources\static\pluginuhr\open\javadoc /E /S /Y /I
+rem kopiere die JavaDOC ins static-Verzeichnis am Webserver
+rmdir src\main\resources\static\%urlpath% /s /q
+rmdir src\main\resources\static\%urlpath%\open\javadoc /s /q
+xcopy target\site\apidocs src\main\resources\static\%urlpath%\open\javadoc /E /S /Y /I
+rem bilde den Spring-Boot-Server
 call mvn package -DinteractiveMode=false -DskipTests
 IF %ERRORLEVEL% EQU 0 (echo plugins packaged)  ELSE goto BUILDFAIL
 
-set image=lettohub/letto-service-pluginuhr:debug
-
+rem beende eine laufende Version des Docker-Containers
 cd \opt\letto\docker\compose\letto
-docker compose -f docker-service-pluginuhr.yml down
+docker compose -f docker-service-%urlpath%.yml down
 rem IF %ERRORLEVEL% EQU 0 (echo docker setup stopped)  ELSE goto BUILDFAIL
 
-cd %dir%\letto-pluginuhr
+rem bilde den Docker-Container neu
+cd %dir%
 docker rmi %image% --force
 docker build -f Dockerfile -t %image% .
-IF %ERRORLEVEL% EQU 0 (echo docker pluginuhr built)  ELSE goto BUILDFAIL
+IF %ERRORLEVEL% EQU 0 (echo docker %urlpath% built)  ELSE goto BUILDFAIL
 
-rem copy %dir%\letto-pluginuhr\yml\docker-service-pluginuhr.yml \opt\letto\docker\compose\letto\
+rem kopiere die yml-Datei ins compose-Verzeichnis und starte den Docker-Container neu
+copy %dir%\yml\docker-service-plugin.yml \opt\letto\docker\compose\letto\docker-service-%urlpath%.yml
 cd \opt\letto\docker\compose\letto
-set yml=\opt\letto\docker\compose\letto\docker-service-pluginuhr.yml
-set template_yml=%dir%\letto-setup\setupservice\src\main\resources\yml\docker-service-pluginuhr.yml
-set replace_bat=%dir%\letto-setup\setupservice\scripts\replacetag.bat
-call %replace_bat% %yml% %template_yml%
-docker compose -f docker-service-pluginuhr.yml up -d
-IF %ERRORLEVEL% EQU 0 (echo pluginuhr built and started)  ELSE goto BUILDFAIL
+docker compose -f docker-service-%urlpath%.yml up -d
+IF %ERRORLEVEL% EQU 0 (echo %urlpath% built and started)  ELSE goto BUILDFAIL
 
 rem docker push %image%
 rem ssh root@s3.letto.at -t ssh root@letto -t /opt/letto/docker/scripts/updatelti.sh
