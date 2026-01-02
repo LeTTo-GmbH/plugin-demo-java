@@ -1,7 +1,7 @@
 package at.letto.plugin.config;
 
 import at.letto.plugin.dto.*;
-import at.letto.plugin.plugin.PluginService;
+import at.letto.plugin.plugins.PluginService;
 import at.letto.plugin.tools.BaseImageService;
 import at.letto.plugin.tools.Datum;
 import at.letto.plugin.tools.ServerStatus;
@@ -103,7 +103,7 @@ public class PluginConfiguration {
         uriIntern = System.getenv("letto.plugin.uri.intern");
         while (uriIntern!=null && uriIntern.endsWith("/")) uriIntern=uriIntern.substring(0,uriIntern.length()-1);
         if (uriIntern==null || uriIntern.trim().length()==0)
-            uriIntern = "http://letto-pluginuhr.nw-letto:8080";
+            uriIntern = "http://letto-plugindemo.nw-letto:8080";
         uriIntern = uriIntern + Endpoint.LOCAL_API;
 
         // externe Uri welche ans Setup weitergegeben wird bestimmen

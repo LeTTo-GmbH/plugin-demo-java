@@ -49,7 +49,7 @@ services:
       - spring.mail.properties.mail.debug=${spring_mail_properties_mail_debug:-false}
       - spring.mail.address.noreply=${spring_mail_address_noreply:-norelpy@schule.com}
       - spring.mail.address.reply=${spring_mail_address_reply:-relpy@schule.com}
-      - letto.plugin.uri.intern=${LETTO_PLUGIN_URI_INTERN:-}
-      - letto.plugin.uri.extern=${LETTO_PLUGIN_URI_EXTERN:-}
+      - letto.plugin.uri.intern=${LETTO_PLUGINDEMO_URI_INTERN:-http://letto-plugindemo.nw-letto:8080}
+      - letto.plugin.uri.extern=${LETTO_PLUGIN_URI_EXTERN:-https://${SERVER_NAME}}
     ports:
       - "${DEBUG_PORT_PLUGINDEMO:-5205}:5080"

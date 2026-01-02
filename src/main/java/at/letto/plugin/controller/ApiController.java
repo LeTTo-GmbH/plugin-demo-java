@@ -3,7 +3,7 @@ package at.letto.plugin.controller;
 import at.letto.plugin.config.Endpoint;
 import at.letto.plugin.config.PluginConfiguration;
 import at.letto.plugin.dto.*;
-import at.letto.plugin.plugin.PluginService;
+import at.letto.plugin.plugins.PluginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

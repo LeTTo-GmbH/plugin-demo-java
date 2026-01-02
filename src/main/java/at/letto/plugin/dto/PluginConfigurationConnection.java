@@ -1,6 +1,6 @@
 package at.letto.plugin.dto;
 
-import at.letto.plugin.plugin.PluginService;
+import at.letto.plugin.plugins.PluginService;
 import at.letto.plugin.tools.Datum;
 import at.letto.plugin.tools.RandomString;
 import lombok.Getter;

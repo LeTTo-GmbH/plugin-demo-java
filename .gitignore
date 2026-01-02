@@ -20,3 +20,5 @@ target/
 
 ### VS Code ###
 .vscode/
+
+src/main/resources/static/*/open/javadoc

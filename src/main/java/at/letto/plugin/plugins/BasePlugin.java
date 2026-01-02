@@ -1,4 +1,4 @@
-package at.letto.plugin.plugin;
+package at.letto.plugin.plugins;
 
 import at.letto.plugin.config.PluginConfiguration;
 import at.letto.plugin.dto.*;

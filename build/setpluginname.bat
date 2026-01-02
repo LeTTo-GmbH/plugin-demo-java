@@ -1,7 +1,7 @@
 @echo off
 
 set startdir=%cd%
-echo wechsel ins Hauptverzeichnis
+
 :LOOP1
 if exist plugin-demo-java.info goto DIROK
 set olddir=%cd%
@@ -42,34 +42,43 @@ rem genau ein Parameter -> endpoint setzen
 set "endpoint=%1"
 echo Endpoint gesetzt auf: %endpoint%
 
-rem ------------------------------
 rem Datei prüfen und Ersetzungen durchführen
-rem ------------------------------
-set "composeFile=%dir%\yml\docker-service-plugin.yml"
-set "composeFileTemplate=%dir%\yml\docker-service-plugin.template.yml"
-if NOT exist "%composeFileTemplate%" (
-  echo Fehler: %composeFileTemplate% nicht gefunden!
-  goto BUILDFAIL
-)
-
-copy %composeFileTemplate% %composeFile%
-
+set "FileTemplate=%dir%\build\templates\docker-service-plugin.yml"
+set "File=%dir%\yml\docker-service-plugin.yml"
+copy %FileTemplate% %File%
 rem Benutze PowerShell für sichere, literale Ersetzungen (case-sensitive).
 powershell -NoProfile -Command ^
-  "$ep = '%endpoint%'; $epUp = $ep.ToUpper(); $path = '%composeFile%'; if(-not (Test-Path $path)){ Write-Host 'Datei nicht gefunden'; exit 2 }; $c = Get-Content -Raw -Encoding UTF8 $path; $c = $c.Replace('plugindemo',$ep).Replace('PLUGINDEMO',$epUp); Set-Content -Encoding UTF8 -Path $path -Value $c"
+  "$ep = '%endpoint%'; $epUp = $ep.ToUpper(); $path = '%File%'; if(-not (Test-Path $path)){ Write-Host 'Datei nicht gefunden'; exit 2 }; $c = Get-Content -Raw -Encoding UTF8 $path; $c = $c.Replace('plugindemo',$ep).Replace('PLUGINDEMO',$epUp); Set-Content -Encoding UTF8 -Path $path -Value $c"
+echo %File% wurde erzeugt.
 
-if errorlevel 1 (
-  echo Fehler bei der Bearbeitung der Datei.
-  goto BUILDFAIL
-)
+set "FileTemplate=%dir%\build\templates\application.properties"
+set "File=%dir%\src\main\resources\application.properties"
+copy %FileTemplate% %File%
+rem Benutze PowerShell für sichere, literale Ersetzungen (case-sensitive).
+powershell -NoProfile -Command ^
+  "$ep = '%endpoint%'; $epUp = $ep.ToUpper(); $path = '%File%'; if(-not (Test-Path $path)){ Write-Host 'Datei nicht gefunden'; exit 2 }; $c = Get-Content -Raw -Encoding UTF8 $path; $c = $c.Replace('plugindemo',$ep).Replace('PLUGINDEMO',$epUp); Set-Content -Encoding UTF8 -Path $path -Value $c"
+echo %File% wurde erzeugt.
 
-echo %composeFile% wurde erfolgreich erzeugt.
+git rm -r "src\main\resources\static"
+rd    src\main\resources\static /s /q
+mkdir src\main\resources\static
+mkdir src\main\resources\static\%endpoint%
+mkdir src\main\resources\static\%endpoint%\open
+xcopy build\templates\open\* src\main\resources\static\%endpoint%\open\ /e /s /q /y
+
+set "FileTemplate=%dir%\build\templates\head_include.html"
+set "File=%dir%\src\main\resources\static\%endpoint%\open\head_include.html"
+copy %FileTemplate% %File%
+rem Benutze PowerShell für sichere, literale Ersetzungen (case-sensitive).
+powershell -NoProfile -Command ^
+  "$ep = '%endpoint%'; $epUp = $ep.ToUpper(); $path = '%File%'; if(-not (Test-Path $path)){ Write-Host 'Datei nicht gefunden'; exit 2 }; $c = Get-Content -Raw -Encoding UTF8 $path; $c = $c.Replace('plugindemo',$ep).Replace('PLUGINDEMO',$epUp); Set-Content -Encoding UTF8 -Path $path -Value $c"
+echo %File% wurde erzeugt.
 
 set "varsFile=%dir%\build\vars.bat"
-echo "@echo off" >%varsFile%
-echo "" >>%varsFile%
-echo "rem öffentlicher Pfad des Plugins direkt nach dem DNS-Namen in der url - https://dns.name.at/urlpath/" >>%varsFile%
-echo "set urlpath=%endpoint%" >>%varsFile%
+
+echo @echo off >%varsFile%
+echo rem öffentlicher Pfad des Plugins direkt nach dem DNS-Namen in der url - https://dns.name.at/urlpath/ >>%varsFile%
+echo set urlpath=%endpoint% >>%varsFile%
 
 echo vars.bat erzeugt!
 

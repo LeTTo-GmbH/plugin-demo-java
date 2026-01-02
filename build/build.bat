@@ -25,6 +25,7 @@ rem öffentlicher Pfad des Plugins direkt nach dem DNS-Namen in der url - https:
 set urlpath=plugindemo
 echo Laden der des Plugin-namens
 call build\vars.bat
+cp revision.txt src\main\resources\revision.txt
 
 rem Name des Docker-Images
 set image=lettohub/letto-service-%urlpath%:debug
