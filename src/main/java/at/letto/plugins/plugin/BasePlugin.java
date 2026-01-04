@@ -427,7 +427,7 @@ public abstract class BasePlugin implements PluginService {
         String url="";
         if (pImage.image!=null) {
             try {
-                BaseImageService imageService = PluginConfiguration.imageService;
+                BaseImageService imageService = PluginConfiguration.pluginImageService;
                 pImage.error += imageService.saveImage(pImage.image,pImage.filename);
                 url = imageService.getURL(pImage.filename);
             } catch (final Exception ioe) {

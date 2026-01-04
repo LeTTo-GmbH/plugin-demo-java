@@ -1,11 +1,11 @@
-package at.letto.plugins.config;
+﻿package at.letto.plugins.config;
 
 
 public class Endpoint {
 
     //-------------------------- Endpoint-Verzeichnisse
 
-    public static final String servicepath  = "/plugindemojava";
+    public static final String servicepath  = "/plugindemo";
     public static final String open         = servicepath+"/open";
     public static final String LOCAL_API    = "/open";
     public static final String EXTERN_API   = servicepath+"/auth/user";
@@ -57,3 +57,18 @@ public class Endpoint {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

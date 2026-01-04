@@ -59,6 +59,11 @@ powershell -NoProfile -Command ^
   "$ep = '%endpoint%'; $epUp = $ep.ToUpper(); $path = '%File%'; if(-not (Test-Path $path)){ Write-Host 'Datei nicht gefunden'; exit 2 }; $c = Get-Content -Raw -Encoding UTF8 $path; $c = $c.Replace('plugindemo',$ep).Replace('PLUGINDEMO',$epUp); Set-Content -Encoding UTF8 -Path $path -Value $c"
 echo %File% wurde erzeugt.
 
+set "File=%dir%\src\main\java\at\letto\plugins\config\Endpoint.java"
+powershell -NoProfile -Command "$path = '%File%'; if (-not (Test-Path $path)) { Write-Host 'Datei nicht gefunden:' $path; exit 2 }; $ep = '%endpoint%'; $content = Get-Content -Raw -Encoding UTF8 -LiteralPath $path; $pattern = 'String servicepath *= [^;]+;'; $replacement = 'String servicepath  = \"/' + $ep + '\";'; $new = [regex]::Replace($content, $pattern, $replacement); if ($new -ne $content) { Set-Content -Path $path -Value $new -Encoding UTF8; Write-Host 'Ersetzt: servicepath -> /' + $ep } else { Write-Host 'Pattern nicht gefunden oder keine Änderung'; }"
+echo %File% wurde erzeugt.
+
+
 git rm -r "src\main\resources\static"
 rd    src\main\resources\static /s /q
 mkdir src\main\resources\static

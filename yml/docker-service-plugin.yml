@@ -21,8 +21,8 @@ services:
         max-file: "3"
     volumes:
       - ${VOLUME_LOG:-/opt/letto/docker/storage/log}/plugindemo:/log
-      - ${VOLUME_IMAGES:-/opt/letto/docker/storage/images}:/opt/letto/docker/storage/images
-      - ${VOLUME_PLUGINS:-/opt/letto/docker/storage/plugins}:/opt/letto/docker/storage/plugins
+      - ${VOLUME_IMAGES:-/opt/letto/docker/storage/images}:/opt/letto/images
+      - ${VOLUME_PLUGINS:-/opt/letto/docker/storage/plugins}:/opt/letto/plugins
     environment:
       - TZ=${TIMEZONE:-Europe/Berlin}
       - LC_ALL=${LOCALE:-de_DE.UTF-8}
@@ -37,6 +37,11 @@ services:
       - letto_setup_uri=${LETTO_SETUP_URI:-http://letto-setup.nw-letto:8096}
       - JAVA_OPTS=${JAVA_OPTS_PLUGINDEMO:--Xms50m -Xmx500m}
       - servername=${SERVER_NAME}
+      - letto_pathImages=/opt/letto/images
+      - letto_pathPlugins=/opt/letto/plugins
+      - letto_webPathImages=${SERVER_NAME}/images
+      - letto_webPathPlugins=${SERVER_NAME}/images/plugins
+
       - service_uri_projekte=${SERVICE_URI_PROJEKTE:-https://${SERVER_NAME:-localhost}}/${PROJEKTE_ENDPOINT:-projekte}
       - debug=${DEBUG_PLUGINS:-${DEBUG:-false}}
       - spring.mail.host=${spring_mail_host:-}

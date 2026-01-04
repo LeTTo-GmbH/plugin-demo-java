@@ -63,6 +63,18 @@ public class PluginConfiguration {
     @Value("${servername:}")
     @Getter private String servername;
 
+    @Value("${letto.pathImages}")
+    @Getter private String pathImages;
+
+    @Value("${letto.webPathImages}")
+    @Getter private String webpathImages;
+
+    @Value("${letto.pathPlugins}")
+    @Getter private String pathPlugins;
+
+    @Value("${letto.webPathPlugins}")
+    @Getter private String webpathPlugins;
+
     /** externe URI welche an das Setup-service übergeben wird */
     @Getter private String uriExtern;
 
@@ -95,7 +107,8 @@ public class PluginConfiguration {
     public static PluginConfiguration pluginConfiguration=null;
 
     /** statische Referenz auf das Imageservice */
-    public static BaseImageService imageService = null;
+    public static BaseImageService pluginImageService = null;
+    public static BaseImageService serverImageService = null;
 
     public void init() {
         pluginConfiguration = this;
@@ -121,7 +134,10 @@ public class PluginConfiguration {
                 .build();
 
         // Image-Service für die Plugin-Bilder
-        imageService = new BaseImageService("","",true);
+        pluginImageService = new BaseImageService(pathPlugins+Endpoint.servicepath, webpathPlugins+Endpoint.servicepath, true);
+        logger.info("URL Plugin-Image-Service: "+pluginImageService.getUrlPath());
+        serverImageService = new BaseImageService(pathImages, webpathImages, true);
+        logger.info("URL Server-Image-Service: "+serverImageService.getUrlPath());
     }
 
     /** registriert das Plugin am Setup-Service */
