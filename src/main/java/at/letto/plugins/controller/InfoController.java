@@ -14,12 +14,12 @@ public class InfoController {
 
     @Autowired private PluginConfiguration pluginConfiguration;
 
-    @RequestMapping(Endpoint.ping)
+    @GetMapping(Endpoint.ping)
     public ResponseEntity<String> ping()  {
         return ResponseEntity.ok("pong");
     }
 
-    @RequestMapping(Endpoint.pingopen)
+    @GetMapping(Endpoint.pingopen)
     public ResponseEntity<String> pingopen()  {
         return ResponseEntity.ok("pong");
     }

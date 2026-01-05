@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "className")
+//@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "className")
 public class PluginDto {
 
     /** Url eines eingebetteten Bildes - meist base64 codiert */

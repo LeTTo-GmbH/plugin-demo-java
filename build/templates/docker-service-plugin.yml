@@ -36,6 +36,8 @@ services:
       - letto_user_admin_password=${SERVICE_ADMIN_PASSWORD}
       - letto_setup_uri=${LETTO_SETUP_URI:-http://letto-setup.nw-letto:8096}
       - JAVA_OPTS=${JAVA_OPTS_PLUGINDEMO:--Xms50m -Xmx500m}
+      - network.letto.address=letto-plugindemo
+      - docker.container.name=letto-plugindemo
       - servername=${SERVER_NAME}
       - letto_pathImages=/opt/letto/images
       - letto_pathPlugins=/opt/letto/plugins
@@ -57,4 +59,4 @@ services:
       - letto.plugin.uri.intern=${LETTO_PLUGINDEMO_URI_INTERN:-http://letto-plugindemo.nw-letto:8080}
       - letto.plugin.uri.extern=${LETTO_PLUGIN_URI_EXTERN:-https://${SERVER_NAME}}
     ports:
-      - "${DEBUG_PORT_PLUGINDEMO:-5205}:5080"
+      - "${DEBUG_PORT_PLUGINDEMO:-5206}:5080"

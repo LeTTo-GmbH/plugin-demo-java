@@ -4,6 +4,7 @@ import at.letto.plugins.config.PluginConfiguration;
 import at.letto.plugins.dto.*;
 import at.letto.plugins.enums.*;
 import at.letto.plugins.tools.*;
+import at.letto.plugins.dto.JavascriptLibrary;
 import lombok.Getter;
 import lombok.Setter;
 import javax.imageio.ImageIO;

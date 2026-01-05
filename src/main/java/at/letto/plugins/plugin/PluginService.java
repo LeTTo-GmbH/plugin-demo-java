@@ -2,6 +2,7 @@ package at.letto.plugins.plugin;
 
 import at.letto.plugins.dto.*;
 import at.letto.plugins.enums.InputElement;
+import at.letto.plugins.dto.JavascriptLibrary;
 
 import java.util.List;
 import java.util.Vector;

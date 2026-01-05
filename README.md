@@ -36,5 +36,8 @@ https://github.com/LeTTo-GmbH/plugin-demo-java.git
 # Debuggen und Testen des Plugins
 * Am Entwicklungsrechner muss eine Letto-Installation vorhanden sein
 * beim Builden des Plugins mit build.bat wird automatisch auch der Docker-Container gestartet und sollte sofort mit dem Plugintester und im Debugger getestet werden können
+* kopiere die Datei *.conf aus dem Verzeichnis proxy in das Verzeichnis /opt/letto/docker/proxy
+* starten den proxy neu
+  >docker restart letto-proxy
 
 

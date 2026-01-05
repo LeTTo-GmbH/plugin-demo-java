@@ -19,7 +19,7 @@ import java.util.Vector;
 @RequestMapping(Endpoint.LOCAL_API)
 @Tag(name = "Api Controller",
         description = "REST-Schnittstelle des Plugins zwischen LeTTo und Plugin (nur aus dem Docker-Netzwerk erreichbar) " +
-                "[JavaDoc](https://build.letto.at/pluginname/open/javadoc/at/letto/plugindemojava/controller/ApiController.html)"
+                "[JavaDoc](/plugindemo/open/javadoc/at/letto/plugins/controller/ApiController.html)"
 )
 public class ApiController {
 

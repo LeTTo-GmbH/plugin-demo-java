@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter @Setter
 @NoArgsConstructor
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "className")
+//@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "className")
 public class JavascriptLibrary {
 
     /** JS-Bibliothek local als Ressource verfügbar */

@@ -1,5 +1,4 @@
-﻿package at.letto.plugins.config;
-
+package at.letto.plugins.config;
 
 public class Endpoint {
 

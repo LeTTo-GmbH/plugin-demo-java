@@ -80,12 +80,25 @@ powershell -NoProfile -Command ^
 echo %File% wurde erzeugt.
 
 set "varsFile=%dir%\build\vars.bat"
-
 echo @echo off >%varsFile%
 echo rem öffentlicher Pfad des Plugins direkt nach dem DNS-Namen in der url - https://dns.name.at/urlpath/ >>%varsFile%
-echo set urlpath=%endpoint% >>%varsFile%
-
+echo set "urlpath=%endpoint%" >>%varsFile%
 echo vars.bat erzeugt!
+
+rd    proxy /s /q
+mkdir proxy
+set "proxyFile=%dir%\proxy\%endpoint%.conf"
+echo location /%endpoint%/ { >%proxyFile%
+echo      resolver 127.0.0.11; >>%proxyFile%
+echo      set $%endpoint%path     letto-%endpoint%.nw-letto:8080; >>%proxyFile%
+echo      proxy_set_header   Host $host; >>%proxyFile%
+echo      proxy_set_header   X-Real-IP $remote_addr; >>%proxyFile%
+echo      proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for; >>%proxyFile%
+echo      proxy_set_header   X-Forwarded-Proto $scheme; >>%proxyFile%
+echo      proxy_pass         http://$%endpoint%path; >>%proxyFile%
+echo      proxy_read_timeout 90; >>%proxyFile%
+echo } >>%proxyFile%
+echo %endpoint%.conf erzeugt!
 
 echo Plugin-Endpoint wurde auf %endpoint% gesetzt!
 goto FIN
