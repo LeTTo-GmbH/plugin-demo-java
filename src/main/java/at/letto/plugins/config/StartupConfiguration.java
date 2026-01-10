@@ -28,7 +28,7 @@ public class StartupConfiguration {
         pluginConfiguration.registerPlugin("Uhr1", "at.letto.plugins.plugin.uhr.PluginUhr");
 
         // Nun wird das Plugin-Service am Setup registriert
-        pluginConfiguration.registerPluginInSetup();
+        // hier bitte nicht: pluginConfiguration.registerPluginInSetup();
     }
 
 }

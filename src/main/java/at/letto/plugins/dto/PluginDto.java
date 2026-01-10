@@ -3,7 +3,6 @@ package at.letto.plugins.dto;
 import at.letto.plugins.plugin.PluginService;
 import at.letto.plugins.tools.JSON;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,6 @@ import java.util.regex.Pattern;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "className")
 public class PluginDto {
 
     /** Url eines eingebetteten Bildes - meist base64 codiert */

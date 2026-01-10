@@ -1,5 +1,6 @@
 package at.letto.plugins.dto;
 
+import at.letto.plugins.plugin.PluginService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -59,6 +60,13 @@ public class PluginConfigDto {
     /** JSON-String welcher vom Plugin an Javascript weitergegeben werden soll,
      *  wird von LeTTo nicht verwendet */
     private String jsonData;
+
+    public PluginConfigDto(String params, PluginService pi, PluginQuestionDto q) {
+        setSize(params);
+        tagName = pi.getName();
+        this.width = pi.getWidth();
+        this.height = pi.getHeight();
+    }
 
     public PluginConfigDto(String params, String name) {
         setSize(params);

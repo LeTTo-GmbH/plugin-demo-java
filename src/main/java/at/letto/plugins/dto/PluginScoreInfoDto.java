@@ -1,7 +1,6 @@
 package at.letto.plugins.dto;
 
 import at.letto.plugins.enums.Score;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "className")
 public class PluginScoreInfoDto {
 
     /** Eingabe des Schülers geparst als CalcErgebnisDto */
