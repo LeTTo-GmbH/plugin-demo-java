@@ -32,17 +32,17 @@ public class PluginConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(StartupConfiguration.class);
 
-    public static final String PLUGIN_NAME     = "letto-plugindemojava";
+    public static final String PLUGIN_NAME     = "letto-plugindemo";
     public static final String PLUGIN_VERSION  = "1.0";
     public static final String PLUGIN_AUTHOR   = "LeTTo GmbH";
     public static final String PLUGIN_LICENSE  = "OpenSource";
 
     /** address of plugin in docker-network nw-letto */
-    @Value("${network.letto.address:letto-plugindemojava}")
+    @Value("${network.letto.address:letto-plugindemo}")
     @Getter  private String networkLettoAddress;
 
     /** name of the docker container */
-    @Value("${docker.container.name:letto-plugindemojava}")
+    @Value("${docker.container.name:letto-plugindemo}")
     @Getter  private String dockerName;
 
     @Value("${letto.setup.uri:http://localhost:8096}")

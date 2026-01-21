@@ -65,9 +65,11 @@ powershell -NoProfile -Command "$path = '%File%'; if (-not (Test-Path $path)) { 
 echo %File% wurde erzeugt.
 dos2unix %File%
 
-rem ersetze plugindemojava in PluginConfiguration.java
+rem ersetze plugindemo in PluginConfiguration.java
 set "File=%dir%\src\main\java\at\letto\plugins\config\PluginConfiguration.java"
-powershell -NoProfile -Command "$path = '%File%'; if (-not (Test-Path $path)) { Write-Host 'Datei nicht gefunden:' $path; exit 2 }; $ep = '%endpoint%'; $content = Get-Content -Raw -Encoding UTF8 -LiteralPath $path; $pattern = 'plugindemojava'; $replacement = $ep; $new = [regex]::Replace($content, $pattern, $replacement); if ($new -ne $content) { Set-Content -Path $path -Value $new -Encoding UTF8; Write-Host 'Ersetzt: servicepath -> /' + $ep } else { Write-Host 'Pattern nicht gefunden oder keine Änderung'; }"
+powershell -NoProfile -Command "$path = '%File%'; if (-not (Test-Path $path)) { Write-Host 'Datei nicht gefunden:' $path; exit 2 }; $ep = '%endpoint%'; $content = Get-Content -Raw -Encoding UTF8 -LiteralPath $path; $pattern = 'PLUGIN_NAME *= *\"[^\"]+\";'; $replacement = 'PLUGIN_NAME     = \"letto-'+$ep+'\";'; $new = [regex]::Replace($content, $pattern, $replacement); if ($new -ne $content) { Set-Content -Path $path -Value $new -Encoding UTF8; Write-Host 'Ersetzt: servicepath -> /' + $ep } else { Write-Host 'Pattern nicht gefunden oder keine Änderung'; }"
+powershell -NoProfile -Command "$path = '%File%'; if (-not (Test-Path $path)) { Write-Host 'Datei nicht gefunden:' $path; exit 2 }; $ep = '%endpoint%'; $content = Get-Content -Raw -Encoding UTF8 -LiteralPath $path; $pattern = '\{network\.letto\.address\:[^\}]+\}'; $replacement = '{network.letto.address:letto-}'+$ep+'}'; $new = [regex]::Replace($content, $pattern, $replacement); if ($new -ne $content) { Set-Content -Path $path -Value $new -Encoding UTF8; Write-Host 'Ersetzt: servicepath -> /' + $ep } else { Write-Host 'Pattern nicht gefunden oder keine Änderung'; }"
+powershell -NoProfile -Command "$path = '%File%'; if (-not (Test-Path $path)) { Write-Host 'Datei nicht gefunden:' $path; exit 2 }; $ep = '%endpoint%'; $content = Get-Content -Raw -Encoding UTF8 -LiteralPath $path; $pattern = '\{docker\.container\.name\:[^\}]+\}'; $replacement = '{docker.container.name:letto-}'+$ep+'}'; $new = [regex]::Replace($content, $pattern, $replacement); if ($new -ne $content) { Set-Content -Path $path -Value $new -Encoding UTF8; Write-Host 'Ersetzt: servicepath -> /' + $ep } else { Write-Host 'Pattern nicht gefunden oder keine Änderung'; }"
 echo %File% wurde erzeugt.
 dos2unix %File%
 
