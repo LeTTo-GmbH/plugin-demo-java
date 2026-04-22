@@ -222,8 +222,8 @@ public class PluginConfiguration {
                 applicationContext.getId(), // Name des Services
                 PLUGIN_VERSION, // Version des Services
                 PLUGIN_AUTHOR,               // Information über den Autor des Services
-                PLUGIN_LICENSE ,          // Information über die Lizenz des Services
-                "",                         // Information über die Endpoints des Services
+                PLUGIN_LICENSE ,             // Information über die Lizenz des Services
+                "",                          // Information über die Endpoints des Services
                 serverStatus.getJarFileName(),
                 Datum.formatDateTime(new Date(applicationContext.getStartupDate())),
                 adminInfoDto,
