@@ -28,8 +28,8 @@ COPY target/plugin-demo-java-0.1.jar plugin.jar
 COPY scripts/*.sh     /scripts/
 COPY src/main/resources/revision.txt revision.txt
 RUN dos2unix /scripts/*.sh
-
 RUN chmod 755 /scripts/*.sh
+RUN mkdir /log -p
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 CMD bash /scripts/healthcheck.sh
 
