@@ -3,6 +3,8 @@ package at.letto.plugins.controller;
 import at.letto.plugins.config.Endpoint;
 import at.letto.plugins.config.PluginConfiguration;
 import at.letto.plugins.dto.ServiceInfoDTO;
+import at.letto.plugins.tools.ServerStatus;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +36,11 @@ public class InfoController {
     public ResponseEntity<ServiceInfoDTO> infoOpen()  {
         ServiceInfoDTO serviceInfoDTO = pluginConfiguration.getServiceInfoDto();
         return ResponseEntity.ok(serviceInfoDTO);
+    }
+
+    @GetMapping(Endpoint.VERSION)
+    public ResponseEntity<String> version()  {
+        return ResponseEntity.ok(PluginConfiguration.PLUGIN_VERSION);
     }
 
 }

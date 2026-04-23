@@ -11,8 +11,8 @@ public class Endpoint {
     public static final String EXTERN_OPEN  = servicepath+"/api/open";
 
     //-------------------------- Info Endpoints
-    public static final String ping         = "/ping";
-    public static final String pingopen     = open+"/ping";
+    public static final String ping             = "/ping";
+    public static final String pingopen         = open+"/ping";
     public static final String INFO             = "/info";
     public static final String INFO_OPEN        = open+INFO;
     public static final String VERSION          = "/version";
