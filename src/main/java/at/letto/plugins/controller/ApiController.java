@@ -358,7 +358,14 @@ public class ApiController {
     /**
      * Liefert die Informationen welche notwendig sind um einen Konfigurationsdialog zu starten<br>
      * Ist die configurationID gesetzt wird eine Konfiguration gestartet und damit auch die restlichen Endpoints für die
-     * Konfiguration aktiviert.
+     * Konfiguration aktiviert.<br>
+     * LeTTo/Plugintester muss die configurationID für jeden Konfigurationsdialog eindeutig setzen, sie dient als Zustandsdefinition<br>
+     * Die Konfiguration ist NICHT stateless - der Zustand muss über die configurationID beidseitig gespeichert werden.<br>
+     * Nach längerer Untätigkeit sollte der Zustand der ConfigurationID wieder entfernt werden (z.B. über die timeout Angabe) damit es nicht zu einem Speicherüberlauf am Plugin-Service kommt<br>
+     * Im Zustand müssen typ,name und config gespeichert werden<br>
+     * Die Konfiguration kann über die configurationID jederzeit über open-Endpoints mit den restlichen Endpoints abgefragt und verändert werden<br>
+     * Die configurationID wird also als Authentifizierung an den Open-Endpoints verwendet.<br>
+     *
      * @param r    PluginConfigurationInfoRequestDto:<br>
      *   r.typ       String: Typ des Plugins<br>
      *   r.name      String: Name des Plugins in der Frage<br>
