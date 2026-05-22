@@ -25,8 +25,8 @@ https://github.com/LeTTo-GmbH/plugin-demo-java.git
 | Datei                                              | Beschreibung           | Sprache/Format |
 |----------------------------------------------------|------------------------|----------------|
 | src/main/java/at/letto/plugin/plugins/uhr/Uhr.java | Hauptdatei des Plugins | Java           |
-| src/main/resources/plugins/uhr/uhrScript.js        | Javascript des Plugins | JavaScript     |
-| src/main/resources/plugins/uhr/uhrConfigScript.js  | Konfigurationsdialog   | JavaScript     |
+| src/main/resources/plugins/uhr/uhr1Script.js        | Javascript des Plugins | JavaScript     |
+| src/main/resources/plugins/uhr/uhr1ConfigScript.js  | Konfigurationsdialog   | JavaScript     |
 | src/main/resources/plugins/uhr/Uhr.html            | Hilfetext              | HTML           |
 
 # Builden des Plugins

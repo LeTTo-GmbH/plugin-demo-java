@@ -42,11 +42,11 @@ public class PluginUhr extends BasePlugin {
 	public PluginUhr(String name, String params) {
 		super(name, params);
 		version           = "1.0";         		// Version des Plugins
-		helpfiles         = new String[]{"plugins/uhr/Uhr.html"};    	// Plugin Hilfe als HTML für den Plugin - Dialog
-		javascriptLibs    = new String[]{"plugins/uhr/uhrScript.js","plugins/uhr/uhrConfigScript.js"};  // Javascript Libraries für das Plugin
+		helpfiles         = new String[]{"plugins/uhr/Uhr1.html"};    	// Plugin Hilfe als HTML für den Plugin - Dialog
+		javascriptLibs    = new String[]{"plugins/uhr/uhr1Script.js","plugins/uhr/uhr1ConfigScript.js"};  // Javascript Libraries für das Plugin
 		javaScript        = true;  				// gibt an ob das Plugin eine Java-Script Schnittstelle bei der Beispieldarstellung hat
-		initPluginJS      = "initPluginUhr";  	// Name der JAVA-Script Methode zur Plugin-Initialisierung für die interaktive Ergebniseingabe
-		configPluginJS    = "configPluginUhr";  // Name der JAVA-Script Methode zur Configuration des Plugins
+		initPluginJS      = "initPluginUhr1";  	// Name der JAVA-Script Methode zur Plugin-Initialisierung für die interaktive Ergebniseingabe
+		configPluginJS    = "configPluginUhr1";  // Name der JAVA-Script Methode zur Configuration des Plugins
 		configurationMode = PluginConfigurationInfoDto.CONFIGMODE_JAVASCRIPT;   // Konfigurations-Mode für die Konfiguration des Plugins
 		wikiHelp          = "Plugins";  		// Namen der Wiki-Seite wenn eine Doku am LeTTo-Wiki vorliegt
 		helpUrl			  = "";    // Hilfe-URL für die Beschreibung des Plugins
@@ -189,7 +189,7 @@ public class PluginUhr extends BasePlugin {
 	@Override
 	public Vector<String[]> getImageTemplates() {
 		Vector<String[]> ret = new Vector<String[]>();
-		ret.add(new String[]{"Uhr ","[PIG "+this.name+" \"\"]","Uhrblatt"});
+		ret.add(new String[]{"Uhr1","[PIG "+this.name+" \"\"]","Uhrblatt"});
 		return ret;
 	}
 
@@ -230,12 +230,17 @@ public class PluginUhr extends BasePlugin {
 	@Override
 	public PluginScoreInfoDto score(PluginDto pluginDto, String antwort, ToleranzDto toleranz, VarHashDto varsQuestion, PluginAnswerDto pluginAnswerDto, double grade){
 		String ze = pluginAnswerDto.getZe();
-		String answerText = pluginAnswerDto.getAnswerText();
+		String answerText = pluginAnswerDto.getAnswerText().trim();
 		PluginScoreInfoDto info = new PluginScoreInfoDto(
 				new CalcErgebnisDto(antwort,null, CALCERGEBNISTYPE.STRING),ze,0.,grade,Score.FALSCH,"",""
 		);
     	try {
-			double richtig = Datum.parseTime(pluginAnswerDto.getAnswerText());
+			double richtig = 0;
+			if (answerText.matches("^\".*\"$")) {
+				richtig = Datum.parseTime(answerText.substring(1,answerText.length()-1));
+			} else if (answerText.matches("^\\d+(\\.\\d*)?$")) {
+				richtig = Double.parseDouble(answerText);
+			}
 			double eingabe = Datum.parseTime(antwort);
 			if (PluginToolsMath.equals(richtig,eingabe,toleranz))
 				info =  new PluginScoreInfoDto(new CalcErgebnisDto(antwort,null, CALCERGEBNISTYPE.STRING),ze,grade,grade, Score.OK,"","");
