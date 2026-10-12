@@ -1,7 +1,7 @@
 @echo off
 
 rem verwendete Java-Version
-set JAVA_HOME=C:\Program Files\Java\jdk-21
+set "JAVA_HOME=C:\Program Files\Java\jdk-25"
 
 call mvn -version
 set startdir=%cd%
