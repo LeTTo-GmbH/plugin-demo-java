@@ -172,28 +172,25 @@ public class PluginConfiguration {
     private ServiceInfoDTO serviceInfoDTO = null;
 
     /** Plugin-Information über alle registrierten Plugins des Services */
-    public static HashMap<String, PluginGeneralInfo> plugins=new HashMap<>();
+    private final Map<String, PluginGeneralInfo> plugins = new ConcurrentHashMap<>();
 
     /**
      * Konfigurationsverbindungen nach ihrer eindeutigen Sitzungs-ID.
      */
-    private static final ConcurrentHashMap<String,PluginConfigurationConnection> configurations = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String,PluginConfigurationConnection> configurations = new ConcurrentHashMap<>();
 
-    /** statische Referenz auf die PluginConfiguration */
-    public static PluginConfiguration pluginConfiguration=null;
+    /** Bildablage für die Plugin-Bilder, wird jedem erzeugten Plugin übergeben */
+    @Getter private BaseImageService pluginImageService;
 
-    /** statische Referenz auf das Imageservice */
-    public static BaseImageService pluginImageService = null;
     /**
      * Gemeinsame Bildablage des Plugin-Services.
      */
-    public static BaseImageService serverImageService = null;
+    @Getter private BaseImageService serverImageService;
 
     /**
      * Initialisiert den Setup-HTTP-Client und die Bildablage des Plugin-Services.
      */
     public void init() {
-        pluginConfiguration = this;
         // Interne Uri welche ans Setup weitergegeben wird bestimmen
         uriIntern = System.getenv("letto.plugin.uri.intern");
         while (uriIntern!=null && uriIntern.endsWith("/")) uriIntern=uriIntern.substring(0,uriIntern.length()-1);
@@ -446,8 +443,9 @@ public class PluginConfiguration {
      *
      */
     public PluginGeneralInfo getPluginGeneralInfo(String typ) {
-        if (plugins.containsKey(typ)) return plugins.get(typ);
-        return null;
+        // ConcurrentHashMap erlaubt keine null-Schlüssel
+        if (typ == null) return null;
+        return plugins.get(typ);
     }
 
     /**
@@ -462,12 +460,13 @@ public class PluginConfiguration {
      * @return        erzeugtes Plugin
      */
     public PluginService createPluginService(String typ, String name, String params) {
-        if (plugins.containsKey(typ)) {
+        PluginGeneralInfo info = getPluginGeneralInfo(typ);
+        if (info != null) {
             try {
-                PluginGeneralInfo info = plugins.get(typ);
                 Class<?> c = Class.forName(info.getPluginType());
                 Constructor<?> constr = c.getConstructor(String.class, String.class);
                 PluginService pi = (PluginService) constr.newInstance(name, params);
+                pi.setImageService(pluginImageService);
                 return pi;
             } catch (Exception ex) {
                 // Fehler im Konstruktor des Plugins kommen als InvocationTargetException und stehen in getCause()
@@ -526,8 +525,8 @@ public class PluginConfiguration {
             connection.pluginConfigDto.setName(connection.getName());
             connection.pluginConfigDto.setConfig(configuration);
             connection.pluginQuestionDto = questionDto;
-            connection.pluginConfigDto.setPluginDto(pluginConfiguration
-                    .createPluginService(typ,connection.getName(),connection.getConfig())
+            connection.pluginConfigDto.setPluginDto(
+                    createPluginService(typ,connection.getName(),connection.getConfig())
                     .loadPluginDto("",questionDto,0));
             connection.pluginConfigDto.setTagName(connection.getName());
             return connection.pluginConfigDto;
@@ -586,7 +585,7 @@ public class PluginConfiguration {
      * @param timeout maximale Inaktivitätsdauer der Sitzung in Sekunden
      * @return erstellte oder aktualisierte Verbindung
      */
-    private static PluginConfigurationConnection addConnection(String typ, String name, String config, String configurationID, PluginService pluginService, long timeout) {
+    private PluginConfigurationConnection addConnection(String typ, String name, String config, String configurationID, PluginService pluginService, long timeout) {
         PluginConfigurationConnection connection;
         if (configurationID!=null && configurations.containsKey(configurationID)) {
             connection = configurations.get(configurationID);
@@ -602,7 +601,7 @@ public class PluginConfiguration {
     /**
      * Entfernt Konfigurationsverbindungen, deren Inaktivitätsfrist abgelaufen ist.
      */
-    private static void removeOutdatedConnections() {
+    private void removeOutdatedConnections() {
         try {
             long now = Datum.nowDateInteger();
             Set<String> keys = configurations.keySet();
@@ -625,7 +624,7 @@ public class PluginConfiguration {
      * @param configurationID eindeutige ID der Konfigurationssitzung
      * @return Verbindung oder {@code null}, wenn die Sitzung fehlt oder abgelaufen ist
      */
-    private static PluginConfigurationConnection getConnection(String configurationID) {
+    private PluginConfigurationConnection getConnection(String configurationID) {
         removeOutdatedConnections();
         if (configurationID!=null && configurationID.trim().length()>0 && configurations.containsKey(configurationID)) {
             PluginConfigurationConnection connection = configurations.get(configurationID);

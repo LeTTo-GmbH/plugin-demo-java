@@ -3,6 +3,7 @@ package at.letto.plugins.plugin;
 import at.letto.plugins.dto.*;
 import at.letto.plugins.enums.InputElement;
 import at.letto.plugins.dto.JavascriptLibrary;
+import at.letto.plugins.tools.BaseImageService;
 
 import java.util.List;
 import java.util.Vector;
@@ -12,6 +13,15 @@ import java.util.Vector;
  * Alle DTOs sind von LeTTo direkt unabhängig<br>
  */
 public interface PluginService {
+
+    /**
+     * Übergibt den Image-Service, in dem das Plugin seine Bilder ablegt.<br>
+     * Wird von der PluginConfiguration nach dem Erzeugen des Plugins aufgerufen.
+     * Plugins ohne Bilder müssen die Methode nicht implementieren.
+     *
+     * @param imageService Image-Service für die Plugin-Bilder
+     */
+    default void setImageService(BaseImageService imageService) {}
 
     /**
      * Liefert den Namen der Wiki-Seite wenn eine Doku am LeTTo-Wiki vorliegt.

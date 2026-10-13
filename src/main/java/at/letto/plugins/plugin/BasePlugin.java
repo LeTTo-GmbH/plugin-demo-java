@@ -1,10 +1,10 @@
 package at.letto.plugins.plugin;
 
-import at.letto.plugins.config.PluginConfiguration;
 import at.letto.plugins.dto.*;
 import at.letto.plugins.enums.*;
 import at.letto.plugins.tools.*;
 import at.letto.plugins.dto.JavascriptLibrary;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import javax.imageio.ImageIO;
@@ -30,6 +30,9 @@ public abstract class BasePlugin implements PluginService {
     // ---------------------------------------------------------------------------------------------------------------------
     /** Maximale Breite und Höhe eines Plugin-Bildes in Pixel, schützt vor zu großem Speicherbedarf */
     public static final int MAX_IMAGE_SIZE = 2000;
+
+    /** Image-Service für die Plugin-Bilder, wird von der PluginConfiguration gesetzt */
+    @Getter(AccessLevel.NONE) @Setter protected BaseImageService imageService;
 
     /** Name des Elements */
     @Setter protected String name;
@@ -503,7 +506,6 @@ public abstract class BasePlugin implements PluginService {
         String url="";
         if (pImage.image!=null) {
             try {
-                BaseImageService imageService = PluginConfiguration.pluginImageService;
                 pImage.error += imageService.saveImage(pImage.image,pImage.filename);
                 url = imageService.getURL(pImage.filename);
             } catch (final Exception ioe) {
