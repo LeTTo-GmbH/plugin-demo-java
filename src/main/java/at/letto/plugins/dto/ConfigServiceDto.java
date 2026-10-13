@@ -92,10 +92,20 @@ public class ConfigServiceDto {
     /** zusätzliche nicht weiter definierte Parameter des Plugins */
     private HashMap<String,String> params;
 
+    /**
+     * Formatiert den Startzeitpunkt des Services für die Anzeige.
+     *
+     * @return formatierter Startzeitpunkt
+     */
     public String htmlServiceStartTime() {
         return Datum.formatDateTime(serviceStartTime);
     }
 
+    /**
+     * Formatiert den Zeitpunkt der letzten Registrierung für die Anzeige.
+     *
+     * @return formatierter Registrierungszeitpunkt
+     */
     public String htmlLastRegistrationTime() {
         return Datum.formatDateTime(lastRegistrationTime);
     }

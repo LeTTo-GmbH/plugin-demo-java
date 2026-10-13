@@ -4,18 +4,22 @@ import at.letto.plugins.enums.*;
 
 import java.awt.*;
 
+/**
+ * Hilfsmethoden zum Zeichnen ausgerichteter und gedrehter Texte mit AWT.
+ */
 public class PluginToolsAwt {
 
     /**
      * Zeichnet einen Text auf den Bildschirm
+     *
      * @param g       Graphics Zeichenobjekt
      * @param s       AusgabeString
      * @param px      Bezugspunkt x
      * @param py      Bezugspunkt y
      * @param height  Schrifthöhe
      * @param ox      Ausrichtung horizontal RIGHT LEFT CENTER
-     * @param oy      Ausrichtung vertikal   UP DOWN CENTER
-     * @param arg     Winkel
+     * @param oy      Ausrichtung vertikal   TOP BOTTOM CENTER
+     * @param arg Drehwinkel in Radiant
      */
     public static void drawString(Graphics2D g, String s, int px, int py, int height, ORIENTATIONX ox, ORIENTATIONY oy, double arg) {
         drawString(g,s,px,py,height,ox,oy,arg,false);
@@ -23,15 +27,17 @@ public class PluginToolsAwt {
 
     /**
      * Zeichnet einen Text auf den Bildschirm
+     *
      * @param g       Graphics Zeichenobjekt
      * @param s       AusgabeString
      * @param px      Bezugspunkt x
      * @param py      Bezugspunkt y
      * @param height  Schrifthöhe
      * @param ox      Ausrichtung horizontal RIGHT LEFT CENTER
-     * @param oy      Ausrichtung vertikal   UP DOWN CENTER
-     * @param arg     Winkel
+     * @param oy      Ausrichtung vertikal   TOP BOTTOM CENTER
+     * @param arg Drehwinkel in Radiant
      * @param underline Text unterstrichen
+     *
      */
     public static void drawString(Graphics2D g,String s, int px, int py, int height, ORIENTATIONX ox, ORIENTATIONY oy, double arg, boolean underline ) {
         if (height>3) {

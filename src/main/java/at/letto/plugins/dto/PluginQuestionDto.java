@@ -14,6 +14,12 @@ import java.util.List;
 @AllArgsConstructor
 public class PluginQuestionDto implements Cloneable {
 
+    /**
+     * Erstellt eine flache Kopie der Frage; enthaltene Objekte bleiben gemeinsam referenziert.
+     *
+     * @return flache Kopie der Frage
+     * @throws RuntimeException wenn das Klonen fehlschlägt
+     */
     public PluginQuestionDto clone() {
         try {
             return (PluginQuestionDto)super.clone();

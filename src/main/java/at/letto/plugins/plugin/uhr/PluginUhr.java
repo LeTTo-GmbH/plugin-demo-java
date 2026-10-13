@@ -22,7 +22,7 @@ public class PluginUhr extends BasePlugin {
 
 	/** Hintergrundfarbe der Uhr */
 	public Color bgcolor      = Color.white;
-	/** Farbe der Zeiger */
+	/** Vorgesehene Farbe der Zeiger; wird derzeit nicht ausgewertet */
 	public String handcolor   = "blue";
 	/** Meldung welche Fehler in den Params aufgetreten sind */
 	public String configMessage = "";
@@ -32,7 +32,7 @@ public class PluginUhr extends BasePlugin {
 	// ---------------------------------------------------------------------------------------------------------------------
 	/**
 	 * Konstruktor eines Plugins für eine Uhr als Demo der Plugin-Verwendung
-	 * Beim Registrieren des Plugins am LeTTo-Server wird der Constructor mit
+	 * Beim Registrieren des Plugins am LeTTo-Server wird der Konstruktor mit
 	 * name="" und params="" aufgerufen, dabei muss er alle Standard-Werte korrekt setzen. <br>
 	 * In einer Frage werden dann über den params-String die Konfigurations-Parameter des Plugins
 	 * gesetzt und können die Werte der Plugin-Variablen anpassen.<br>
@@ -88,12 +88,21 @@ public class PluginUhr extends BasePlugin {
 		}
 	}
 
+	/**
+	 * Hängt eine Konfigurationsfehlermeldung an die bereits vorhandenen Meldungen an.
+	 *
+	 * @param msg anzuhängende beziehungsweise darzustellende Meldung
+	 */
 	private void configMessage(String msg) {
 		if (configMessage.length()>0) configMessage += ", ";
 		configMessage += msg;
 	}
 
-	/** parst einen beliebigen Parameter welcher in einer Semikolon-getrennten Liste war */
+	/**
+	 * parst einen beliebigen Parameter welcher in einer Semikolon-getrennten Liste war
+	 *
+	 * @param p einzelner Konfigurationsparameter
+	 */
 	private void parseParam(String p) {
 		Matcher m;
 		if ((m=Pattern.compile("^bgcolor=(.+)$").matcher(p)).find()) {
@@ -171,7 +180,7 @@ public class PluginUhr extends BasePlugin {
 	/**
 	 * Liefert eine Liste aller Variablen welche als Dataset benötigt werden.
 	 *
-	 * @return Liste aller Variablen des Plugins
+	 * @return {@code null}, da diese Funktion in dieser Implementierung nicht bereitgestellt wird
 	 */
 	@Override
 	public Vector<String> getVars() {
@@ -199,7 +208,7 @@ public class PluginUhr extends BasePlugin {
 	 * @param vars Alle Variablen der Frage
 	 * @param cp   Berechnungsparameter
 	 * @param p    Liste von CalcErgebnis-Werten, welche an das Plugin von der Question aus übergeben werden können
-	 * @return Ergebnis der Funktion
+	 * @return {@code null}, da diese Funktion in dieser Implementierung nicht bereitgestellt wird
 	 */
 	@Override
 	public CalcErgebnisDto parserPlugin(VarHashDto vars, CalcParamsDto cp, CalcErgebnisDto ... p) {
@@ -207,10 +216,11 @@ public class PluginUhr extends BasePlugin {
 	}
 
 	/**
-	 * Bestimmt die Recheneinheit, welche bei der Methode parserPlugin als Ergebnis herauskomment wenn die Parameter die Einheiten wie in der Liste p haben
+	 * Bestimmt die Recheneinheit, welche bei der Methode parserPlugin als Ergebnis herauskommt wenn die Parameter die Einheiten wie in der Liste p haben
 	 *
 	 * @param p Einheiten der Parameter
-	 * @return Recheneinheit des Ergebnisses
+	 * @return {@code null}, da diese Funktion in dieser Implementierung nicht bereitgestellt wird
+	 *
 	 */
 	@Override
 	public String parserPluginEinheit(String... p) {
@@ -219,11 +229,11 @@ public class PluginUhr extends BasePlugin {
 
 	/**
 	 * Prüft die Eingabe eines Schülers
-	 * @param pluginDto           PluginDto welches für die Java-Script aktive Eingabe aufbereitet wurde
+	 * @param pluginDto           PluginDto welches für die JavaScript aktive Eingabe aufbereitet wurde
 	 * @param antwort             Antwort die der Schüler eingegeben hat
 	 * @param toleranz            Toleranz für die Lösung
-	 * @param varsQuestion        Referenz auf VarHash, wird dynamisch nachgeladen
-	 * @param pluginAnswerDto     Antwort des Schülers
+	 * @param varsQuestion        Variablen der Frage
+	 * @param pluginAnswerDto     Musterlösung und Informationen für die Bewertung
 	 * @param grade               Maximale Punktanzahl für die richtige Antwort
 	 * @return                    Bewertung
 	 */
@@ -250,7 +260,7 @@ public class PluginUhr extends BasePlugin {
 	}
 
 	/**
-	 * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren Javascript - Bearbeitung
+	 * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren JavaScript - Bearbeitung
 	 *
 	 * @param params       Plugin-Parameter
 	 * @param q            Question, in die das Plugin eingebettet ist
@@ -298,7 +308,7 @@ public class PluginUhr extends BasePlugin {
 
 	/**
 	 * Liefert die aktuelle Konfiguration eines Plugins welches sich gerade in einem CONFIGMODE_URL Konfigurationsdialog befindet
-	 * @return                Konfigurationsparameter oder "@ERROR: Meldung" wenn etwas nicht funktioniert hat
+	 * @return                aktueller Konfigurationsstring
 	 */
 	@Override
 	public String getConfiguration() {

@@ -5,6 +5,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+/**
+ * Beschreibt eine JavaScript-Bibliothek als lokale Ressource, Serverdatei oder Quelltext.
+ */
 @Getter @Setter
 @NoArgsConstructor
 public class JavascriptLibrary {
@@ -16,6 +19,9 @@ public class JavascriptLibrary {
     /** JS-Library als vollständiger Text verfügbar */
     public static final String JAVASCRIPT="JAVASCRIPT";
 
+    /**
+     * Ressourcenverzeichnis oder Serveradresse der JavaScript-Bibliothek.
+     */
     private String library;
     /** Name / Bezeichner der Bibliothek */
     private String name;
@@ -41,10 +47,11 @@ public class JavascriptLibrary {
     }
 
     /**
-     * JS-Library mit kompletten Source-Code
-     * @param name      Name des Plugins
+     * JS-Library mit kompletten Quelltext
+     *
+     * @param name Name der JavaScript-Bibliothek
      * @param jscode    Vollständiger JS-Code
-     * @param code      muss true gesetzt sein für vollst. Code
+     * @param code Unterscheidungsparameter dieser Konstruktorvariante; der Wert wird nicht ausgewertet
      */
     public JavascriptLibrary(String name, String jscode, boolean code) {
         String libPath = "";
@@ -70,10 +77,12 @@ public class JavascriptLibrary {
     }
 
     /**
+     * Beschreibt eine Serverbibliothek mit getrennten lokalen und globalen Dateipfaden.
      *
      * @param server Server-Pfad, wo die JSF-Dateien liegen
-     * @param pathlocal  Unterordner + JS-File + Params, wenn JS-Library lokal verfügbar
-     * @param pathGlobal Unterordner + JS-File + Params für Zugriff über Web uf global verf. JS-Libraries
+     * @param pathlocal  Unterordner, JavaScript-Datei und Parameter, wenn JS-Library lokal verfügbar
+     * @param pathGlobal Unterordner, JavaScript-Datei und Parameter für Zugriff über Web auf global verfügbare JS-Bibliotheken
+     *
      */
     public JavascriptLibrary(String server, String pathlocal, String pathGlobal) {
         this.local = SERVER;
@@ -84,8 +93,10 @@ public class JavascriptLibrary {
 
     /**
      * Definition der Pfadangabe, von wo JS-Libraries bezogen werden
+     *
      * @param localServer   Webadresse des Hauptservers im LOKALEN Modus
-     * @return  PFad im Modus LOKAL, GLOBAL
+     * @return  Pfad im Modus LOKAL, GLOBAL
+     *
      */
     public String loadPath(String localServer) {
         if (local.equals(LOCAL)) return localServer + "" + name;
@@ -93,6 +104,12 @@ public class JavascriptLibrary {
         return "";
     }
 
+    /**
+     * Vergleicht Bezugsmodus, Name und gegebenenfalls Serverpfad zweier Bibliotheken.
+     *
+     * @param lib zu vergleichende Bibliothek
+     * @return {@code true}, wenn die verwendeten Bibliotheksangaben übereinstimmen
+     */
     public boolean equals(JavascriptLibrary lib) {
         if (!local.equals(lib.local)) return false;
         switch (local) {

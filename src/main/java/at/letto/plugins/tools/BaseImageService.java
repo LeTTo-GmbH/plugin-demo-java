@@ -22,6 +22,9 @@ import java.util.regex.Pattern;
 @Setter
 public class BaseImageService {
 
+    /**
+     * Logger für Meldungen dieser Klasse.
+     */
     private Logger logger = LoggerFactory.getLogger(BaseImageService.class);
 
     /** Lokaler Pfad in dem die Bilder gespeichert werden */
@@ -33,12 +36,21 @@ public class BaseImageService {
     /** absolute URL welche am Webserver auf die Bilder verweist */
     private String absUrlPath = "";
 
-    /** Gibt an ob die Dateien in Unterverzeichniss gelegt werden, welche mit den ersten zwei Buchstaben der Datei beginnen */
+    /**
+     * Gibt an ob die Dateien in Unterverzeichnissen gelegt werden, welche mit den ersten zwei Buchstaben der Datei beginnen
+     */
     private boolean subdirs = true;
 
     /** Dateiname der Datei welche zum Prüfen verwendet wird */
     protected String filename;
 
+    /**
+     * Initialisiert die Bildablage mit lokalem Verzeichnis, URL und Unterverzeichnissentrategie.
+     *
+     * @param localPath lokales Verzeichnis für die Bildablage
+     * @param urlPath URL-Pfad der Bildablage
+     * @param subdirs {@code true}, wenn Bilder in Unterverzeichnissen nach ihrem Namenspräfix abgelegt werden
+     */
     public BaseImageService(String localPath, String urlPath, boolean subdirs) {
         this(localPath,urlPath,subdirs,"checkfs.txt");
     }
@@ -70,12 +82,25 @@ public class BaseImageService {
     }
 
 
+    /**
+     * Entfernt den Serveranteil aus dem Bildpfad, wenn dieser auf den angegebenen Server verweist.
+     *
+     * @param serverpath Adresse des Servers, auf den die Bild-URL verweist
+     */
     public void adaptUrlToRelative(String serverpath) {
         String server = serverpath.replaceAll("(https?://[^/:]*)(.*)","$1");
         if (urlPath.contains(server+"/"))
             urlPath = urlPath.replaceAll("https?://[^/]*(.*)","$1");
     }
 
+    /**
+     * Initialisiert die Bildablage mit lokalem Verzeichnis, URL und Unterverzeichnissentrategie.
+     *
+     * @param localPath lokales Verzeichnis für die Bildablage
+     * @param urlPath URL-Pfad der Bildablage
+     * @param subdirs {@code true}, wenn Bilder in Unterverzeichnissen nach ihrem Namenspräfix abgelegt werden
+     * @param filename Dateiname des Bildes
+     */
     protected BaseImageService(String localPath, String urlPath, boolean subdirs, String filename) {
         localPath = localPath.replaceAll("/+","/");
         urlPath = urlPath.replaceAll("/+","/");
@@ -97,6 +122,11 @@ public class BaseImageService {
         this.setUrlPath("https://"+url);
     }
 
+    /**
+     * Legt das lokale Bildverzeichnis an, sofern es noch nicht existiert.
+     *
+     * @throws RuntimeException wenn der Pfad kein Verzeichnis ist oder nicht angelegt werden kann
+     */
     private void createLocalPath() {
         File file = new File(this.getLocalPath());
         if (file.exists()) {
@@ -111,6 +141,11 @@ public class BaseImageService {
         throw new RuntimeException("Der Image-Pfad "+this.getLocalPath()+" konnte nicht angelegt werden!");
     }
 
+    /**
+     * Normalisiert den lokalen Bildpfad und ergänzt einen abschließenden Schrägstrich.
+     *
+     * @param localPath lokales Verzeichnis für die Bildablage
+     */
     public void setLocalPath(String localPath) {
         localPath = localPath.trim().replaceAll("\\\\", "/");
         localPath = localPath + "/";
@@ -118,6 +153,11 @@ public class BaseImageService {
         this.localPath = localPath;
     }
 
+    /**
+     * Setzt Bild-URL und absolute Bild-URL mit abschließendem Schrägstrich.
+     *
+     * @param urlPath URL-Pfad der Bildablage
+     */
     public void setUrlPath(String urlPath) {
         urlPath = urlPath + "/";
         urlPath = urlPath.replaceAll("//$", "/");
@@ -125,11 +165,21 @@ public class BaseImageService {
         this.absUrlPath = urlPath;
     }
 
+    /**
+     * Liefert eine Textdarstellung dieses Objekts.
+     *
+     * @return Textdarstellung des Objekts
+     */
     @Override
     public String toString() {
         return "Base-Image-Service:[" + localPath + "," + urlPath + ","+absUrlPath+"]";
     }
 
+    /**
+     * Prüft Schreib- und Leserechte mit einer temporären Datei im Bildverzeichnis.
+     *
+     * @return leerer String bei Erfolg, andernfalls eine Fehlermeldung
+     */
     public String checkFilesystem(){
         File file = new File(this.getLocalPath() + filename);
         try {
@@ -196,6 +246,12 @@ public class BaseImageService {
         return "";
     }*/
 
+    /**
+     * Bildet den URL-Pfad eines Bildes unter Berücksichtigung der Unterverzeichnissentruktur.
+     *
+     * @param filename Dateiname des Bildes
+     * @return URL-Pfad des Bildes
+     */
     public String getURL(String filename) {
         File f = getImageFile(filename);
         if (subdirs) {
@@ -210,6 +266,12 @@ public class BaseImageService {
         return path;
     }
 
+    /**
+     * Liefert die absolute URL eines vorhandenen Bildes.
+     *
+     * @param filename Dateiname des Bildes
+     * @return absolute Bild-URL oder leerer String, wenn das Bild nicht existiert
+     */
     public String getAbsURL(String filename) {
         File f = getImageFile(filename);
         if (f == null || !f.exists()) return "";
@@ -245,8 +307,10 @@ public class BaseImageService {
 
     /**
      * Liefert einen File-Handle auf eine Info-Datei
+     *
      * @param filename  Dateiname
-     * @return          Filehandle auf die die Info-Datei zu einer Datei
+     * @return          Filehandle auf die Info-Datei zu einer Datei
+     *
      */
     public File getImageInfoFile(String filename) {
         if (subdirs) {
@@ -261,12 +325,24 @@ public class BaseImageService {
         return new File(path);
     }
 
+    /**
+     * Sucht eine vorhandene Bilddatei im lokalen Bildverzeichnis.
+     *
+     * @param filename Dateiname des Bildes
+     * @return Bilddatei oder {@code null}, wenn sie nicht existiert
+     */
     public File getLocalFile(String filename) {
         File f =  getImageFile(filename);
         if (f!=null && f.exists() && f.isFile()) return f;
         return null;
     }
 
+    /**
+     * Prüft, ob die Bilddatei existiert und eine reguläre Datei ist.
+     *
+     * @param filename Dateiname des Bildes
+     * @return {@code true}, wenn die Bilddatei vorhanden ist
+     */
     public boolean existImage(String filename) {
         File file = getImageFile(filename);
         if (file != null) {
@@ -275,6 +351,12 @@ public class BaseImageService {
         return false;
     }
 
+    /**
+     * Bestimmt die Zeit seit der letzten Änderung einer Bilddatei.
+     *
+     * @param filename Dateiname des Bildes
+     * @return Alter in Millisekunden, {@code -1} bei fehlender Datei oder {@code -2} bei einem Ermittlungsfehler
+     */
     public long getImageAge(String filename) {
         File file = getImageFile(filename);
         if (file != null) {
@@ -289,6 +371,12 @@ public class BaseImageService {
         return -2;
     }
 
+    /**
+     * Bestimmt die Größe einer vorhandenen Bilddatei.
+     *
+     * @param filename Dateiname des Bildes
+     * @return Dateigröße in Bytes, {@code -1} bei fehlender Datei oder {@code -2} bei einem Ermittlungsfehler
+     */
     public long getImageSize(String filename) {
         File file = getImageFile(filename);
         if (file != null) {
@@ -301,6 +389,12 @@ public class BaseImageService {
         return -2;
     }
 
+    /**
+     * Versucht, Bilddatei und zugehörige Informationsdatei zu löschen.
+     *
+     * @param filename Dateiname des Bildes
+     * @return {@code true}, wenn der Löschversuch der Bilddatei ohne Ausnahme ausgeführt wurde
+     */
     public boolean delImage(String filename) {
         File file = getImageInfoFile(filename);
         if (file != null) {
@@ -319,6 +413,12 @@ public class BaseImageService {
         return false;
     }
 
+    /**
+     * Legt das Bildverzeichnis und die angegebene Datei bei Bedarf an.
+     *
+     * @param filename Dateiname des Bildes
+     * @return {@code true}, wenn die Datei anschließend existiert
+     */
     public boolean createFile(String filename) {
         File file = getImageFile(filename);
         String path = file.getAbsolutePath();
@@ -337,6 +437,12 @@ public class BaseImageService {
         return false;
     }
 
+    /**
+     * Prüft Dateiname, Erweiterung und das Fehlen von Pfadtrennern.
+     *
+     * @param filename Dateiname des Bildes
+     * @return {@code true}, wenn der Name mindestens drei Zeichen vor dem Punkt und eine Erweiterung besitzt
+     */
     public boolean isFilenameOK(String filename) {
         if (filename.contains("\\")) return false;
         if (filename.contains("/")) return false;
@@ -349,6 +455,12 @@ public class BaseImageService {
         return false;
     }
 
+    /**
+     * Ermittelt die Erweiterung hinter dem letzten Punkt eines Dateinamens.
+     *
+     * @param filename Dateiname des Bildes
+     * @return Dateierweiterung oder leerer String, wenn keine gefunden wird
+     */
     public String getExtension(String filename) {
         Pattern p = Pattern.compile("^(.+)\\.([^\\.\\/\\\\]+)$");
         Matcher m = p.matcher(filename);
@@ -384,15 +496,23 @@ public class BaseImageService {
         return "Fehler beim Speichern der Datei " + filename;
     }
 
+    /**
+     * Liest eine Bilddatei und kodiert ihren Inhalt als Base64.
+     *
+     * @param filename Dateiname des Bildes
+     * @return Base64-Inhalt oder leerer String, wenn die Datei nicht gelesen werden kann
+     */
     public String loadImageBase64(String filename) {
         File f = this.getImageFile(filename);
         return CryptTools.loadFileAsBase64(f);
     }
 
     /**
-     * Speichert eine Base-64-kodierte Datei und sein zugehörigen Bild-Informationen
+     * Speichert eine Base-64-kodierte Datei und die zugehörigen Bild-Informationen
+     *
      * @param imageBase64Dto Bild und Bild-Informationen
      * @return               Leer wenn ok, oder eine Fehlermeldung
+     *
      */
     public String saveImage(ImageBase64Dto imageBase64Dto){
         String result="";
@@ -409,6 +529,12 @@ public class BaseImageService {
         return result;
     }
 
+    /**
+     * Lädt Base64-Bildinhalt und Bildinformationen; fehlende Metadaten werden durch Standardwerte ersetzt.
+     *
+     * @param filename Dateiname des Bildes
+     * @return Bild-DTO, bei fehlender Bilddatei mit Fehlertext
+     */
     public ImageBase64Dto loadImageBase64Dto(String filename) {
         File f = this.getImageFile(filename);
         if (f!=null && f.exists()) {
@@ -448,6 +574,13 @@ public class BaseImageService {
         return new ImageBase64Dto("",new ImageInfoDto(),"cannot read file "+filename);
     }
 
+    /**
+     * Schreibt Binärdaten in eine Datei des Bildverzeichnisses.
+     *
+     * @param data zu verarbeitende Daten
+     * @param filename Dateiname des Bildes
+     * @throws IOException wenn die Datei nicht geschrieben werden kann
+     */
     private void saveByteArrayInFile(byte[] data, String filename) throws IOException {
         File f = this.getImageFile(filename);
         this.createFile(filename);
@@ -457,6 +590,13 @@ public class BaseImageService {
         fos.close();
     }
 
+    /**
+     * Speichert ein AWT-Bild im PNG-, JPEG- oder GIF-Format.
+     *
+     * @param image Bilddaten
+     * @param filename Dateiname des Bildes
+     * @return leerer String bei Erfolg, andernfalls eine Fehlermeldung
+     */
     public String saveImage(BufferedImage image, String filename) {
         String extension = this.getExtension(filename);
         if (!(extension.equals("jpg") || extension.equals("png") || extension.equals("gif")))
@@ -490,6 +630,13 @@ public class BaseImageService {
         return "";
     }*/
 
+    /**
+     * Dekodiert Base64-Bilddaten und speichert sie unter einem aus der MD5-Prüfsumme gebildeten Namen.
+     *
+     * @param base64encodedString Base64-kodierter Bildinhalt
+     * @param extension Dateierweiterung ohne Punkt
+     * @return gespeicherter Dateiname oder leerer String bei einem Fehler
+     */
     public String saveBase64Image(String base64encodedString, String extension){
         try {
             byte[] inhalt = Base64.getMimeDecoder().decode(base64encodedString);
@@ -501,6 +648,12 @@ public class BaseImageService {
         return "";
     }
 
+    /**
+     * Kopiert eine lokale Bilddatei unter einem aus ihrem Inhalt gebildeten Namen in die Bildablage.
+     *
+     * @param file zu lesende Datei
+     * @return gespeicherter Dateiname oder leerer String bei einem Fehler
+     */
     public String saveLocalImage(File file){
         try {
             if (!file.exists()) return "";
@@ -516,6 +669,13 @@ public class BaseImageService {
         return "";
     }
 
+    /**
+     * Speichert Binärdaten unter einem aus der MD5-Prüfsumme gebildeten Dateinamen.
+     *
+     * @param byteArray binärer Bildinhalt
+     * @param extension Dateierweiterung ohne Punkt
+     * @return gespeicherter Dateiname oder leerer String bei einem Fehler
+     */
     public String saveByteArrayImage(byte[] byteArray, String extension) {
         try {
             String filename = generateFilename(byteArray,extension);
@@ -526,6 +686,12 @@ public class BaseImageService {
         return "";
     }
 
+    /**
+     * Listet die Namen der regulären Dateien eines Verzeichnisses auf.
+     *
+     * @param path Verzeichnispfad
+     * @return Dateinamen ohne Verzeichnispfad
+     */
     private Vector<String> getFiles(String path) {
         File dir = new File(path);
         Vector<String> ret = new Vector<String>();
@@ -537,6 +703,12 @@ public class BaseImageService {
         return ret;
     }
 
+    /**
+     * Listet die Namen der unmittelbaren Unterverzeichnissene auf.
+     *
+     * @param path Verzeichnispfad
+     * @return Unterverzeichnisnamen ohne Verzeichnispfad
+     */
     private Vector<String> getDirs(String path) {
         File dir = new File(path);
         Vector<String> ret = new Vector<String>();
@@ -548,6 +720,11 @@ public class BaseImageService {
         return ret;
     }
 
+    /**
+     * Listet die Dateien der Bildablage unter Berücksichtigung der Unterverzeichnissene auf.
+     *
+     * @return Dateinamen der Bildablage
+     */
     public Vector<String> getImages() {
         Vector<String> ret;
         if (subdirs) {
@@ -564,6 +741,12 @@ public class BaseImageService {
         return ret;
     }
 
+    /**
+     * Versucht, die angegebenen Bilder und ihre Informationsdateien zu löschen.
+     *
+     * @param images Dateinamen der zu löschenden Bilder
+     * @return Dateinamen, für die {@link #delImage(String)} einen erfolgreichen Löschversuch meldet
+     */
     public Vector<String> delImages(Vector<String> images){
         Vector<String> ret = new Vector<String>();
         for (String filename:images) {
@@ -572,6 +755,12 @@ public class BaseImageService {
         return ret;
     }
 
+    /**
+     * Sucht Bilddateien mit mindestens dem angegebenen Alter.
+     *
+     * @param age Mindestalter in Millisekunden
+     * @return Dateinamen der gefundenen Bilder
+     */
     public Vector<String> getImagesOlderThan(long age){
         Vector<String> ret = new Vector<String>();
         for (String filename: getImages()) {

@@ -19,6 +19,9 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Gemeinsame Basis für Plugin-Metadaten, Ressourcen, Bilderzeugung und Konfiguration.
+ */
 @Getter
 public abstract class BasePlugin implements PluginService {
 
@@ -61,13 +64,13 @@ public abstract class BasePlugin implements PluginService {
     /** Plugin Hilfe als HTML für den Plugin - Dialog */
     protected String[] helpfiles = {"plugins/plugin.html"};
 
-    /** Javascript Libraries für das Plugin */
+    /** JavaScript Libraries für das Plugin */
     protected String[] javascriptLibs = {"plugins/plugintools.js"};
 
     /** Name der JAVA-Script Methode zur Plugin-Initialisierung für die interaktive Ergebniseingabe */
     protected String initPluginJS="";
 
-    /** gibt an ob das Plugin eine Java-Script Schnittstelle bei der Beispieldarstellung hat */
+    /** gibt an ob das Plugin eine JavaScript Schnittstelle bei der Beispieldarstellung hat */
     protected boolean javaScript=false;
 
     /** Plugin ist stateless und liefert bei gleicher Angabe immer das gleiche Verhalten */
@@ -124,23 +127,41 @@ public abstract class BasePlugin implements PluginService {
     // ---------------------------------------------------------------------------------------------------------------------
     //        Methoden
     // ---------------------------------------------------------------------------------------------------------------------
-    /** @return Liefert den Typ des Plugins - Klasse des Plugins  */
+    /**
+     * Liefert den Typ des Plugins - Klasse des Plugins.
+     *
+     * @return Liefert den Typ des Plugins - Klasse des Plugins
+     */
     @Override
     public String getPluginType() {
         return this.getClass().toString();
     }
 
-    /** @return Liefert den String welcher für die Definition des Plugins gespeichert wird [PI name typ "config"] */
+    /**
+     * Liefert den String welcher für die Definition des Plugins gespeichert wird [PI name typ "config"].
+     *
+     * @return Liefert den String welcher für die Definition des Plugins gespeichert wird [PI name typ "config"]
+     */
     @Override
     public String getTag() {
         return "[PI "+ name + " " + typ + " \""+config+"\"]";
     }
 
+    /**
+     * Liefert die Versionskennung dieses Plugins.
+     *
+     * @return Versionskennung
+     */
     @Override
     public String getPluginVersion(){
         return getVersion();
     }
 
+    /**
+     * Stellt die allgemeinen Plugin-Metadaten zusammen.
+     *
+     * @return Metadaten dieses Plugins
+     */
     @Override
     public PluginGeneralInfo getPluginGeneralInfo() {
         PluginGeneralInfo info = new PluginGeneralInfo(
@@ -169,7 +190,7 @@ public abstract class BasePlugin implements PluginService {
 
     /**
      * Liefert eine HTML-Hilfe zu dem Plugin.<br>
-     * Standardmäßig liegt die Hilfe in einer HTML-Datei welche gleich heisst wie die Klasse, im selben Verzeichnis sitzt und die Endung .html hat<br>
+     * Die konfigurierten Hilfedateien werden zusammengefügt; ohne Hilfetext wird ein Hinweis auf die fehlende Konfiguration geliefert.
      * @return HTML Hilfe
      */
     @Override
@@ -188,12 +209,18 @@ public abstract class BasePlugin implements PluginService {
         return help;
     }
 
+    /**
+     * Lädt den HTML-Hilfetext und ersetzt Umlaute durch HTML-Entitäten.
+     *
+     * @param resource Ressourcenpfad relativ zum Klassenpfad
+     * @return aufbereiteter Hilfetext
+     */
     protected String loadHelpFile(String resource) {
         return PluginResource.replaceUmlautHTML(getHelpMessageFromResource(resource));
     }
 
     /**
-            * Lädt eine HTML-Hilfedatei aus den Resourcen
+            * Lädt eine HTML-Hilfedatei aus den Ressourcen
 	 * @param   name Pfad der Hilfedate
 	 * @return  Inhalt der Hilfedatei als String
 	 */
@@ -231,7 +258,7 @@ public abstract class BasePlugin implements PluginService {
      * Liefert einen Angabestring für die MoodleText Angabe und erzeugt gegebenenfalls fehlende Datasets in der Datasetliste
      *
      * @param params Parameter für die Einstellungen
-     * @return String für das MoodleText-Feld
+     * @return {@code null}, da diese Funktion in dieser Implementierung nicht bereitgestellt wird
      */
     @Override
     public String getAngabe(String params) {
@@ -239,8 +266,9 @@ public abstract class BasePlugin implements PluginService {
     }
 
     /**
-     * Liefert alle Datensätze, welche für das Plugin in der Frage vorhanden sein sollten <br>
-     * als Feld [Name,Datasetdefinition,Einheit]
+     * Liefert die für dieses Plugin benötigten Datensätze.
+     *
+     * @return Liste der benötigten Datensätze; standardmäßig leer
      */
     @Override
     public List<PluginDatasetDto> generateDatasets() {
@@ -275,7 +303,7 @@ public abstract class BasePlugin implements PluginService {
     /**
      * Liefert eine Liste aller Variablen welche als Dataset benötigt werden.
      *
-     * @return Liste aller Variablen des Plugins
+     * @return {@code null}, da diese Funktion in dieser Implementierung nicht bereitgestellt wird
      */
     @Override
     public Vector<String> getVars() {
@@ -308,6 +336,12 @@ public abstract class BasePlugin implements PluginService {
         return sb.toString();
     }
 
+    /**
+     * Zeichnet eine Fehlermeldung in ein Ersatzbild.
+     *
+     * @param msg anzuhängende beziehungsweise darzustellende Meldung
+     * @return Fehlerbild mit 500 mal 500 Pixeln
+     */
     private BufferedImage errorMessageImage(String msg) {
         BufferedImage bi = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bi.createGraphics();
@@ -330,11 +364,34 @@ public abstract class BasePlugin implements PluginService {
         return bi;
     }
 
+    /**
+     * Internes Ergebnis der Bilderzeugung mit Dateiname, Format und Fehlertext.
+     */
     private static class PImage{
+        /**
+         * Erzeugtes Bild.
+         */
         public BufferedImage image;
+        /**
+         * Dateiname des Bildes.
+         */
         public String filename;
+        /**
+         * Dateierweiterung des Bildes.
+         */
         public String extension;
+        /**
+         * Fehlermeldung der Bilderzeugung, leer bei Erfolg.
+         */
         public String error="";
+        /**
+         * Bündelt das erzeugte Bild mit Dateiname, Format und Fehlertext.
+         *
+         * @param image Bilddaten
+         * @param filename Dateiname des Bildes
+         * @param extension Dateierweiterung ohne Punkt
+         * @param error Fehlermeldung, leer bei fehlerfreiem Ergebnis
+         */
         public PImage(BufferedImage image,String filename,String extension,String error) {
             this.image = image;
             this.filename = filename;
@@ -343,6 +400,13 @@ public abstract class BasePlugin implements PluginService {
         }
     }
 
+    /**
+     * Erzeugt ein Plugin-Bild und bestimmt Dateiname, Format und Fehlerstatus.
+     *
+     * @param params Parameterstring des Plugins
+     * @param q Frage, in die das Plugin eingebettet ist
+     * @return internes Ergebnis der Bilderzeugung
+     */
     private PImage calcImage(String params, PluginQuestionDto q) {
         String error="";
         String extension = "png";
@@ -368,6 +432,13 @@ public abstract class BasePlugin implements PluginService {
         return new PImage(image,filename,extension,error);
     }
 
+    /**
+     * Erstellt Metadaten für ein Plugin-Bild.
+     *
+     * @param filename Dateiname des Bildes
+     * @param url URL des Bildes
+     * @return Bildinformationen mit Größe, URL und Gültigkeitszeitpunkt
+     */
     private ImageInfoDto calcImageInfoDto(String filename, String url){
         ImageInfoDto imageInfoDto = new ImageInfoDto(
                 getVersion(),
@@ -391,7 +462,8 @@ public abstract class BasePlugin implements PluginService {
      *
      * @param params Parameter für die Bilderzeugung
      * @param q      Frage wo das Plugin eingebettet ist
-     * @return Base64 kodiertes Bild in einem PluginFileDto
+     * @return Base64 kodiertes Bild in einem ImageBase64Dto
+     *
      */
     @Override
     public ImageBase64Dto getImageDto(String params, PluginQuestionDto q) {
@@ -415,11 +487,11 @@ public abstract class BasePlugin implements PluginService {
     }
 
     /**
-     * Liefert ein Base64 codiertes Bild mit den angegebenen Parametern
+     * Erzeugt und speichert ein Plugin-Bild und liefert seine URL und Metadaten.
      *
      * @param params Parameter für die Bilderzeugung
      * @param q      Frage wo das Plugin eingebettet ist
-     * @return Base64 kodiertes Bild in einem PluginFileDto
+     * @return Bild-URL und Bildinformationen einschließlich möglicher Fehlermeldungen
      */
     @Override
     public ImageUrlDto getImageUrl(String params, PluginQuestionDto q) {
@@ -519,7 +591,7 @@ public abstract class BasePlugin implements PluginService {
      * Element 1 : PIG Tag
      * Element 2 : Hilfetext
      *
-     * @return Liefert eine Liste aller möglichen Varianten von Bildern
+     * @return {@code null}, da diese Funktion in dieser Implementierung nicht bereitgestellt wird
      */
     @Override
     public Vector<String[]> getImageTemplates() {
@@ -532,7 +604,7 @@ public abstract class BasePlugin implements PluginService {
      * @param vars Alle Variablen der Frage
      * @param cp   Berechnungsparameter
      * @param p    Liste von CalcErgebnis-Werten, welche an das Plugin von der Question aus übergeben werden können
-     * @return Ergebnis der Funktion
+     * @return {@code null}, da diese Funktion in dieser Implementierung nicht bereitgestellt wird
      */
     @Override
     public CalcErgebnisDto parserPlugin(VarHashDto vars, CalcParamsDto cp, CalcErgebnisDto ... p) {
@@ -540,10 +612,11 @@ public abstract class BasePlugin implements PluginService {
     }
 
     /**
-     * Bestimmt die Recheneinheit, welche bei der Methode parserPlugin als Ergebnis herauskomment wenn die Parameter die Einheiten wie in der Liste p haben
+     * Bestimmt die Recheneinheit, welche bei der Methode parserPlugin als Ergebnis herauskommt wenn die Parameter die Einheiten wie in der Liste p haben
      *
      * @param p Einheiten der Parameter
-     * @return Recheneinheit des Ergebnisses
+     * @return {@code null}, da diese Funktion in dieser Implementierung nicht bereitgestellt wird
+     *
      */
     @Override
     public String parserPluginEinheit(String... p) {
@@ -553,7 +626,7 @@ public abstract class BasePlugin implements PluginService {
     /**
      * Methode definiert das Eingabeelement der Subquestion, die das
      * Plugin verwendet
-     * @return anzuzeigendes Eingabeelement, default: TextField
+     * @return {@code JAVASCRIPT} bei aktivierter JavaScript-Schnittstelle, andernfalls {@code TextArea}
      */
     @Override
     public InputElement getInputElement() {
@@ -562,10 +635,12 @@ public abstract class BasePlugin implements PluginService {
     }
 
     /**
-     * Passt die Plugindefinition an die Eingabe aus dem Javascipt-Result an. zB: Interaktive Karte
+     * Passt die Plugindefinition an die Eingabe aus dem JavaScript-Result an. zB: Interaktive Karte
+     *
      * @param pluginDef	akt. Plugin-Definition
-     * @param jsResult	Rückgabe von Javascript
-     * @return	aktualiesierte Plugindefinition
+     * @param jsResult	Rückgabe von JavaScript
+     * @return	aktualisierte Plugindefinition
+     *
      */
     @Override
     public String updatePluginstringJavascript(String pluginDef, String jsResult) {
@@ -573,7 +648,7 @@ public abstract class BasePlugin implements PluginService {
     }
 
     /**
-     * Liefert eine Liste von Javascript-Libraries,
+     * Liefert eine Liste von JavaScript-Libraries,
      * die im Header der HTML-Seite eingebunden werden müssen.
      * Es muss die vollständige URL angegeben werden!
      *
@@ -585,7 +660,7 @@ public abstract class BasePlugin implements PluginService {
     }
 
     /**
-     * Liefert eine Liste von LOKALEN Javascript-Libraries,
+     * Liefert eine Liste von LOKALEN JavaScript-Libraries,
      * die im Header der HTML-Seite eingebunden werden müssen.
      * Pfade werden relativ zum akt. Servernamen übergeben
      *
@@ -602,12 +677,12 @@ public abstract class BasePlugin implements PluginService {
     }
 
     /**
-     * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren Javascript - Bearbeitung
+     * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren JavaScript - Bearbeitung
      *
      * @param params       Plugin-Parameter
      * @param q            Question, in die das Plugin eingebettet ist
      * @param nr           Laufende Nummer für alle PIG-Tags und Question-Plugins
-     * @return PluginDto
+     * @return {@code null}, da diese Funktion in dieser Implementierung nicht bereitgestellt wird
      */
     @Override
     public PluginDto loadPluginDto(String params, PluginQuestionDto q, int nr) {
@@ -615,11 +690,11 @@ public abstract class BasePlugin implements PluginService {
     }
 
     /**
-     * Rendert ein Plugins für den Fragedruck als Latex-Sourcode
-     * @param pluginDto Das PluginDto welches am Webserver an das Java-Script des Plugins zum Rendern gesandt wird
+     * Rendert ein Plugin für den Fragedruck als LaTeX-Quelltext
+     * @param pluginDto Das PluginDto welches am Webserver an das JavaScript des Plugins zum Rendern gesandt wird
      * @param answer    Inhalt des Antwortfeldes welches der Schüler eingegeben hat
      * @param mode      Druckmode
-     * @return          Latexsourcode und zugehörige Bilder in einer Hashmap
+     * @return          leeres Render-DTO; die Basisklasse erzeugt keine Ausgabe
      */
     @Override
     public PluginRenderDto renderLatex(PluginDto pluginDto, String answer, String mode){return new PluginRenderDto(); }
@@ -628,13 +703,13 @@ public abstract class BasePlugin implements PluginService {
      * Rendert das Plugin inklusive der Schülereingabe und korrekter Lösung<br>
      * Es wird dabei entweder direkt ein HTML-Code oder LaTeX-Code erzeugt<br>
      * @param tex                 true für LaTeX-Code, false für html-Code
-     * @param pluginDto           PluginDto welches für die Java-Script aktive Eingabe aufbereitet wurde
+     * @param pluginDto           PluginDto welches für die JavaScript aktive Eingabe aufbereitet wurde
      * @param antwort             Antwort die der Schüler eingegeben hat
      * @param toleranz            Toleranz für die Lösung
-     * @param varsQuestion        Referenz auf VarHash, wird dynamisch nachgeladen
-     * @param answerDto           Antwort des Schülers
+     * @param varsQuestion        Variablen der Frage
+     * @param answerDto           Musterlösung und Informationen für die Bewertung
      * @param grade               Maximale Punktanzahl für die richtige Antwort
-     * @return                    HTML-Code oder LaTeX-Code mit Bildern
+     * @return                    leeres Render-DTO; die Basisklasse erzeugt keine Ausgabe
      */
     @Override
     public PluginRenderDto renderPluginResult(boolean tex, PluginDto pluginDto, String antwort, ToleranzDto toleranz, VarHashDto varsQuestion, PluginAnswerDto answerDto, double grade) {
@@ -682,7 +757,7 @@ public abstract class BasePlugin implements PluginService {
 
     /**
      * Liefert die aktuelle Konfiguration eines Plugins welches sich gerade in einem CONFIGMODE_URL Konfigurationsdialog befindet
-     * @return                Konfigurationsparameter oder "@ERROR: Meldung" wenn etwas nicht funktioniert hat
+     * @return                aktueller Konfigurationsstring
      */
     @Override
     public String getConfiguration() {

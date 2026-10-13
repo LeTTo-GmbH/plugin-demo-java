@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Anfragedaten für die Bewertung einer Plugin-Antwort.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +21,7 @@ public class PluginScoreRequestDto {
     /** Konfigurationsstring des Plugins */
     private String config="";
 
-    /** PluginDto welches für die Java-Script aktive Eingabe aufbereitet wurde */
+    /** PluginDto welches für die JavaScript aktive Eingabe aufbereitet wurde */
     private PluginDto pluginDto;
 
     /** Antwort die der Schüler eingegeben hat */

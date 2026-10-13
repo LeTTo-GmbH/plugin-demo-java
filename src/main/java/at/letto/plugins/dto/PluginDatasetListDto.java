@@ -14,6 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PluginDatasetListDto {
 
+    /**
+     * Datensätze der Liste.
+     */
     private List<PluginDatasetDto> datasets;
 
 }

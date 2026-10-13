@@ -15,6 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PluginGeneralInfoList {
 
+    /**
+     * Allgemeine Informationen der enthaltenen Plugins.
+     */
     private List<PluginGeneralInfo> pluginInfos;
 
 }

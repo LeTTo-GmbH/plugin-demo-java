@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Anfragedaten für die LaTeX-Ausgabe eines Plugins.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +21,7 @@ public class PluginRenderLatexRequestDto {
     /** Konfigurationsstring des Plugins */
     private String config="";
 
-    /** Das PluginDto welches am Webserver an das Java-Script des Plugins zum Rendern gesandt wird */
+    /** Das PluginDto welches am Webserver an das JavaScript des Plugins zum Rendern gesandt wird */
     private PluginDto pluginDto;
 
     /** Inhalt des Antwortfeldes welches der Schüler eingegeben hat */

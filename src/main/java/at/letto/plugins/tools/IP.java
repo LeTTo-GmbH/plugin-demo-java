@@ -10,6 +10,12 @@ import java.util.List;
  */
 public class IP {
 
+    /**
+     * Liest eine IPv4-Adresse aus vier dezimalen Oktetten.
+     *
+     * @param s IPv4-Adresse als Text
+     * @return IPv4-Adresse oder {@code null} bei ungültiger Eingabe
+     */
     public static InetAddress parseIP(String s) {
         s = s.trim();
         String st[] = s.split("\\.");
@@ -29,10 +35,22 @@ public class IP {
         return null;
     }
 
+    /**
+     * Prüft, ob der Text eine IPv4-Adresse enthält.
+     *
+     * @param s IPv4-Adresse als Text
+     * @return {@code true}, wenn die IPv4-Adresse gelesen werden kann
+     */
     public static boolean isIP(String s) {
         return parseIP(s)!=null;
     }
 
+    /**
+     * Prüft, ob eine IPv4-Adresse weder lokale, Link-Local-, Loopback- noch private Adresse ist.
+     *
+     * @param s IPv4-Adresse als Text
+     * @return {@code true}, wenn keine dieser lokalen Adresskategorien vorliegt
+     */
     public static boolean isOeffentlicheIP(String s) {
         InetAddress inetAddress = parseIP(s);
         if (inetAddress==null) return false;
@@ -43,6 +61,11 @@ public class IP {
         return true;
     }
 
+    /**
+     * Ermittelt eine lokale IP-Adresse als Text.
+     *
+     * @return IP-Adresse oder Fehlermeldung, wenn keine gefunden wird
+     */
     public static String getLocalIPString() {
         InetAddress iAddress = getLocalIP();
         if (iAddress!=null) {
@@ -55,6 +78,11 @@ public class IP {
         } else return "no IP-Adress found";
     }
 
+    /**
+     * Ermittelt eine lokale Adresse über Hostauflösung, Netzwerkverbindung oder Netzwerkschnittstellen.
+     *
+     * @return gefundene Adresse oder {@code null}
+     */
     public static InetAddress getLocalIP() {
         try {
             InetAddress local = InetAddress.getLocalHost();
@@ -84,6 +112,11 @@ public class IP {
         return null;
     }
 
+    /**
+     * Sammelt unterschiedliche lokale Adressen über Hostauflösung, Netzwerkverbindung und Schnittstellen.
+     *
+     * @return Liste der gefundenen Adressen
+     */
     public static List<InetAddress> getLocalIPs() {
         List<InetAddress> iPs = new ArrayList<>();
         try {
@@ -126,6 +159,11 @@ public class IP {
         return iPs;
     }
 
+    /**
+     * Wandelt die gefundenen lokalen IP-Adressen in Texte um.
+     *
+     * @return Liste der Adresszeichenfolgen
+     */
     public static List<String> getLocalIPsStringList() {
         List<InetAddress> iAddresses = getLocalIPs();
         List<String> iPs = new ArrayList<>();
@@ -142,6 +180,11 @@ public class IP {
         return iPs;
     }
 
+    /**
+     * Verbindet die gefundenen lokalen IP-Adressen zu einem kommaseparierten Text.
+     *
+     * @return Adressliste als Text
+     */
     public static String getLocalIPsString() {
         List<String> iPs = getLocalIPsStringList();
         String ret="";
@@ -181,9 +224,10 @@ public class IP {
     }
 
     /**
-     * Umwandlung einer IP4-Adresse in einen int-Wert
-     * @param ip    IP-Asdresse in vierteiliger Form: 10.128.3.4
-     * @return      Ganzzahliger Wert der IP-Adresse
+     * Wandelt eine auflösbare IP-Adresse in einen ganzzahligen {@code long}-Wert um.
+     *
+     * @param ip    IP-Adresse in vierteiliger Form: 10.128.3.4
+     * @return ganzzahliger Adresswert oder {@code -1}, wenn die Adresse nicht aufgelöst werden kann
      */
     public static long getIpAsInt(String ip) {
         if (ip == null || ip.trim().length()==0) return -1;

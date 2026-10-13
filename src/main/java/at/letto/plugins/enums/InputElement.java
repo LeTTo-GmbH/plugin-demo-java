@@ -16,12 +16,24 @@ public enum InputElement {
      * TextArea für einen größeren Eingabebereich
      */
     TextArea,
+    /**
+     * Schaltfläche als Eingabeelement.
+     */
     Button,
+    /**
+     * Auswahl mehrerer vorgegebener Antworten.
+     */
     MULTICHOICE,
+    /**
+     * Eingabeelement mit XHTML-Inhalt.
+     */
     XHTML,
     /**
-     * Javascript-Editor für Eingabe von Source-Code von Programmen
+     * JavaScript-Editor für Eingabe von Quelltext von Programmen
      */
     SourceCode,
+    /**
+     * Interaktive JavaScript-Eingabe.
+     */
     JAVASCRIPT
 }

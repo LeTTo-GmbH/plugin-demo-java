@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Sammelt Status und Fehlermeldungen der Plugin-Bilderzeugung.
+ */
 @Data
 @NoArgsConstructor
 public class PluginImageResultDto {

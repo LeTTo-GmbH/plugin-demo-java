@@ -8,5 +8,12 @@ package at.letto.plugins.enums;
  *
  */
 public enum TOLERANZMODE {
-    RELATIV,ABSOLUT;
+    /**
+     * Relative Toleranz bezogen auf die verglichenen Werte.
+     */
+    RELATIV,
+    /**
+     * Absolute Toleranz unabhängig von der Größe der Werte.
+     */
+    ABSOLUT;
 }

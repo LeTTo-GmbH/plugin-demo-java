@@ -7,6 +7,9 @@ import lombok.Getter;
 
 import java.util.HashMap;
 
+/**
+ * Speichert Zustand und Gültigkeit einer Plugin-Konfigurationssitzung.
+ */
 @Getter
 public class PluginConfigurationConnection {
     /** Konfigurations ID */
@@ -15,11 +18,11 @@ public class PluginConfigurationConnection {
     public final String typ;
     /** Name des Plugins */
     public final String name;
-    /** Configurationsstring des Plugins */
+    /** Konfigurationsstring des Plugins */
     public String config;
     /** Plugin das gerade bearbeitet wird */
     public PluginService pluginService;
-    /** Plugin Configurations-Information */
+    /** Plugin Konfigurations-Information */
     public PluginConfigurationInfoDto pluginConfigurationInfoDto;
     /** PluginConfigDto welches aktuell gültig ist */
     public PluginConfigDto pluginConfigDto;
@@ -30,6 +33,16 @@ public class PluginConfigurationConnection {
     /** Zugriffszeitstempel des letzten Zugriffes als DateInteger in Sekunden */
     public long lastTime = Datum.nowDateInteger();
 
+    /**
+     * Erstellt eine Konfigurationssitzung mit Plugin-Instanz und Inaktivitätsfrist.
+     *
+     * @param typ Typ des Plugins
+     * @param name Name beziehungsweise Bezeichner
+     * @param config Konfigurationsstring des Plugins
+     * @param configurationID eindeutige ID der Konfigurationssitzung
+     * @param pluginService zugehörige Plugin-Instanz
+     * @param timeout maximale Inaktivitätsdauer der Sitzung in Sekunden
+     */
     public PluginConfigurationConnection(String typ, String name, String config, String configurationID, PluginService pluginService, long timeout) {
         this.typ    = typ;
         this.name   = name;
@@ -56,6 +69,12 @@ public class PluginConfigurationConnection {
         changeConfig(config, pluginService);
     }
 
+    /**
+     * Aktualisiert Konfiguration, Plugin-Instanz und Informationen zum Konfigurationsdialog.
+     *
+     * @param config Konfigurationsstring des Plugins
+     * @param pluginService zugehörige Plugin-Instanz
+     */
     public void changeConfig(String config, PluginService pluginService) {
         this.config                     = config;
         this.pluginService              = pluginService;

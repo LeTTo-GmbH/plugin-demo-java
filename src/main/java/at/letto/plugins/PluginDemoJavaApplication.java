@@ -6,9 +6,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.jar.Manifest;
 
+/**
+ * Startpunkt der Spring-Boot-Anwendung für den LeTTo-Plugin-Service.
+ */
 @SpringBootApplication
 public class PluginDemoJavaApplication {
 
+    /**
+     * Startet den Spring-Boot-Plugin-Service.
+     *
+     * @param args Kommandozeilenargumente
+     */
     public static void main(String[] args) {
         ServerStatus.mainClass   = PluginDemoJavaApplication.class;
         ServerStatus.mainContext = SpringApplication.run(ServerStatus.mainClass, args);

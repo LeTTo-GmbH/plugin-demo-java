@@ -27,14 +27,32 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Verwaltet Plugin-Registrierung, Service-Informationen, Bildablage und Konfigurationsverbindungen.
+ */
 @Configuration
 public class PluginConfiguration {
 
+    /**
+     * Logger für Meldungen dieser Klasse.
+     */
     private Logger logger = LoggerFactory.getLogger(StartupConfiguration.class);
 
+    /**
+     * Name des Plugin-Services.
+     */
     public static final String PLUGIN_NAME     = "letto-plugindemo";
+    /**
+     * Version des Plugin-Services.
+     */
     public static final String PLUGIN_VERSION  = "1.0";
+    /**
+     * Autor des Plugin-Services.
+     */
     public static final String PLUGIN_AUTHOR   = "LeTTo GmbH";
+    /**
+     * Lizenzangabe des Plugin-Services.
+     */
     public static final String PLUGIN_LICENSE  = "OpenSource";
 
     /** address of plugin in docker-network nw-letto */
@@ -45,33 +63,63 @@ public class PluginConfiguration {
     @Value("${docker.container.name:letto-plugindemo}")
     @Getter  private String dockerName;
 
+    /**
+     * Basis-URI des Setup-Services.
+     */
     @Value("${letto.setup.uri:http://localhost:8096}")
     @Getter private String setupServiceUri;
 
+    /**
+     * Benutzername für die Anmeldung am Setup-Service.
+     */
     @Value("${letto.user.user.name:user}")
     @Getter  private String userUserName;
 
+    /**
+     * Passwort für die Anmeldung am Setup-Service.
+     */
     @Value("${letto.user.user.password:}")
     @Getter private String userUserPassword;
 
+    /**
+     * Interne URI des Plugin-Services.
+     */
     @Value("${letto.plugin.uri.intern:}")
     @Getter private String uriIntern;
 
+    /**
+     * Externe Basis-URI des Plugin-Services.
+     */
     @Value("${letto.plugin.uri.extern:}")
     @Getter private String baseUriExtern;
 
+    /**
+     * Konfigurierter Servername.
+     */
     @Value("${servername:}")
     @Getter private String servername;
 
+    /**
+     * Lokales Verzeichnis für Plugin-Bilder.
+     */
     @Value("${letto.pathImages}")
     @Getter private String pathImages;
 
+    /**
+     * Webpfad für Plugin-Bilder.
+     */
     @Value("${letto.webPathImages}")
     @Getter private String webpathImages;
 
+    /**
+     * Lokales Verzeichnis für Plugin-Ressourcen.
+     */
     @Value("${letto.pathPlugins}")
     @Getter private String pathPlugins;
 
+    /**
+     * Webpfad für Plugin-Ressourcen.
+     */
     @Value("${letto.webPathPlugins}")
     @Getter private String webpathPlugins;
 
@@ -81,26 +129,50 @@ public class PluginConfiguration {
     /** externe URI für das PluginDto */
     @Getter private String uriGetPluginDto;
 
+    /**
+     * HTTP-Client für authentifizierte Anfragen an den Setup-Service.
+     */
     @Getter private WebClient webClientSetupUser;
 
+    /**
+     * Builder zum Erzeugen von HTTP-Clients.
+     */
     @Autowired
     private WebClient.Builder   webClientBuilder;
 
+    /**
+     * Spring-Anwendungskontext.
+     */
     @Autowired
     private ApplicationContext applicationContext;
 
+    /**
+     * Anwendungskontext des Servlet-Webservers.
+     */
     @Autowired
     private WebServerApplicationContext webServerAppCtxt;
 
+    /**
+     * Dienst zum Ermitteln von Laufzeitinformationen.
+     */
     @Autowired
     private ServerStatus serverStatus;
 
+    /**
+     * Beim ersten Zugriff zwischengespeicherte Administrationsinformationen.
+     */
     private AdminInfoDto   adminInfoDto = null;
+    /**
+     * Beim ersten Zugriff zwischengespeicherte Service-Informationen.
+     */
     private ServiceInfoDTO serviceInfoDTO = null;
 
     /** Plugin-Information über alle registrierten Plugins des Services */
     public static HashMap<String, PluginGeneralInfo> plugins=new HashMap<>();
 
+    /**
+     * Konfigurationsverbindungen nach ihrer eindeutigen Sitzungs-ID.
+     */
     private static final ConcurrentHashMap<String,PluginConfigurationConnection> configurations = new ConcurrentHashMap<>();
 
     /** statische Referenz auf die PluginConfiguration */
@@ -108,8 +180,14 @@ public class PluginConfiguration {
 
     /** statische Referenz auf das Imageservice */
     public static BaseImageService pluginImageService = null;
+    /**
+     * Gemeinsame Bildablage des Plugin-Services.
+     */
     public static BaseImageService serverImageService = null;
 
+    /**
+     * Initialisiert den Setup-HTTP-Client und die Bildablage des Plugin-Services.
+     */
     public void init() {
         pluginConfiguration = this;
         // Interne Uri welche ans Setup weitergegeben wird bestimmen
@@ -206,16 +284,31 @@ public class PluginConfiguration {
         }
     }
 
+    /**
+     * Liefert die beim ersten Zugriff ermittelten Administrationsinformationen.
+     *
+     * @return zwischengespeicherte Administrationsinformationen
+     */
     public AdminInfoDto getAdminInfoDto() {
         if (adminInfoDto == null) adminInfoDto = calcAdminInfo();
         return adminInfoDto;
     }
 
+    /**
+     * Liefert die beim ersten Zugriff ermittelten Service-Informationen.
+     *
+     * @return zwischengespeicherte Service-Informationen
+     */
     public ServiceInfoDTO getServiceInfoDto() {
         if (serviceInfoDTO==null) serviceInfoDTO = calcServiceInfoDTO();
         return serviceInfoDTO;
     }
 
+    /**
+     * Erstellt Service-Informationen aus Anwendungskontext und Administrationsdaten.
+     *
+     * @return Service-Informationen
+     */
     private ServiceInfoDTO calcServiceInfoDTO() {
         AdminInfoDto adminInfoDto = getAdminInfoDto();
         ServiceInfoDTO serviceInfoDTO = new ServiceInfoDTO(
@@ -232,6 +325,11 @@ public class PluginConfiguration {
         return serviceInfoDTO;
     }
 
+    /**
+     * Ermittelt Administrationsdaten zur aktuellen Laufzeitumgebung.
+     *
+     * @return Administrationsdaten
+     */
     private AdminInfoDto calcAdminInfo() {
         String pid = new ApplicationPid().toString();
         String applicationname = applicationContext.getId();
@@ -291,7 +389,7 @@ public class PluginConfiguration {
     }
 
     /**
-     * Registriert ein Plugin im Services,
+     * Registriert einen Plugin-Typ im Service.
      * @param typ         Name des Plugins
      * @param classname   Klassenpfad des Plugins
      */
@@ -309,13 +407,22 @@ public class PluginConfiguration {
         }
     }
 
+    /**
+     * Liefert die Namen aller registrierten Plugin-Typen.
+     *
+     * @return Liste der Plugin-Typen
+     */
     public List<String> getPluginList() {
         List<String> pluginList = new ArrayList<>();
         for (String typ:plugins.keySet()) pluginList.add(typ);
         return pluginList;
     }
 
-    /** @return liefert eine Liste aller globalen Informationen über alle Plugins des verwalteten Services */
+    /**
+     * Liefert die globalen Informationen aller registrierten Plugins.
+     *
+     * @return liefert eine Liste aller globalen Informationen über alle Plugins des verwalteten Services
+     */
     public List<PluginGeneralInfo> getPluginGeneralInfoList() {
         List<PluginGeneralInfo> pluginList = new ArrayList<>();
         for (String typ:plugins.keySet()) pluginList.add(plugins.get(typ));
@@ -323,8 +430,11 @@ public class PluginConfiguration {
     }
 
     /**
+     * Liefert die allgemeinen Informationen eines registrierten Plugin-Typs.
+     *
      * @param typ Plugin Typ
      * @return liefert die allgemeinen Konfigurationsinformationen zu einem Plugin
+     *
      */
     public PluginGeneralInfo getPluginGeneralInfo(String typ) {
         if (plugins.containsKey(typ)) return plugins.get(typ);
@@ -333,7 +443,7 @@ public class PluginConfiguration {
 
     /**
      * Erzeugt aus dem Plugin-Typ und den Parametern ein PluginService Objekt<br>
-     * Sollte nur intern im SpringBoot-Service verwendet werden!<br>
+     * Sollte nur intern im Spring Boot-Service verwendet werden!<br>
      * Bis der Plugin-Config-Dialog umgestellt ist wird die Funktion auch von
      * JSF für den Konfigurationsdialog verwendet, sollte später aber auf
      * private gesetzt werden!!
@@ -385,10 +495,13 @@ public class PluginConfiguration {
 
     /**
      * Sendet alle notwendigen (im ConfigurationInfo) angeforderten Daten im Mode CONFIGMODE_URL an die Plugin-Konfiguration
+     *
      * @param configurationID zu verwendende Konfigurations-ID (muss am Plugin-Service zuvor angelegt worden sein  mit configurationInfo)
      * @param configuration   aktueller Konfigurations-String des Plugins
      * @param questionDto     Question-DTO mit Varhashes
      * @return                Liefert die Daten welche an JS weitergeleitet werden.
+     *
+     * @param typ Typ des Plugins
      */
     public PluginConfigDto setConfigurationData(String typ, String configurationID, String configuration, PluginQuestionDto questionDto) {
         PluginConfigurationConnection connection = getConnection(configurationID);
@@ -415,8 +528,11 @@ public class PluginConfiguration {
 
     /**
      * Liefert die aktuelle Konfiguration eines Plugins welches sich gerade in einem CONFIGMODE_URL Konfigurationsdialog befindet
+     *
      * @param configurationID zu verwendende Konfigurations-ID
      * @return                Konfigurationsparameter oder "@ERROR: Meldung" wenn etwas nicht funktioniert hat
+     *
+     * @param typ Typ des Plugins
      */
     public String getConfiguration(String typ, String configurationID) {
         PluginConfigurationConnection connection = getConnection(configurationID);
@@ -431,6 +547,13 @@ public class PluginConfiguration {
         return "@Error:cannot find connection or plugin";
     }
 
+    /**
+     * Sucht eine gültige Verbindung mit einer vorhandenen Plugin-Instanz.
+     *
+     * @param typ Typ des Plugins
+     * @param configurationID eindeutige ID der Konfigurationssitzung
+     * @return Konfigurationsverbindung oder {@code null}, wenn keine passende Verbindung existiert
+     */
     public PluginConfigurationConnection getConfigurationConnection(String typ, String configurationID) {
         PluginConfigurationConnection connection = getConnection(configurationID);
         if (connection!=null && connection.getPluginService()!=null) {
@@ -439,6 +562,17 @@ public class PluginConfiguration {
         return null;
     }
 
+    /**
+     * Erstellt oder aktualisiert eine Konfigurationsverbindung und entfernt abgelaufene Sitzungen.
+     *
+     * @param typ Typ des Plugins
+     * @param name Name beziehungsweise Bezeichner
+     * @param config Konfigurationsstring des Plugins
+     * @param configurationID eindeutige ID der Konfigurationssitzung
+     * @param pluginService zugehörige Plugin-Instanz
+     * @param timeout maximale Inaktivitätsdauer der Sitzung in Sekunden
+     * @return erstellte oder aktualisierte Verbindung
+     */
     private static PluginConfigurationConnection addConnection(String typ, String name, String config, String configurationID, PluginService pluginService, long timeout) {
         PluginConfigurationConnection connection;
         if (configurationID!=null && configurations.containsKey(configurationID)) {
@@ -452,6 +586,9 @@ public class PluginConfiguration {
         return connection;
     }
 
+    /**
+     * Entfernt Konfigurationsverbindungen, deren Inaktivitätsfrist abgelaufen ist.
+     */
     private static void removeOutdatedConnections() {
         try {
             long now = Datum.nowDateInteger();
@@ -469,6 +606,12 @@ public class PluginConfiguration {
         }
     }
 
+    /**
+     * Sucht eine Konfigurationsverbindung und aktualisiert deren letzten Zugriffszeitpunkt.
+     *
+     * @param configurationID eindeutige ID der Konfigurationssitzung
+     * @return Verbindung oder {@code null}, wenn die Sitzung fehlt oder abgelaufen ist
+     */
     private static PluginConfigurationConnection getConnection(String configurationID) {
         removeOutdatedConnections();
         if (configurationID!=null && configurationID.trim().length()>0 && configurations.containsKey(configurationID)) {

@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Berechnungsparameter für Parser, Zahlendarstellung und Toleranzvergleich.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,7 +18,7 @@ public class CalcParamsDto implements Cloneable {
     private String optmode;
     /** Toleranz für Vergleiche */
     private ToleranzDto toleranz;
-    /** Zugehörige Frage, um bei Plugins, die Plugin-Methoden verwenden zu können */
+    // Zugehörige Frage für den Zugriff auf Plugin-Methoden; derzeit nicht Teil dieses DTOs.
     //private PluginQuestionDto     q;
     /** Auswertung und Optimierung wird rekursiv auf alle Parameter der Funktion oder des Operators angewendet */
     private boolean 	  rekursiv;
@@ -27,14 +30,14 @@ public class CalcParamsDto implements Cloneable {
      * Gibt an, ob eine Potenz als Potenz oder als Wurzel dargestellt werden soll<br>
      * AUTO : Die Darstellung wird automatisch festgelegt<br>
      * POW  : Potenzen werden als Potenz dargestellt<br>
-     * SQRT : Wenn es sinnvoll ist, werden Potenten als Wurzel dargestellt<br>
+     * SQRT : Wenn es sinnvoll ist, werden Potenzen als Wurzel dargestellt<br>
      */
     private SHOWPOTENZ showpotenz;
     /**
      * Art der Berechnung<br>
      * MAXIMA  : Berechnung im Maxima-Feld einer Frage<br>
      * LOESUNG : Berechnung der Lösung aus dem Lösungsfeld<br>
-     * ERGEBNIS: Vergleich des Ergebnisses des Schülers mit dem Ergebnis des Lehrers<br>
+     * EQUALS  : Vergleich des Ergebnisses des Schülers mit dem Ergebnis des Lehrers<br>
      * VIEW    : Berechnungen direkt mit Angabefeld mit {=
      */
     private CALCMODE calcmode;
@@ -46,7 +49,7 @@ public class CalcParamsDto implements Cloneable {
      * Gibt an, ob aus Summen herausgehoben werden soll
      */
     private boolean herausheben;
-    /** Datensätze welche bei der Berechnung verwendet werden können */
+    // Datensätze für die Berechnung; derzeit nicht Teil dieses DTOs.
     //private VarHash vars;
     /** Ist dieser Parameter gesetzt, so wird ein noopt jedenfalls entfernt und optimiert */
     private boolean forceOpt;

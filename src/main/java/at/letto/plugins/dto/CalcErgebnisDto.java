@@ -24,6 +24,11 @@ public class CalcErgebnisDto implements Cloneable {
     private CALCERGEBNISTYPE type;
 
 
+    /**
+     * Liefert eine Textdarstellung dieses Objekts.
+     *
+     * @return Textdarstellung des Objekts
+     */
     @Override
     public String toString() {
         switch (type) {

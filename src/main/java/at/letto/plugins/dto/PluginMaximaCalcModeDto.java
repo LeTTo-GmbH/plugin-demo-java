@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Legt fest, ob Maxima verwendet und ob Datensatzwerte vor der Berechnung eingesetzt werden.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

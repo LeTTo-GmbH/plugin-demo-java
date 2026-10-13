@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Dto welches vom Plugin über Letto zum Javascript des Plugins geschickt wird
+ * Dto welches vom Plugin über Letto zum JavaScript des Plugins geschickt wird
  */
 @Getter
 @Setter
@@ -38,14 +38,22 @@ public class PluginDto {
     /** Höhe des Plugin-Bereiches in Pixel */
     private int height = 500;
 
-    /** Parameter welche vom Plugin an Javascript weitergegeben werden sollen,
+    /** Parameter welche vom Plugin an JavaScript weitergegeben werden sollen,
      *  wird von LeTTo nicht verwendet */
     private HashMap<String,String> params = new HashMap<>();
 
-    /** JSON-String welcher vom Plugin an Javascript weitergegeben werden soll,
+    /** JSON-String welcher vom Plugin an JavaScript weitergegeben werden soll,
      *  wird von LeTTo nicht verwendet */
     private String jsonData;
 
+    /**
+     * Erstellt Darstellungsdaten mit eindeutigem Tag-Bezeichner und Abmessungen.
+     *
+     * @param params Parameterstring des Plugins
+     * @param pi Plugin-Instanz
+     * @param q Frage, in die das Plugin eingebettet ist
+     * @param nr laufende Nummer des Plugins innerhalb der Frage
+     */
     public PluginDto(String params, PluginService pi, PluginQuestionDto q, int nr) {
         setSize(params);
         tagName = q.getId() + "_" + pi.getName() + "_" + nr;
@@ -67,15 +75,33 @@ public class PluginDto {
         this.height = pi.getHeight();
     }
 
+    /**
+     * Serialisiert dieses DTO als JSON.
+     *
+     * @return JSON-Darstellung des DTOs
+     */
     public String toJson() {
         return JSON.objToJson(this);
     }
 
+    /**
+     * Erstellt Darstellungsdaten mit eindeutigem Tag-Bezeichner und Abmessungen.
+     *
+     * @param params Parameterstring des Plugins
+     * @param name Name beziehungsweise Bezeichner
+     * @param nr laufende Nummer des Plugins innerhalb der Frage
+     * @param idQuestion ID der Frage
+     */
     public PluginDto(String params, String name, int nr, long idQuestion) {
         setSize(params);
         tagName = idQuestion + "_" + name + "_" + nr;
     }
 
+    /**
+     * Übernimmt {@code size=N} oder {@code size=BreitexHöhe} aus den kommaseparierten Parametern.
+     *
+     * @param params Parameterstring des Plugins
+     */
     @JsonIgnore
     private void setSize(String params) {
         for (String p:params.split(",")) {

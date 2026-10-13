@@ -58,6 +58,11 @@ public enum Score implements Cloneable {
 	/** Mehrfachbeantwortung der Frage, Antwort tw. richtig, Lehrerbeurteilung */
 	MEHRFACHANTWORT_TW_RICHTIG_LEHRER;
 	
+	/**
+	 * Liefert die LaTeX-Farbe für diesen Bewertungsstatus.
+	 *
+	 * @return Farbdefinition für LaTeX
+	 */
 	public String getScoreTexColor() {
 		switch (this) {
 		case ANGABEFEHLER_EH:
@@ -85,6 +90,12 @@ public enum Score implements Cloneable {
 		return "";
 	}
 
+	/**
+	 * Umrahmt HTML-Inhalt mit der zum Bewertungsstatus passenden Farbformatierung.
+	 *
+	 * @param text zu formatierender Text
+	 * @return farbig formatierter HTML-Inhalt
+	 */
 	public String htmlColor(String text) {
 		switch (this) {
 			case ANGABEFEHLER_EH:

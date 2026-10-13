@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Anfragedaten für das Laden eines Plugin-DTOs.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,7 +30,7 @@ public class LoadPluginRequestDto {
     /** Laufende Nummer für alle PIG-Tags und Question-Plugins */
     private int nr;
 
-    /** Configuration-ID, wenn das PluginDto über AJAX bei der Konfiguration angefordert wird */
+    /** Konfigurations-ID, wenn das PluginDto über AJAX bei der Konfiguration angefordert wird */
     private String configurationID;
 
 }

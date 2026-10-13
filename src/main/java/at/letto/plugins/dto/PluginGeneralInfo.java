@@ -44,16 +44,16 @@ public class PluginGeneralInfo {
     /** Name der JAVA-Script Methode zur Plugin-Initialisierung für die interaktive Ergebniseingabe */
     private String initPluginJS="";
 
-    /** Gibt an ob das Plugin eine Java-Script Schnittstelle bei der Beispieldarstellung hat */
+    /** Gibt an ob das Plugin eine JavaScript Schnittstelle bei der Beispieldarstellung hat */
     private boolean javaScript=false;
 
-    /** Liste von Javascript-Libraries, die im Header der HTML-Seite eingebunden werden müssen.
+    /** Liste von JavaScript-Libraries, die im Header der HTML-Seite eingebunden werden müssen.
      * Es muss die vollständige URL angegeben werden.
      * für das Plugin notwendige JS-Libraries
      */
     private List<JavascriptLibrary> javascriptLibraries=new ArrayList<>();
 
-    /** Liste von LOKALEN Javascript-Libraries, die im Header der HTML-Seite eingebunden werden müssen.
+    /** Liste von LOKALEN JavaScript-Libraries, die im Header der HTML-Seite eingebunden werden müssen.
      * Pfade werden relativ zum akt. Servernamen übergeben
      * für das Plugin notwendige JS-Libraries
      */

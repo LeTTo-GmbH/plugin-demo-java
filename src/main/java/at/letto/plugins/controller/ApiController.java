@@ -23,9 +23,16 @@ import java.util.Vector;
 )
 public class ApiController {
 
+    /**
+     * Verwaltung der registrierten Plugins und Konfigurationssitzungen.
+     */
     @Autowired PluginConfiguration pluginConfiguration;
     
-    /** @return liefert eine Liste aller Plugins (Pluginnamen) , welche mit diesem Service verwaltet werden */
+    /**
+     * Liefert eine Liste aller Plugins (Pluginnamen) , welche mit diesem Service verwaltet werden.
+     *
+     * @return liefert eine Liste aller Plugins (Pluginnamen) , welche mit diesem Service verwaltet werden
+     */
     @Operation(summary = "liefert eine Liste aller Plugins (Pluginnamen) , welche mit diesem Service verwaltet werden")
     @GetMapping(Endpoint.getPluginList)
     public ResponseEntity<List<String>> pluginList() {
@@ -33,7 +40,11 @@ public class ApiController {
         return ResponseEntity.ok(pluginList);
     }
 
-    /** @return liefert eine Liste aller globalen Informationen über alle Plugins des verwalteten Services*/
+    /**
+     * Liefert eine Liste aller globalen Informationen über alle Plugins des verwalteten Services.
+     *
+     * @return liefert eine Liste aller globalen Informationen über alle Plugins des verwalteten Services
+     */
     @GetMapping(Endpoint.getPluginGeneralInfoList)
     public ResponseEntity<PluginGeneralInfoList> pluginGeneralInfoList() {
         List<PluginGeneralInfo> resultList = pluginConfiguration.getPluginGeneralInfoList();
@@ -42,8 +53,11 @@ public class ApiController {
     }
 
     /**
+     * Liefert die allgemeinen Konfigurationsinformationen zu einem Plugin.
+     *
      * @param plugintyp Typ des Plugins (z.B. Wsr) mit dem das Plugin auch in LeTTo angesprochen wird
      * @return          liefert die allgemeinen Konfigurationsinformationen zu einem Plugin
+     *
      */
     @PostMapping(Endpoint.getPluginGeneralInfo)
     public ResponseEntity<PluginGeneralInfo> pluginGeneralInfo(
@@ -183,13 +197,15 @@ public class ApiController {
     }
 
     /**
-     * Bestimmt die Recheneinheit, welche bei der Methode parserPlugin als Ergebnis herauskomment wenn die Parameter die Einheiten wie in der Liste p haben
+     * Bestimmt die Recheneinheit, welche bei der Methode parserPlugin als Ergebnis herauskommt wenn die Parameter die Einheiten wie in der Liste p haben
+     *
      * @param r    PluginEinheitRequestDto:<br>
-     *   r.typ     String: Typ des Plugins<br>
-     *   r.name    String: Name des Plugins in der Frage<br>
-     *   r.config  String: Konfigurationsstring des Plugins<br>
-     *   r.p       String[]: Einheiten der Parameter als Recheneinheiten
+     * r.typ     String: Typ des Plugins<br>
+     * r.name    String: Name des Plugins in der Frage<br>
+     * r.config  String: Konfigurationsstring des Plugins<br>
+     * r.p       String[]: Einheiten der Parameter als Recheneinheiten
      * @return     Recheneinheit des Ergebnisses
+     *
      */
     @PostMapping(Endpoint.parserPluginEinheit)
     public ResponseEntity<String> parserPluginEinheit(@RequestBody PluginEinheitRequestDto r) {
@@ -205,7 +221,7 @@ public class ApiController {
      *   r.typ          String: Typ des Plugins<br>
      *   r.name         String: Name des Plugins in der Frage<br>
      *   r.config       String: Konfigurationsstring des Plugins<br>
-     *   r.pluginDto    PluginDto: PluginDto welches für die Java-Script aktive Eingabe aufbereitet wurde<br>
+     *   r.pluginDto    PluginDto: PluginDto welches für die JavaScript aktive Eingabe aufbereitet wurde<br>
      *   r.antwort      String: Antwort die der Schüler eingegeben hat<br>
      *   r.toleranz     ToleranzDto: Toleranz für die Lösung<br>
      *   r.varsQuestion VarHashDto: VarHash aller Variablen der Frage<br>
@@ -276,14 +292,16 @@ public class ApiController {
     }
 
     /**
-     *Passt die Plugindefinition an die Eingabe aus dem Javascipt-Result an. zB: Interaktive Karte
-     * @param r    PluginUpdateJavascriptRequestDto:<br>
-     *   r.typ       String: Typ des Plugins<br>
-     *   r.name      String: Name des Plugins in der Frage<br>
-     *   r.config    String: Konfigurationsstring des Plugins<br>
-     *   r.pluginDef String: akt. Plugin-Definition<br>
-     *   r.jsResult  String: Rückgabe von Javascript<br>
-     * @return     aktualiesierte Plugindefinition
+     * Passt die Plugindefinition an die Eingabe aus dem JavaScript-Result an. zB: Interaktive Karte
+     *
+     * @param r    PluginUpdateJavaScriptRequestDto:<br>
+     * r.typ       String: Typ des Plugins<br>
+     * r.name      String: Name des Plugins in der Frage<br>
+     * r.config    String: Konfigurationsstring des Plugins<br>
+     * r.pluginDef String: akt. Plugin-Definition<br>
+     * r.jsResult  String: Rückgabe von JavaScript<br>
+     * @return     aktualisierte Plugindefinition
+     *
      */
     @PostMapping(Endpoint.updatePluginstringJavascript)
     public ResponseEntity<String> updatePluginstringJavascript(@RequestBody PluginUpdateJavascriptRequestDto r) {
@@ -294,7 +312,7 @@ public class ApiController {
     }
 
     /**
-     * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren Javascript - Bearbeitung
+     * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren JavaScript - Bearbeitung
      * @param r    LoadPluginRequestDto:<br>
      *   r.typ       String: Typ des Plugins<br>
      *   r.name      String: Name des Plugins in der Frage<br>
@@ -313,12 +331,12 @@ public class ApiController {
     }
 
     /**
-     * Rendert ein Plugins für den Fragedruck als Latex-Sourcode
+     * Rendert ein Plugin für den Fragedruck als LaTeX-Quelltext
      * @param r    PluginRenderLatexRequestDto:<br>
      *   r.typ       String: Typ des Plugins<br>
      *   r.name      String: Name des Plugins in der Frage<br>
      *   r.config    String: Konfigurationsstring des Plugins<br>
-     *   r.pluginDto PluginDto: Das PluginDto welches am Webserver an das Java-Script des Plugins zum Rendern gesandt wird<br>
+     *   r.pluginDto PluginDto: Das PluginDto welches am Webserver an das JavaScript des Plugins zum Rendern gesandt wird<br>
      *   r.answer    String: Inhalt des Antwortfeldes welches der Schüler eingegeben hat<br>
      *   r.mode      String: Druckmode<br>
      * @return     PluginDto welches von LeTTo an JavaScript übergeben wird
@@ -339,7 +357,7 @@ public class ApiController {
      *   r.name         String: Name des Plugins in der Frage<br>
      *   r.config       String: Konfigurationsstring des Plugins<br>
      *   r.tex          boolean: true für LaTeX-Code, false für html-Code<br>
-     *   r.pluginDto    PluginDto: Das PluginDto welches am Webserver an das Java-Script des Plugins zum Rendern gesandt wird<br>
+     *   r.pluginDto    PluginDto: Das PluginDto welches am Webserver an das JavaScript des Plugins zum Rendern gesandt wird<br>
      *   r.antwort      String: Antwort die der Schüler eingegeben hat<br>
      *   r.toleranz     ToleranzDto: Toleranz für die Lösung<br>
      *   r.varsQuestion VarHashDto: VarHash aller Variablen der Frage<br>
@@ -403,7 +421,7 @@ public class ApiController {
 
     /**
      * Liefert die aktuelle Konfiguration eines Plugins welches sich gerade in einem CONFIGMODE_URL Konfigurationsdialog befindet
-     * @param      dto    typ und Configuration-ID<br>
+     * @param      dto    typ und Konfigurations-ID<br>
      *   r.typ              String: PluginTyp<br>
      *   r.configurationID  String:zu verwendende Konfigurations-ID (muss am Plugin-Service zuvor angelegt worden sein  mit configurationInfo)<br>
      * @return     Konfigurationsparameter oder "@ERROR: Meldung" wenn etwas nicht funktioniert hat
@@ -415,7 +433,7 @@ public class ApiController {
     }
 
     /**
-     * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren Javascript - Bearbeitung
+     * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren JavaScript - Bearbeitung
      * @param r    LoadPluginRequestDto:<br>
      *   r.typ       String: Typ des Plugins<br>
      *   r.name      String: Name des Plugins in der Frage<br>

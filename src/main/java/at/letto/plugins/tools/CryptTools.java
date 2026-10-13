@@ -8,6 +8,9 @@ import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Hilfsmethoden für MD5-Prüfsummen, Dateinamen und Base64-Dateiinhalte.
+ */
 public class CryptTools {
 
     /**
@@ -57,10 +60,12 @@ public class CryptTools {
     }
 
     /**
-     * Entfernt aus einem Dateinamen alle Umlaute und Sonderzeichen.<br>
-     * Es bleiben nur mehr Buchstaben, Zahlen, Minus und Unterstrich erhalten<br>
+     * Ersetzt Umlaute und entfernt Sonderzeichen aus einem Dateinamen.
+     * Buchstaben, Ziffern, Minus, Unterstrich und Punkt bleiben erhalten.
+     *
      * @param name alter Dateiname
      * @return     neuer Dateiname
+     *
      */
     public static String renameFile(String name) {
         name =  name.replaceAll("ö","oe").replaceAll("ü","ue").replaceAll("ä","ae").replaceAll("Ü","Ue").replaceAll("Ö","Oe").replaceAll("Ä","ae").replaceAll("ß","ss");
@@ -91,6 +96,12 @@ public class CryptTools {
         return name + "." + ext;
     }
 
+    /**
+     * Liest eine Datei und kodiert ihren Inhalt als Base64.
+     *
+     * @param file zu lesende Datei
+     * @return Base64-kodierter Dateiinhalt oder leerer String bei fehlender oder nicht lesbarer Datei
+     */
     public static String loadFileAsBase64(File file) {
         if (file!=null && file.exists()) {
             String ImgString = "";

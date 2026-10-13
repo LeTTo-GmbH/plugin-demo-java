@@ -20,7 +20,7 @@ public class PluginConfigurationInfoDto {
     /** Das Plugin ist im Edit-Service direkt eingebunden und wird über eine JSF-Seite direkt im Edit-Service konfiguriert */
     public static final int CONFIGMODE_JSF=1;
 
-    /** Das Plugin wird über eine Javascript - Funktion konfiguriert */
+    /** Das Plugin wird über eine JavaScript - Funktion konfiguriert */
     public static final int CONFIGMODE_JAVASCRIPT=2;
 
     /** Das Plugin wird über einen Dialog in einem iframe oder in einem eigenen Browser-TAB welches vom Plugin-Service über eine URL zur Verfügung gestellt wird konfiguriert */
@@ -60,7 +60,7 @@ public class PluginConfigurationInfoDto {
     /** Gibt an, ob das Plugin über den Browser direkt erreichbar ist */
     private boolean externUrl=false;
 
-    /** Java-Script-Methode, die beim Konfigurieren des Plugins aufgerufen wird. <br>
+    /** JavaScript-Methode, die beim Konfigurieren des Plugins aufgerufen wird. <br>
      * Als Parameter wird ein PluginConfigDto übergeben (Konfigurationsstring des Plugins an diese Methode übergeben. <br>
      * JS-Code ist in den javascriptLibraries enthalten. */
     private String javaScriptMethode=null;

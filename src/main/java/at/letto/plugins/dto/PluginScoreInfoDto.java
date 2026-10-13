@@ -24,6 +24,9 @@ public class PluginScoreInfoDto {
     /** Score Ergebnis als Enum-Feld */
     Score status;
     /* HTML Score Information */
+    /**
+     * HTML-Text mit zusätzlichen Informationen zur Bewertung.
+     */
     String htmlScoreInfo;
     /** Feedback */
     String feedback;

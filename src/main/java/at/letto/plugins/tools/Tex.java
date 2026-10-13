@@ -1,8 +1,13 @@
 package at.letto.plugins.tools;
 
+/**
+ * LaTeX-Farbdefinitionen für Aufgaben, Antworten und Bewertungsstatus.
+ */
 public class Tex {
 
-    /** Legend im Textkopf */
+    /**
+     * Farbe und Schriftgröße der Legende im Textkopf.
+     */
     public static final String ColorTestLegende = "{\\small\\color{lightgray}";
 
     /** Farbe der Lösung beim Fragedruck */
@@ -20,25 +25,37 @@ public class Tex {
     /** Farbe einer richtigen Antwort beim Fragedruck */
     public static final String ColorAntwortRichtig = "\\colorbox{colorok}{";
 
-    /** Farbe einer richtigen Antwort beim Fragedruck */
+    /**
+     * Hintergrundfarbe einer falschen Antwort beim Fragedruck.
+     */
     public static final String ColorAntwortFalsch = "\\colorbox{colorfalsch}{";
 
     /** Farbe einer richtigen Antwort beim Fragedruck */
     public static final String ColorAntwortTextRichtig = "{\\color{coloroktext}";
 
-    /** Farbe einer richtigen Antwort beim Fragedruck */
+    /**
+     * Textfarbe einer falschen Antwort beim Fragedruck.
+     */
     public static final String ColorAntwortTextFalsch = "{\\color{colorfalsch}";
 
-    /** Farbe einer richtigen Antwort beim Fragedruck */
+    /**
+     * Textfarbe einer teilweise richtigen Antwort beim Fragedruck.
+     */
     public static final String ColorAntwortTextTeilRichtig = "{\\color{colortextteilrichtig}";
 
-    /** Farbe einer richtigen Antwort beim Fragedruck */
+    /**
+     * Hintergrundfarbe einer teilweise richtigen Antwort beim Fragedruck.
+     */
     public static final String ColorAntwortTeilrichtig = "\\colorbox{colorteilrichtig}{";
 
-    /** Farbe einer richtigen Antwort beim Fragedruck */
+    /**
+     * Hintergrundfarbe bei einem Angabe- oder Berechnungsfehler.
+     */
     public static final String ColorAntwortAngabeFehler = "\\colorbox{colorangabefehler}{";
 
-    /** Farbe einer richtigen Antwort beim Fragedruck */
+    /**
+     * Hintergrundfarbe einer noch nicht entschiedenen Bewertung.
+     */
     public static final String ColorAntwortNichtentschieden = "\\colorbox{lightgray}{";
 
 }

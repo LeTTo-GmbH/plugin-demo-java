@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Anfragedaten für die Aktualisierung einer Plugin-Definition anhand der JavaScript-Eingabe.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,7 +24,7 @@ public class PluginUpdateJavascriptRequestDto {
     /** akt. Plugin-Definition */
     private String pluginDef="";
 
-    /** Rückgabe von Javascript */
+    /** Rückgabe von JavaScript */
     private String jsResult;
 
 }

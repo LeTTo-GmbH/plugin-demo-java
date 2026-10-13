@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Anfragedaten für die Verarbeitung eines Angabetextes.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

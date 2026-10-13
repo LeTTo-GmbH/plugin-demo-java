@@ -22,20 +22,49 @@ import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Ermittelt Informationen über Betriebssystem, Java-Laufzeit und laufenden Webserver.
+ */
 @Service
 public class ServerStatus {
 
+    /**
+     * Hauptklasse der laufenden Anwendung.
+     */
     public static Class               mainClass;
+    /**
+     * Anwendungskontext der laufenden Anwendung.
+     */
     public static ApplicationContext  mainContext;
+    /**
+     * Manifest des ausführbaren Anwendungsarchivs.
+     */
     public static Manifest            mainManifest;
 
 
+    /**
+     * Wartet auf das Ende eines Prozesses und speichert dessen Exitcode.
+     */
     private static class Worker extends Thread {
+        /**
+         * Prozess, auf dessen Ende gewartet wird.
+         */
         private final Process process;
+        /**
+         * Exitcode des Prozesses oder {@code null}, solange kein Ergebnis vorliegt.
+         */
         private Integer exit;
+        /**
+         * Verknüpft den Warte-Thread mit dem zu beobachtenden Prozess.
+         *
+         * @param process Prozess, auf dessen Ende gewartet wird
+         */
         private Worker(Process process) {
             this.process = process;
         }
+        /**
+         * Wartet auf das Prozessende und speichert den Exitcode, sofern der Thread nicht unterbrochen wird.
+         */
         public void run() {
             try {
                 exit = process.waitFor();
@@ -48,8 +77,9 @@ public class ServerStatus {
     /**
      * Führt das Kommando cmd im Betriebssystem aus, und wartet bis
      * es wieder beendet wird!
+     *
      * @param cmd     Kommando
-     * @return        stdout des Programmes
+     * @return Standardausgabe mit angehängter Fehlerausgabe oder Fehlermeldung bei Start- beziehungsweise Unterbrechungsfehlern
      */
     public static String systemcall(String cmd) {
         String charset = Charset.defaultCharset().toString();
@@ -59,9 +89,10 @@ public class ServerStatus {
     /**
      * Führt das Kommando cmd im Betriebssystem aus, und wartet bis
      * es wieder beendet wird!
+     *
      * @param cmd     Kommando
      * @param charset Character-Set
-     * @return        stdout des Programmes
+     * @return Standardausgabe mit angehängter Fehlerausgabe oder Fehlermeldung bei Start- beziehungsweise Unterbrechungsfehlern
      */
     public static String systemcall(String cmd, String charset) {
         String ret="";
@@ -106,8 +137,8 @@ public class ServerStatus {
             if (acmd.length()>0) cv.add(acmd);
             String cmdlst[] = new String[cv.size()];
             for (int j=0;j<cv.size();j++) cmdlst[j] = cv.get(j);
-            /**
-             * Starten den Prozesses
+            /*
+             * Starten des Prozesses
              */
             p = new ProcessBuilder(cmdlst).start();
             BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream(),charset));
@@ -137,10 +168,11 @@ public class ServerStatus {
     }
 
     /**
-     * Führt das Kommando cmd im Betriebssystem aus,
+     * Führt ein Kommando mit der intern festgelegten Wartefrist von 10 Sekunden aus.
+     *
      * @param cmd     Kommando
-     * @param timeout Zeit in ms nachdem das Programm sicher beendet wird!
-     * @return        stdout des Programmes
+     * @param timeout reservierter Parameter; derzeit wird stets die interne Wartefrist verwendet
+     * @return leerer String; die Prozessausgabe wird verworfen
      */
     public static String systemcall(String cmd,int timeout) {
         try {
@@ -193,12 +225,22 @@ public class ServerStatus {
         }
     }
 
+    /**
+     * Ermittelt den Namen der ausführbaren JAR-Datei.
+     *
+     * @return JAR-Dateiname oder leerer String, wenn keine JAR-Datei gefunden wird
+     */
     public String getJarFileName() {
         File file = getJarFile();
         if (file!=null) return file.getName();
         return "";
     }
 
+    /**
+     * Ermittelt die JAR-Datei anhand der Ressource der Hauptklasse.
+     *
+     * @return JAR-Datei oder {@code null}, wenn keine passende Datei gefunden wird
+     */
     public File getJarFile() {
         String className = mainClass.getName().replace('.', '/');
         String classJar = mainClass.getResource("/" + className + ".class").toString();
@@ -210,7 +252,11 @@ public class ServerStatus {
         return null;
     }
 
-    /** @return Liefert den Distributionsnamen der Linux Distribution wenn es sich um eine Linux-System handelt */
+    /**
+     * Ermittelt den Distributionsnamen aus der Linux-Distributionsdatei.
+     *
+     * @return Liefert den Distributionsnamen der Linux Distribution wenn es sich um eine Linux-System handelt
+     */
     public String getLinuxDistribution() {
         if (isLinux()) try {
             List<String> v = Files.readAllLines(Path.of("/etc/lsb-release"));
@@ -227,6 +273,11 @@ public class ServerStatus {
         return "";
     }
 
+    /**
+     * Ermittelt die Release-Angabe aus der Linux-Distributionsdatei.
+     *
+     * @return Release-Angabe oder leerer String, wenn sie nicht ermittelt werden kann
+     */
     public String getLinuxRelease() {
         if (isLinux()) try {
             List<String> v = Files.readAllLines(Path.of("/etc/lsb-release"));
@@ -243,6 +294,11 @@ public class ServerStatus {
         return "";
     }
 
+    /**
+     * Ermittelt die Beschreibung aus der Linux-Distributionsdatei.
+     *
+     * @return Distributionsbeschreibung oder leerer String
+     */
     public String getLinuxDescription() {
         if (isLinux()) try {
             List<String> v = Files.readAllLines(Path.of("/etc/lsb-release"));
@@ -259,23 +315,43 @@ public class ServerStatus {
         return "";
     }
 
+    /**
+     * Prüft, ob die Anwendung auf Windows läuft.
+     *
+     * @return {@code true}, wenn Windows erkannt wird
+     */
     public boolean isWindows() {
         String bs = System.getProperty("os.name");
         if (bs!=null && bs.toLowerCase().startsWith("windows")) return true;
         return false;
     }
 
+    /**
+     * Prüft, ob die Anwendung auf Linux läuft.
+     *
+     * @return {@code true}, wenn Linux erkannt wird
+     */
     public boolean isLinux() {
         String bs = System.getProperty("os.name");
         if (bs!=null && bs.toLowerCase().startsWith("linux")) return true;
         return false;
     }
 
+    /**
+     * Prüft, ob die Anwendung auf Ubuntu läuft.
+     *
+     * @return {@code true}, wenn Ubuntu erkannt wird
+     */
     public boolean isUbuntu() {
         if (getLinuxDistribution().toLowerCase().trim().startsWith("ubuntu")) return true;
         return false;
     }
 
+    /**
+     * Ermittelt Betriebssystemname, Version und gegebenenfalls Distributionsbeschreibung.
+     *
+     * @return Betriebssystembeschreibung
+     */
     public String getBetriebssystem() {
         String ver = System.getProperty("os.version");
         if (isWindows()) return "Windows "+ver;
@@ -283,6 +359,11 @@ public class ServerStatus {
         return System.getProperty("os.name")+" "+ver;
     }
 
+    /**
+     * Ermittelt den Anbieter der Java-Laufzeit.
+     *
+     * @return Java-Anbieter
+     */
     public String getJavaVendor() {
         String vendor="";
         try { if (vendor==null || vendor.length()==0) vendor = System.getProperty("java.vendor"); } catch (Exception e) {};
@@ -291,6 +372,11 @@ public class ServerStatus {
         return vendor;
     }
 
+    /**
+     * Ermittelt die Versionsnummer der Java-Laufzeit.
+     *
+     * @return Java-Versionsnummer
+     */
     public String getJavaVersionNumber() {
         String nr="";
         try { if (nr==null || nr.length()==0) nr = System.getProperty("java.runtime.version"); } catch (Exception e) {};
@@ -298,26 +384,56 @@ public class ServerStatus {
         return nr;
     }
 
+    /**
+     * Ermittelt Anbieter und Versionsnummer der Java-Laufzeit.
+     *
+     * @return Java-Laufzeitbeschreibung
+     */
     public String getJavaVersion() {
         return getJavaVendor() + " " + getJavaVersionNumber();
     }
 
+    /**
+     * Ermittelt die native Zeichensatzangabe der Laufzeit.
+     *
+     * @return Wert von {@code sun.jnu.encoding} oder {@code null}
+     */
     public String getEncoding() {
         return System.getProperty("sun.jnu.encoding");
     }
 
+    /**
+     * Ermittelt die Zeichensatzangabe für Dateien.
+     *
+     * @return Wert von {@code file.encoding} oder {@code null}
+     */
     public String getFileEncoding() {
         return System.getProperty("file.encoding");
     }
 
+    /**
+     * Ermittelt eine lokale IP-Adresse.
+     *
+     * @return lokale Adresse als Text oder Fehlermeldung
+     */
     public String getIP() {
         return IP.getLocalIPString();
     }
 
+    /**
+     * Ermittelt die gefundenen lokalen IP-Adressen.
+     *
+     * @return kommaseparierte Adressliste
+     */
     public String getIPs() {
         return IP.getLocalIPsString();
     }
 
+    /**
+     * Ermittelt den Hostnamen aus Betriebssystem oder Netzwerkauflösung.
+     *
+     * @return Hostname oder {@code null}, wenn keine Angabe verfügbar ist
+     */
     public String getHostname() {
         if (isWindows()) return System.getenv("COMPUTERNAME");
         try {
@@ -327,6 +443,11 @@ public class ServerStatus {
         return System.getenv("HOSTNAME");
     }
 
+    /**
+     * Ermittelt die eingebetteten JAR-Bibliotheken des ausführbaren Archivs.
+     *
+     * @return alphabetisch sortierte Bibliotheksnamen ohne Dateierweiterung
+     */
     public List<String> getLibJars(){
         List<String> libs = new ArrayList<>();
         File jarFile = getJarFile();
@@ -348,10 +469,20 @@ public class ServerStatus {
     }
 
 
+    /**
+     * Ermittelt das Arbeitsverzeichnis der Java-Anwendung.
+     *
+     * @return Wert von {@code user.dir}
+     */
     public String getUserDir() {
         return System.getProperty("user.dir");
     }
 
+    /**
+     * Ermittelt das konfigurierte Systemverzeichnis oder ersatzweise das Arbeitsverzeichnis.
+     *
+     * @return Pfad des Systemverzeichnisses
+     */
     public String getSystemHome() {
         String ret = System.getProperty("derby.system.home");
         if (ret==null) {
@@ -371,22 +502,47 @@ public class ServerStatus {
         return ret;
     }
 
+    /**
+     * Ermittelt die Sprache der Laufzeitumgebung.
+     *
+     * @return Wert von {@code user.language}
+     */
     public String getLanguage() {
         return System.getProperty("user.language");
     }
 
+    /**
+     * Ermittelt das Pfadtrennzeichen des Betriebssystems.
+     *
+     * @return Wert von {@code file.separator}
+     */
     public String getFileSeparator() {
         return System.getProperty("file.separator");
     }
 
+    /**
+     * Ermittelt den Benutzer der Java-Anwendung.
+     *
+     * @return Wert von {@code user.name}
+     */
     public String getServerUsername() {
         return System.getProperty("user.name");
     }
 
+    /**
+     * Ermittelt die Java-Spezifikationsversion.
+     *
+     * @return Wert von {@code java.specification.version}
+     */
     public String getJavaSpecificationVersion() {
         return System.getProperty("java.specification.version");
     }
 
+    /**
+     * Ermittelt die Tomcat-Version aus den verfügbaren Laufzeitinformationen.
+     *
+     * @return ermittelte Versionskennung oder leerer String
+     */
     public String getTomeeRevision() {
         Matcher m;
         String version = "";

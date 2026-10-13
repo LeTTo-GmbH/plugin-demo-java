@@ -19,6 +19,11 @@ public class VarDto implements Cloneable {
     /** CalcParams */
     private CalcParamsDto   cp;
 
+    /**
+     * Liefert eine Textdarstellung dieses Objekts.
+     *
+     * @return Textdarstellung des Objekts
+     */
     @Override
     public String toString() {
         return calcErgebnisDto.toString();

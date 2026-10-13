@@ -8,5 +8,20 @@ package at.letto.plugins.enums;
  * VIEW    : Berechnungen direkt mit Angabefeld mit {=
  */
 public enum CALCMODE{
-    MAXIMA,LOESUNG,EQUALS,VIEW
+    /**
+     * Berechnung im Maxima-Feld einer Frage.
+     */
+    MAXIMA,
+    /**
+     * Berechnung der Musterlösung.
+     */
+    LOESUNG,
+    /**
+     * Vergleich von Schülerantwort und Musterlösung.
+     */
+    EQUALS,
+    /**
+     * Berechnung eines Ausdrucks innerhalb des Angabetextes.
+     */
+    VIEW
 }

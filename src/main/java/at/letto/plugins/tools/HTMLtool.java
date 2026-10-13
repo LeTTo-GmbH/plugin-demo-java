@@ -3,8 +3,14 @@ package at.letto.plugins.tools;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Hilfsmethoden zum Maskieren, Dekodieren und farbigen Formatieren von HTML-Texten.
+ */
 public class HTMLtool {
 
+    /**
+     * Muster zum Zerlegen einer URL an einer Prozentkodierung.
+     */
     private static final Pattern P_URLtoString = Pattern.compile("^(.*)\\%([a-fA-F0-9][a-fA-F0-9])(.*)$");
 
     /**
@@ -141,22 +147,46 @@ public class HTMLtool {
         return s;
     }
 
-    /** setzt einen Text als roten Text in HTML und ersetzt dabei alle Umlaute etc. durch Entitäten */
+    /**
+     * setzt einen Text als roten Text in HTML und ersetzt dabei alle Umlaute etc. durch Entitäten
+     *
+     * @param s zu verarbeitender Text
+     * @return rot formatierter HTML-Inhalt
+     */
     public static String redText(String s){
         return colorText(toHTML(s),"red");
     }
 
-    /** setzt einen Text als färbigen Text in HTML und ersetzt dabei alle Umlaute etc. durch Entitäten */
+    /**
+     * setzt einen Text als färbigen Text in HTML und ersetzt dabei alle Umlaute etc. durch Entitäten
+     *
+     * @param s zu verarbeitender Text
+     * @param color CSS-Textfarbe
+     * @return farbig formatierter HTML-Inhalt
+     */
     public static String colorText(String s, String color){
         return colorHtml(toHTML(s),color);
     }
 
-    /** setzt einen HTML-Code in ein span mit einer Textfarbe */
+    /**
+     * setzt einen HTML-Code in ein span mit einer Textfarbe
+     *
+     * @param html zu formatierender HTML-Inhalt
+     * @param color CSS-Textfarbe
+     * @return HTML-Inhalt mit Farbformatierung
+     */
     public static String colorHtml(String html,String color){
        return "<span style='color:"+color+"'>"+html+"</span>";
     }
 
-    /** setzt einen HTML-Code in ein span mit einer Textfarbe */
+    /**
+     * setzt einen HTML-Code in ein span mit einer Textfarbe
+     *
+     * @param html zu formatierender HTML-Inhalt
+     * @param color CSS-Textfarbe
+     * @param bgcolor CSS-Hintergrundfarbe
+     * @return HTML-Inhalt mit Farbformatierung
+     */
     public static String colorHtml(String html,String color, String bgcolor){
         return "<span style='color:"+color+";background-color:"+bgcolor+"'>"+html+"</span>";
     }

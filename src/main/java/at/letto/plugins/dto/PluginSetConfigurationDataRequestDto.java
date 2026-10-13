@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Anfragedaten für die Übermittlung von Konfigurationsdaten.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

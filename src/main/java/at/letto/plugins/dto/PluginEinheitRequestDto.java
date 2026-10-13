@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Anfragedaten für die Bestimmung der Ergebniseinheit.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

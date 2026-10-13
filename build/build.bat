@@ -2,6 +2,7 @@
 
 rem verwendete Java-Version
 set "JAVA_HOME=C:\Program Files\Java\jdk-25"
+set "MAVEN_OPTS=--sun-misc-unsafe-memory-access=allow"
 
 call mvn -version
 set startdir=%cd%

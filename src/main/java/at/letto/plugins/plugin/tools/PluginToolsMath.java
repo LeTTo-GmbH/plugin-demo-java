@@ -11,10 +11,13 @@ public class PluginToolsMath {
     /**
      * Prüft ob der zweite Wert gleich ist wie der erste Wert<br>
      * Zahlenwerte mit Berücksichtigung einer Toleranz <br>
+     *
      * @param w1         erster Wert
-     * @param w2         zweiter Werte
+     * @param w2         zweiter Wert
      * @param tol        Toleranz
      * @return           true wenn die zwei Werte gleich sind
+     *
+     * @throws RuntimeException wenn mindestens einer der Werte unendlich oder undefiniert ist
      */
     public static boolean equals(double w1, double w2, ToleranzDto tol) {
         if (!Double.isFinite(w1) || !Double.isFinite(w2))
@@ -39,6 +42,7 @@ public class PluginToolsMath {
      * parst einen String in ein Feld von Double-Werten
      * @param s String
      * @return  Feld von double Werten
+     * @throws RuntimeException wenn die Eingabe keine passende Zahlenliste in eckigen Klammern ist
      */
     public static double[] parsedoubleArray(String s) {
         s = s.trim();
@@ -57,6 +61,7 @@ public class PluginToolsMath {
      * parst einen String in ein Feld von int-Werten
      * @param s String
      * @return  Feld von int Werten
+     * @throws RuntimeException wenn die Eingabe keine passende Zahlenliste in eckigen Klammern ist
      */
     public static int[] parseintArray(String s) {
         s = s.trim();

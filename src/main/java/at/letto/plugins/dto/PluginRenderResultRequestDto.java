@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Anfragedaten für die Darstellung einer bewerteten Antwort.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,7 +24,7 @@ public class PluginRenderResultRequestDto {
     /** true für LaTeX-Code, false für html-Code */
     boolean tex;
 
-    /** Das PluginDto welches am Webserver an das Java-Script des Plugins zum Rendern gesandt wird */
+    /** Das PluginDto welches am Webserver an das JavaScript des Plugins zum Rendern gesandt wird */
     private PluginDto pluginDto;
 
     /** Antwort die der Schüler eingegeben hat */

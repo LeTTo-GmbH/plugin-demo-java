@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Anfragedaten für das Abfragen einer Plugin-Konfiguration.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

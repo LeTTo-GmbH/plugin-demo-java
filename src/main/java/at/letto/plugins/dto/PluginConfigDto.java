@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Dto welches vom Plugin über Letto zum Javascript der Konfiguration des Plugins geschickt wird
+ * Dto welches vom Plugin über Letto zum JavaScript der Konfiguration des Plugins geschickt wird
  */
 @Getter
 @Setter
@@ -38,7 +38,7 @@ public class PluginConfigDto {
     /** Höhe des Plugin-Bereiches in Pixel */
     private int height = 500;
 
-    /** Configuration-ID */
+    /** Konfigurations-ID */
     private String configurationID;
 
     /** Fehlermeldung wenn das DTO nicht korrekt erzeugt wurde */
@@ -53,14 +53,21 @@ public class PluginConfigDto {
     /** Token welcher an der pluginDtoUri benötigt wird */
     private String pluginDtoToken;
 
-    /** Parameter welche vom Plugin an Javascript weitergegeben werden sollen,
+    /** Parameter welche vom Plugin an JavaScript weitergegeben werden sollen,
      *  wird von LeTTo nicht verwendet, kann aber gelesen und verändert werden */
     private HashMap<String,String> params = new HashMap<>();
 
-    /** JSON-String welcher vom Plugin an Javascript weitergegeben werden soll,
+    /** JSON-String welcher vom Plugin an JavaScript weitergegeben werden soll,
      *  wird von LeTTo nicht verwendet */
     private String jsonData;
 
+    /**
+     * Erstellt Konfigurationsdaten mit Plugin-Bezeichner und Abmessungen.
+     *
+     * @param params Parameterstring des Plugins
+     * @param pi Plugin-Instanz
+     * @param q zugehörige Frage; wird in dieser Konstruktorvariante derzeit nicht ausgewertet
+     */
     public PluginConfigDto(String params, PluginService pi, PluginQuestionDto q) {
         setSize(params);
         tagName = pi.getName();
@@ -68,11 +75,22 @@ public class PluginConfigDto {
         this.height = pi.getHeight();
     }
 
+    /**
+     * Erstellt Konfigurationsdaten mit Plugin-Bezeichner und Abmessungen.
+     *
+     * @param params Parameterstring des Plugins
+     * @param name Name beziehungsweise Bezeichner
+     */
     public PluginConfigDto(String params, String name) {
         setSize(params);
         tagName = name;
     }
 
+    /**
+     * Übernimmt {@code size=N} oder {@code size=BreitexHöhe} aus den kommaseparierten Parametern.
+     *
+     * @param params Parameterstring des Plugins
+     */
     @JsonIgnore
     private void setSize(String params) {
         for (String p:params.split(",")) {

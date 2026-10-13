@@ -55,7 +55,11 @@ public class ImageInfoDto {
      *  if lifetime is equal or less then zero there is no lifetime defined*/
     private long lifetime = (new Date()).getTime() + 365L*24L*3600L*1000L;
 
-    /** @return true if actual time is greater then lifetime */
+    /**
+     * Prüft, ob der Gültigkeitszeitpunkt des Bildes überschritten ist.
+     *
+     * @return {@code true}, wenn die aktuelle Zeit nach dem Gültigkeitszeitpunkt liegt
+     */
     public boolean lifetimeOutdated() {
         if (lifetime<=0) return false;
         long time = (new Date()).getTime();

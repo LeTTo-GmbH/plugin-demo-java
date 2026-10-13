@@ -13,27 +13,81 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Hilfsmethoden zum Parsen, Formatieren und Umrechnen von Datum, Uhrzeit und Zeitdauer.
+ */
 public class Datum {
 
+    /**
+     * Datumsformat {@code yyyy-MM-dd}.
+     */
     public static SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd");
+    /**
+     * Datums- und Zeitformat {@code yyyy-MM-dd HH:mm:ss}.
+     */
     public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    /**
+     * Datums- und Zeitformat mit Millisekunden.
+     */
     public static SimpleDateFormat simpleDateFormatMillis = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    /**
+     * Zeitformat {@code HH:mm:ss}.
+     */
     public static SimpleDateFormat simpleTimeFormat = new SimpleDateFormat("HH:mm:ss");
 
+    /**
+     * Englische Wochentagsnamen mit Sonntag als erstem Eintrag mit drei Zeichen.
+     */
     public static String[] WEEKDAYS3 = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+    /**
+     * Englische Wochentagsnamen mit Sonntag als erstem Eintrag mit zwei Zeichen.
+     */
     public static String[] WEEKDAYS2 = {"Su","Mo","Tu","We","Th","Fr","Sa"};
+    /**
+     * Englische Wochentagsnamen mit Sonntag als erstem Eintrag.
+     */
     public static String[] WEEKDAYS = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
+    /**
+     * Deutsche Wochentagsnamen mit Sonntag als erstem Eintrag.
+     */
     public static String[] WEEKDAYSGERMAN = {"Sonntag","Montag","Dinestag","Mittwock","Donnerstag","Freitag","Samstag"};
+    /**
+     * Deutsche Wochentagsnamen mit Sonntag als erstem Eintrag mit drei Zeichen.
+     */
     public static String[] WEEKDAYSGERMAN3 = {"Son","Mon","Die","Mit","Don","Fre","Sam"};
+    /**
+     * Deutsche Wochentagsnamen mit Sonntag als erstem Eintrag mit zwei Zeichen.
+     */
     public static String[] WEEKDAYSGERMAN2 = {"So","Mo","Di","Mi","Do","Fr","Sa"};
 
+    /**
+     * Englische Monatsnamen mit Januar als erstem Eintrag mit drei Zeichen.
+     */
     public static String[] MONTH3 = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+    /**
+     * Deutsche Monatsnamen mit Januar als erstem Eintrag mit drei Zeichen.
+     */
     public static String[] MONTHGERMAN3 = {"Jän","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"};
+    /**
+     * Englische Monatsnamen mit Januar als erstem Eintrag.
+     */
     public static String[] MONTH = {"January","February","March","April","May","June","July","August","September","October","November","December"};
+    /**
+     * Deutsche Monatsnamen mit Januar als erstem Eintrag.
+     */
     public static String[] MONTHGERMAN = {"Jänner","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"};
 
+    /**
+     * Muster für ein Datum als {@code yyyyMMdd}.
+     */
     public static Pattern patternDateYYYYMMDD = Pattern.compile("^(?<y>\\d\\d\\d\\d)(?<m>\\d\\d)(?<d>\\d\\d)$");
+    /**
+     * Muster für Jahr, Monat und Tag mit optionalen Trennzeichen.
+     */
     public static Pattern patternDateYYYYMD = Pattern.compile("^(?<y>\\d\\d\\d\\d)[\\.\\-\\/\\s]*(?<m>\\d+)[\\.\\-\\/\\s]*(?<d>\\d+)$");
+    /**
+     * Muster für Tag, Monat und Jahr mit optionalen Trennzeichen.
+     */
     public static Pattern patternDateDMY = Pattern.compile("^(?<d>\\d+)[\\.\\-\\/\\s]*(?<m>\\d+)[\\.\\-\\/\\s]*(?<y>\\d+)$");
 
 /*
@@ -41,25 +95,48 @@ public class Datum {
             "yyyy/M/d","yyyy/MMM/d","yyyy-M-d","yyyy-MMM-d","d.M.yy","d.MMM.yy","yy-M-d","yy-MMM-d",
             "d.MMM.y","y-M-d","y-MMM-d"};*/
 
+    /**
+     * Bestimmt die Sekunde innerhalb der Minute.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Sekunde von 0 bis 59
+     */
     public static int second(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal.get(Calendar.SECOND);
     }
 
+    /**
+     * Bestimmt die Minute innerhalb der Stunde.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Minute von 0 bis 59
+     */
     public static int minute(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal.get(Calendar.MINUTE);
     }
 
-    /** Stunde im 24-Stunden-Format */
+    /**
+     * Stunde im 24-Stunden-Format
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Stunde von 0 bis 23
+     */
     public static int hour(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal.get(Calendar.HOUR_OF_DAY);
     }
 
+    /**
+     * Bestimmt den Tag innerhalb des Monats.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Tag des Monats von 1 bis 31
+     */
     public static int day(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -67,6 +144,12 @@ public class Datum {
         // return date.getDate();
     }
 
+    /**
+     * Bestimmt den Monat des Datums.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Monat von 1 bis 12
+     */
     public static int month(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -74,6 +157,12 @@ public class Datum {
         //return date.getMonth()+1;
     }
 
+    /**
+     * Bestimmt das Jahr des Datums.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Jahr des Datums
+     */
     public static int year(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -81,34 +170,117 @@ public class Datum {
         //return date.getYear()+1900;
     }
 
+    /**
+     * Bestimmt den Wochentag mit Sonntag als erstem Tag.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Wochentag von 0 (Sonntag) bis 6 (Samstag)
+     */
     public static int dayOfWeek(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal.get(Calendar.DAY_OF_WEEK)-1;
     }
 
+    /**
+     * Liefert die englische Wochentagsbezeichnung mit drei Zeichen.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Wochentagsbezeichnung mit drei Zeichen
+     */
     public static String dayOfWeekString3(Date date) { return WEEKDAYS3[dayOfWeek(date)]; }
+    /**
+     * Liefert die englische Wochentagsbezeichnung mit zwei Zeichen.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Wochentagsbezeichnung mit zwei Zeichen
+     */
     public static String dayOfWeekString2(Date date) { return WEEKDAYS2[dayOfWeek(date)]; }
+    /**
+     * Liefert die englische Wochentagsbezeichnung.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Wochentagsbezeichnung
+     */
     public static String dayOfWeekString(Date date) { return WEEKDAYS[dayOfWeek(date)]; }
+    /**
+     * Liefert die deutsche Wochentagsbezeichnung mit drei Zeichen.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Wochentagsbezeichnung mit drei Zeichen
+     */
     public static String dayOfWeekStringGerman3(Date date) { return WEEKDAYSGERMAN3[dayOfWeek(date)]; }
+    /**
+     * Liefert die deutsche Wochentagsbezeichnung mit zwei Zeichen.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Wochentagsbezeichnung mit zwei Zeichen
+     */
     public static String dayOfWeekStringGerman2(Date date) { return WEEKDAYSGERMAN2[dayOfWeek(date)]; }
+    /**
+     * Liefert die deutsche Wochentagsbezeichnung.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Wochentagsbezeichnung
+     */
     public static String dayOfWeekStringGerman(Date date) { return WEEKDAYSGERMAN[dayOfWeek(date)]; }
 
+    /**
+     * Liefert die englische Monatsbezeichnung mit drei Zeichen.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Monatsbezeichnung mit drei Zeichen
+     */
     public static String monthString3(Date date) { return MONTH3[month(date)-1];}
+    /**
+     * Liefert die englische Monatsbezeichnung.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Monatsbezeichnung
+     */
     public static String monthString(Date date) { return MONTH[month(date)-1];}
+    /**
+     * Liefert die deutsche Monatsbezeichnung mit drei Zeichen.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Monatsbezeichnung mit drei Zeichen
+     */
     public static String monthStringGerman3(Date date) { return MONTHGERMAN3[month(date)-1];}
+    /**
+     * Liefert die deutsche Monatsbezeichnung.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Monatsbezeichnung
+     */
     public static String monthStringGerman(Date date) { return MONTHGERMAN[month(date)-1];}
 
 
+    /**
+     * Liefert den aktuellen Zeitpunkt.
+     *
+     * @return aktueller Zeitpunkt
+     */
     public static Date now() {
         return Calendar.getInstance().getTime();
     }
 
+    /**
+     * Formatiert ein Datum als {@code d.M.yyyy}.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Datumstext oder leerer String bei {@code null}
+     */
     public static String toString(Date date) {
         if (date==null) return "";
         return day(date)+"."+month(date)+"."+year(date);
     }
 
+    /**
+     * Formatiert ein Datum als {@code dd/MM/yyyy}.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Datumstext oder leerer String bei {@code null}
+     */
     public static String toHTMLDateString(Date date) {
         if (date==null) return "";
         String y=year(date)+"";
@@ -120,6 +292,12 @@ public class Datum {
         return d+"/"+m+"/"+y;
     }
 
+    /**
+     * Formatiert ein Datum als {@code yyyy-MM-dd}.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Datumstext
+     */
     public static String toSQLDateString(Date date) {
         if (date==null) return "";
         String y=year(date)+"";
@@ -131,6 +309,14 @@ public class Datum {
         return y+"-"+m+"-"+d;
     }
 
+    /**
+     * Formatiert ein Datum als {@code yyyy-MM-dd}.
+     *
+     * @param year Jahr
+     * @param month Monat von 1 bis 12
+     * @param day Tag des Monats
+     * @return Datumstext
+     */
     public static String toSQLDateString(int year, int month, int day) {
         String y=year+"";
         while (y.length()<4) y="0"+y;
@@ -141,6 +327,14 @@ public class Datum {
         return y+"-"+m+"-"+d;
     }
 
+    /**
+     * Erstellt ein SQL-Datum aus Jahr, Monat und Tag.
+     *
+     * @param y Jahr
+     * @param m Monat von 1 bis 12
+     * @param d Tag des Monats
+     * @return Datum oder {@code null}, wenn die Werte nicht verarbeitet werden können
+     */
     public static Date setDate(int y, int m, int d) {
         if (y<0 || m<1 || d<1) return null;
         if (y>9999) return null;
@@ -152,6 +346,12 @@ public class Datum {
         } catch (Exception ex) { return null; }
     }
 
+    /**
+     * Liest ein Datum in den unterstützten numerischen oder textuellen Formaten.
+     *
+     * @param s Zeit- oder Datumstext
+     * @return Datum oder {@code null}, wenn kein Format passt
+     */
     public static Date parse(String s) {
         Matcher matcher;
         int y,m,d;
@@ -177,6 +377,9 @@ public class Datum {
         return parseDate(s);
     }
 
+    /**
+     * Unterstützte Parser für Datumsangaben.
+     */
     static SimpleDateFormat formatter[] = {
             new SimpleDateFormat("dd/MM/yyyy"),
             new SimpleDateFormat("dd.MM.yyyy"),
@@ -188,6 +391,12 @@ public class Datum {
             new SimpleDateFormat("yyyy.MMM.dd")
     };
 
+    /**
+     * Probiert die hinterlegten SimpleDateFormat-Muster zum Lesen eines Datums.
+     *
+     * @param dat zu prüfender beziehungsweise zu lesender Datumstext
+     * @return Datum oder {@code null}, wenn kein Muster passt
+     */
     private static Date parseDate(String dat) {
         Date date = null;
         for (SimpleDateFormat format: formatter) {
@@ -200,11 +409,30 @@ public class Datum {
     }
 
     // ------------------------------------------------------- parse DATE -----------------------------
+    /**
+     * Regulärer Ausdruck für Uhrzeiten mit optionalen Sekundenbruchteilen.
+     */
     private static final String  pTime = "\\s*(?<h>\\d\\d?):(?<m>\\d\\d?)(:(?<s>\\d\\d?)(\\.(?<nk>\\d+?)?)?)?\\s*";
+    /**
+     * Muster für eine alleinstehende Uhrzeit.
+     */
     private static final Pattern patternTime=Pattern.compile("^"+pTime+"$");
+    /**
+     * Muster für Uhrzeit vor Datum.
+     */
     private static final Pattern patternTimeDate=Pattern.compile("^(?<time>"+pTime+")\\s(?<date>[a-zA-Z0-9]+.*)$");
+    /**
+     * Muster für Datum vor Uhrzeit.
+     */
     private static final Pattern patternDateTime=Pattern.compile("^(?<date>[a-zA-Z0-9]+.*)\\s(?<time>"+pTime+")$");
 
+    /**
+     * Addiert Kalendertage zu einem Datum.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @param days Anzahl der zu addierenden Tage
+     * @return Datum nach Addition der Tage
+     */
     public static Date addDays(Date date, int days) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -213,20 +441,33 @@ public class Datum {
         return date;
     }
 
+    /**
+     * Konvertiert den Zeitpunkt zwischen Date und LocalDateTime in der Systemzeitzone.
+     *
+     * @param dateToConvert zu konvertierender Zeitpunkt, darf {@code null} sein
+     * @return konvertierter Wert oder {@code null} bei {@code null} als Eingabe
+     */
     public static LocalDateTime localDate(Date dateToConvert) {
         if (dateToConvert==null) return null;
         return LocalDateTime.ofInstant(dateToConvert.toInstant(), ZoneId.systemDefault());
     }
 
+    /**
+     * Konvertiert den Zeitpunkt zwischen Date und LocalDateTime in der Systemzeitzone.
+     *
+     * @param dateToConvert zu konvertierender Zeitpunkt, darf {@code null} sein
+     * @return konvertierter Wert oder {@code null} bei {@code null} als Eingabe
+     */
     public static Date localDate(LocalDateTime dateToConvert) {
         if (dateToConvert==null) return null;
         return Date.from(dateToConvert.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     /**
-     * Parst einen Zeitstring i eine Zeit in Sekunden
+     * Rechnet eine Uhrzeit in Sekunden um; Stunden und Minuten werden nicht auf Wertebereiche geprüft.
+     *
      * @param s Zeitstring 10:30 bzw. 10:30:22 bzw. 10:30:22.435423
-     * @return Zeit in Sekunden
+     * @return Zeit in Sekunden oder {@code 0}, wenn das Format nicht erkannt wird
      */
     public static double parseTime(String s) {
         s=s.trim();
@@ -245,9 +486,10 @@ public class Datum {
     }
 
     /**
-     * Parst einen Zeitstring i eine Zeit in Sekunden
+     * Zerlegt eine Uhrzeit in Stunden, Minuten, Sekunden und Millisekunden.
+     *
      * @param s Zeitstring 10:30 bzw. 10:30:22 bzw. 10:30:22.435423
-     * @return Zeit in Sekunden
+     * @return Array mit Stunden, Minuten, Sekunden und Millisekunden oder {@code null} bei einem unbekannten Format
      */
     public static int[] parseTimeArray(String s) {
         s=s.trim();
@@ -277,33 +519,80 @@ public class Datum {
         return result;
     }
 
+    /**
+     * Formatiert ein Datum als {@code yyyy-MM-dd}.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return Datumstext oder leerer String bei {@code null}
+     */
     public static String formatSimple(Date date) {
         if (date==null) return "";
         return simpleDate.format(date);
     }
 
+    /**
+     * Formatiert Datum und Uhrzeit im Standardformat.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return formatierter Text oder leerer String bei {@code null}
+     */
     public static String formatDateTime(Date date) {
         if (date==null) return "";
         return simpleDateFormat.format(date);
     }
 
+    /**
+     * Liefert das aktuelle Datum in der Systemzeitzone.
+     *
+     * @return aktuelles lokales Datum
+     */
     public static LocalDate nowLocalDate() { return LocalDate.now(); }
+    /**
+     * Liefert Datum und Uhrzeit in der Systemzeitzone.
+     *
+     * @return aktuelles lokales Datum mit Uhrzeit
+     */
     public static LocalDateTime nowLocalDateTime() { return LocalDateTime.now(); }
 
+    /**
+     * Formatiert Datum und Uhrzeit im Standardformat.
+     *
+     * @param localDateTime lokales Datum mit Uhrzeit
+     * @return formatierter Text oder leerer String bei {@code null}
+     */
     public static String formatDateTime(LocalDateTime localDateTime) {
         if (localDateTime==null) return "";
         return localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
+    /**
+     * Formatiert die Uhrzeit im Standardformat.
+     *
+     * @param localDateTime lokales Datum mit Uhrzeit
+     * @return formatierter Text oder leerer String bei {@code null}
+     */
     public static String formatTime(LocalDateTime localDateTime) {
         if (localDateTime==null) return "";
         return localDateTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
     }
 
+    /**
+     * Formatiert Datum und Uhrzeit im Standardformat.
+     *
+     * @param localDate lokales Datum
+     * @return formatierter Text oder leerer String bei {@code null}
+     */
     public static String formatDateTime(LocalDate localDate) {
         if (localDate==null) return "";
         return localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
+    /**
+     * Formatiert Datum und Uhrzeit mit dem angegebenen Muster beziehungsweise der Sprachkennung.
+     *
+     * @param localDateTime lokales Datum mit Uhrzeit
+     * @param format Formatmuster oder Sprachkennung wie {@code de_AT} beziehungsweise {@code en_US}
+     * @return formatierter Text oder leerer String bei {@code null}
+     */
     public static String formatDateTime(LocalDateTime localDateTime, String format) {
         if (localDateTime==null) return "";
         String formatString = "yyyy-MM-dd HH:mm:ss";
@@ -312,6 +601,13 @@ public class Datum {
         } else if (format.length()>0) formatString = format;
         return localDateTime.format(DateTimeFormatter.ofPattern(formatString));
     }
+    /**
+     * Formatiert die Uhrzeit mit dem angegebenen Muster beziehungsweise der Sprachkennung.
+     *
+     * @param localDateTime lokales Datum mit Uhrzeit
+     * @param format Formatmuster oder Sprachkennung wie {@code de_AT} beziehungsweise {@code en_US}
+     * @return formatierter Text oder leerer String bei {@code null}
+     */
     public static String formatTime(LocalDateTime localDateTime, String format) {
         if (localDateTime==null) return "";
         String formatString = "HH:mm:ss";
@@ -321,6 +617,13 @@ public class Datum {
         return localDateTime.format(DateTimeFormatter.ofPattern(formatString));
     }
 
+    /**
+     * Formatiert Datum und Uhrzeit mit dem angegebenen Muster beziehungsweise der Sprachkennung.
+     *
+     * @param localDate lokales Datum
+     * @param format Formatmuster oder Sprachkennung wie {@code de_AT} beziehungsweise {@code en_US}
+     * @return formatierter Text oder leerer String bei {@code null}
+     */
     public static String formatDateTime(LocalDate localDate, String format) {
         if (localDate==null) return "";
         String formatString = "yyyy-MM-dd";
@@ -330,25 +633,34 @@ public class Datum {
         return localDate.format(DateTimeFormatter.ofPattern(formatString));
     }
 
-    /** Formatieren eines Datum-Integers nach Locale
+    /**
+     * Formatiert einen Datum-Integer im Standardformat.
+     *
      * @param d       Datum-Integer
      * @return        formatierter Datum-String mit Zeit
+     *
      */
     public static String formatDateTime(long d) {
         LocalDateTime localDateTime = dateIntegerToLocalDateTime(d);
         return formatDateTime(localDateTime);
     }
-    /** Formatieren eines Datum-Integers nach Locale
+    /**
+     * Formatiert einen Datum-Integer im Standardformat.
+     *
      * @param d       Datum-Integer
      * @return        formatierter Datum-String
+     *
      */
     public static String formatDate(long d) {
         LocalDate localDate = dateIntegerToLocalDate(d);
         return formatDateTime(localDate);
     }
-    /** Formatieren eines Datum-Integers nach Locale
+    /**
+     * Formatiert einen Datum-Integer im Standardformat.
+     *
      * @param d       Datum-Integer
      * @return        formatierter Zeit-String
+     *
      */
     public static String formatTime(long d) {
         LocalDateTime localDateTime = dateIntegerToLocalDateTime(d);
@@ -383,16 +695,35 @@ public class Datum {
         return formatTime(localDateTime,format);
     }
 
+    /**
+     * Bestimmt die Sekunden seit dem 1. Januar des Jahres 0 für die aktuelle lokale Zeit.
+     *
+     * @return aktueller Datum-Integer in Sekunden
+     */
     public static long nowDateInteger() { return toDateInteger(LocalDateTime.now()); }
 
     // -------------------------------------------------------------------------------------------------------------
+    /**
+     * Unterstützte Datumsformate für die LocalDateTime-Parser.
+     */
     static String dateFormats[] = {"d.M.yyyy","d.MMM.yyyy","d/M/yyyy","d/MMM/yyyy","d-M-yyyy","d-MMM-yyyy","yyyy.M.d", "yyyy.MMM.d",
                                    "yyyy/M/d","yyyy/MMM/d","yyyy-M-d","yyyy-MMM-d","d.M.yy","d.MMM.yy","yy-M-d","yy-MMM-d",
                                    "d.MMM.y","y-M-d","y-MMM-d"};
+    /**
+     * Unterstützte Uhrzeitformate für die LocalDateTime-Parser.
+     */
     static String timeFormats[] = {"H:m:s","H:m","H:m:s.S","H:m:s.SS","H:m:s.n"};
 
+    /**
+     * Parser für die Kombinationen unterstützter Datums- und Zeitformate.
+     */
     private static DateTimeFormatter[] formatterLDT=initFormatterLDT();
 
+    /**
+     * Erzeugt Parser für die Kombinationen der unterstützten Datums- und Zeitformate.
+     *
+     * @return Parser für Datum vor Uhrzeit und Uhrzeit vor Datum
+     */
     public static DateTimeFormatter[] initFormatterLDT() {
         Vector<String> fo = new Vector<String>();
         for (int i=0;i<dateFormats.length;i++) {
@@ -407,6 +738,12 @@ public class Datum {
         return f;
     }
 
+    /**
+     * Liest Datum und Uhrzeit mit den unterstützten Formaten; ein {@code T} wird als Leerzeichen behandelt.
+     *
+     * @param dat zu prüfender beziehungsweise zu lesender Datumstext
+     * @return Datum und Uhrzeit oder {@code null}, wenn kein Format passt
+     */
     public static LocalDateTime parseLocalDateTime(String dat) {
         LocalDateTime date = null;
         String datumstring = dat.replaceAll("T"," ");
@@ -418,6 +755,12 @@ public class Datum {
     }
 
     // Prüft ob es sich bei der Eingabe um ein Datum mit Zeit handelt
+    /**
+     * Prüft, ob die Eingabe als Datum mit Uhrzeit erkannt wird.
+     *
+     * @param dat zu prüfender beziehungsweise zu lesender Datumstext
+     * @return {@code true}, wenn Datum und Uhrzeit erkannt werden
+     */
     public static boolean isDateTime(String dat) {
         Matcher m;
         try {
@@ -435,6 +778,12 @@ public class Datum {
         return false;
     }
     //** Prüft ob es sich bei der Eingabe um ein Datum handelt
+    /**
+     * Prüft, ob die Eingabe als Datum ohne Uhrzeit erkannt wird.
+     *
+     * @param dat zu prüfender beziehungsweise zu lesender Datumstext
+     * @return {@code true}, wenn ein Datumsformat erkannt wird
+     */
     public static boolean isDate(String dat) {
         try {
             Matcher m;
@@ -444,7 +793,12 @@ public class Datum {
         } catch (Exception e) {}
         return false;
     }
-    /** Prüft ob es sich bei der Eingabe um eine Zeit handelt */
+    /**
+     * Prüft ob es sich bei der Eingabe um eine Zeit handelt
+     *
+     * @param dat zu prüfender beziehungsweise zu lesender Datumstext
+     * @return {@code true}, wenn das Uhrzeitformat passt; Wertebereiche werden nicht geprüft
+     */
     public static boolean isTime(String dat) {
         try {
             Matcher m;
@@ -457,7 +811,14 @@ public class Datum {
     }
 
     // -------------------------------------------------------
-    /** Bestimmt die Tagesanzahl vom 1.1.0000 bis zum angegebenen Datum */
+    /**
+     * Bestimmt die Tagesanzahl vom 1.1.0000 bis zum angegebenen Datum
+     *
+     * @param y Jahr
+     * @param m Monat von 1 bis 12
+     * @param d Tag des Monats
+     * @return Tage zwischen Referenzdatum und angegebenem Datum
+     */
     public static long calcDays(int y, int m, int d) {
         LocalDate refdate = LocalDate.of(0, 1, 1);
         LocalDate date    = LocalDate.of(y,m,d);
@@ -466,12 +827,22 @@ public class Datum {
     }
 
 
-    /** Bestimmt die Sekunden seit dem 1.1.0000 eines gegebenen Datums */
+    /**
+     * Bestimmt die Sekunden seit dem 1.1.0000 eines gegebenen Datums
+     *
+     * @param d Datum beziehungsweise Zeitpunkt
+     * @return Datum-Integer in Sekunden
+     */
     public static long toDateInteger(Date d) {
         return toDateInteger(year(d), month(d), day(d), hour(d), minute(d), second(d));
     }
 
-    /** Bestimmt die Sekunden seit dem 1.1.0000 eines gegebenen Datums */
+    /**
+     * Bestimmt die Sekunden seit dem 1.1.0000 eines gegebenen Datums
+     *
+     * @param d Datum beziehungsweise Zeitpunkt
+     * @return Datum-Integer in Sekunden
+     */
     public static long toDateInteger(LocalDate d) {
         LocalDate refdate = LocalDate.of(0, 1, 1);
         long days = ChronoUnit.DAYS.between(refdate,d);
@@ -479,7 +850,12 @@ public class Datum {
         return ret;
     }
 
-    /** Bestimmt die Sekunden seit dem 1.1.0000 eines gegebenen Datums */
+    /**
+     * Bestimmt die Sekunden seit dem 1.1.0000 eines gegebenen Datums
+     *
+     * @param d Datum beziehungsweise Zeitpunkt
+     * @return Datum-Integer in Sekunden
+     */
     public static long toDateInteger(LocalDateTime d) {
         LocalDate refdate = LocalDate.of(0, 1, 1);
         long days = ChronoUnit.DAYS.between(refdate,d);
@@ -488,7 +864,13 @@ public class Datum {
         return ret;
     }
 
-    /** Bestimmt die Sekunden seit dem 1.1.0000 eines gegebenen Datums als String */
+    /**
+     * Bestimmt die Sekunden seit dem 1.1.0000 eines gegebenen Datums als String
+     *
+     * @param s Zeit- oder Datumstext
+     * @return Datum-Integer in Sekunden
+     * @throws RuntimeException wenn der Datumstext nicht verarbeitet werden kann
+     */
     public static long toDateInteger(String s) {
         if (isTime(s)) {
             int[] time = parseTimeArray(s);
@@ -515,6 +897,17 @@ public class Datum {
         throw new RuntimeException("cannot parse Date");
     }
 
+    /**
+     * Bestimmt die Sekunden seit dem 1. Januar des Jahres 0.
+     *
+     * @param y Jahr
+     * @param m Monat von 1 bis 12
+     * @param d Tag des Monats
+     * @param h Stunde
+     * @param min Minute
+     * @param sec Sekunde
+     * @return Datum-Integer in Sekunden
+     */
     public static long toDateInteger(int y, int m, int d, int h, int min, int sec) {
         long days = calcDays(y,m,d);
         long t    = h*3600+min*60+sec;
@@ -522,6 +915,12 @@ public class Datum {
         return ret;
     }
 
+    /**
+     * Konvertiert einen Datum-Integer in ein Datum.
+     *
+     * @param d Datum-Integer in Sekunden seit dem 1. Januar des Jahres 0
+     * @return Datum ohne Uhrzeit
+     */
     public static LocalDate dateIntegerToLocalDate(long d){
         long days = d/3600/24;
         long time = d%(3600*24);
@@ -530,6 +929,12 @@ public class Datum {
         return date;
     }
 
+    /**
+     * Konvertiert einen Datum-Integer in Datum und Uhrzeit.
+     *
+     * @param d Datum-Integer in Sekunden seit dem 1. Januar des Jahres 0
+     * @return Datum und Uhrzeit
+     */
     public static LocalDateTime dateIntegerToLocalDateTime(long d){
         long days = d/3600/24;
         long time = d%(3600*24);
@@ -538,23 +943,68 @@ public class Datum {
         return date;
     }
 
-    /** Bestimmt das Jahr eines Datum-Integers */
+    /**
+     * Bestimmt das Jahr eines Datum-Integers
+     *
+     * @param d Datum-Integer in Sekunden seit dem 1. Januar des Jahres 0
+     * @return Jahr des Datums
+     */
     public static int year(long d)  { return dateIntegerToLocalDate(d).getYear();}
-    /** Bestimmt das Monat eines Datum-Integers */
+    /**
+     * Bestimmt das Monat eines Datum-Integers
+     *
+     * @param d Datum-Integer in Sekunden seit dem 1. Januar des Jahres 0
+     * @return Monat von 1 bis 12
+     */
     public static int month(long d)  { return dateIntegerToLocalDate(d).getMonthValue();}
-    /** Bestimmt den Tag im Monat eines Datum-Integers */
+    /**
+     * Bestimmt den Tag im Monat eines Datum-Integers
+     *
+     * @param d Datum-Integer in Sekunden seit dem 1. Januar des Jahres 0
+     * @return Tag des Monats von 1 bis 31
+     */
     public static int day(long d)    { return dateIntegerToLocalDate(d).getDayOfMonth();}
-    /** Bestimmt die Stunde eines Datum-Integers */
+    /**
+     * Bestimmt die Stunde eines Datum-Integers
+     *
+     * @param d Datum-Integer in Sekunden seit dem 1. Januar des Jahres 0
+     * @return Stunde von 0 bis 23
+     */
     public static int hour(long d)    { return dateIntegerToLocalDateTime(d).getHour();}
-    /** Bestimmt die Minute eines Datum-Integers */
+    /**
+     * Bestimmt die Minute eines Datum-Integers
+     *
+     * @param d Datum-Integer in Sekunden seit dem 1. Januar des Jahres 0
+     * @return Minute von 0 bis 59
+     */
     public static int minute(long d)    { return dateIntegerToLocalDateTime(d).getMinute();}
-    /** Bestimmt die Minute eines Datum-Integers */
+    /**
+     * Bestimmt die Sekunde innerhalb der Minute.
+     *
+     * @param d Datum-Integer in Sekunden seit dem 1. Januar des Jahres 0
+     * @return Sekunde von 0 bis 59
+     */
     public static int second(long d)    { return dateIntegerToLocalDateTime(d).getSecond();}
-    /** Bestimmt den Wochentag eines Datum-Integers als Mo=1 bis So=7 */
+    /**
+     * Bestimmt den Wochentag eines Datum-Integers als Mo=1 bis So=7
+     *
+     * @param d Datum-Integer in Sekunden seit dem 1. Januar des Jahres 0
+     * @return Wochentag von 1 (Montag) bis 7 (Sonntag)
+     */
     public static int weekday(long d) { return dateIntegerToLocalDate(d).getDayOfWeek().getValue();}
-    /** Bestimmt die Kalenderwoche eines Datum-Integers */
+    /**
+     * Bestimmt die Wochenzahl mit der im Projekt hinterlegten Jahresanfangsberechnung.
+     *
+     * @param d Datum-Integer in Sekunden seit dem 1. Januar des Jahres 0
+     * @return berechnete Wochenzahl; keine ISO-Kalenderwoche
+     */
     public static int week(long d)    { return week(dateIntegerToLocalDate(d)); }
-    /** Bestimmt die Kalenderwoche eines Datums */
+    /**
+     * Bestimmt die Wochenzahl mit der im Projekt hinterlegten Jahresanfangsberechnung.
+     *
+     * @param date Datum beziehungsweise Zeitpunkt
+     * @return berechnete Wochenzahl; keine ISO-Kalenderwoche
+     */
     public static int week(LocalDate date) {
         // Wochentag des ersten Jänners im Jahr
         int weekdayErsterJan = LocalDate.of(date.getYear(),1,1).getDayOfWeek().getValue();
@@ -624,6 +1074,12 @@ public class Datum {
         return 0;
     }
 
+    /**
+     * Zerlegt Sekunden in Jahre, Monate, Tage und Uhrzeit mit 365 Tagen je Jahr und 30 Tagen je Monat.
+     *
+     * @param dauer Zeitdauer in Sekunden
+     * @return Dauertext oder leerer String bei einer Dauer von null Sekunden
+     */
     public static String toDauerString(long dauer) {
         long sec = dauer%60; dauer/=60;
         long min = dauer%60; dauer/=60;
@@ -652,9 +1108,11 @@ public class Datum {
     }
 
     /**
-     * Bestimmt die Dauer in Sekunden von dem Datmu date bis zur aktuellen Zeit
+     * Bestimmt die Dauer in Sekunden von dem Datum date bis zur aktuellen Zeit
+     *
      * @param date  Datum
      * @return      Dauer in Sekunden von date bis jetzt
+     *
      */
     public static long secondsToNow(Date date) {
         long s1 = toDateInteger(date);

@@ -19,34 +19,48 @@ import java.util.List;
 @RequestMapping(Endpoint.EXTERN_OPEN)
 public class ApiExternOpenController {
 
+    /**
+     * Verwaltung der registrierten Plugins und Konfigurationssitzungen.
+     */
     @Autowired private PluginConfiguration pluginConfiguration;
+    /**
+     * Interner Controller für delegierte Plugin-Anfragen.
+     */
     @Autowired private ApiController apiController;
 
-    /** liefert eine Liste aller Plugins (Pluginnamen) , welche mit diesem Service verwaltet werden */
+    /**
+     * liefert eine Liste aller Plugins (Pluginnamen) , welche mit diesem Service verwaltet werden
+     *
+     * @return HTTP-Antwort mit den Namen der Plugin-Typen
+     */
     @GetMapping(Endpoint.getPluginList)
     public ResponseEntity<List<String>> pluginList() {
         return apiController.pluginList();
     }
 
     /** liefert eine Liste aller globalen Informationen über alle Plugins des verwalteten Services<br>
-     * @return [PluginGeneralInfoList](https://build.letto.at/pluginuhr/open/javadoc/at/letto/plugins/dto/PluginGeneralInfoList.html)
+     * @return HTTP-Antwort mit den allgemeinen Informationen aller registrierten Plugins
      * */
     @GetMapping(Endpoint.getPluginGeneralInfoList)
     public ResponseEntity<PluginGeneralInfoList> pluginGeneralInfoList() {
         return apiController.pluginGeneralInfoList();
     }
 
-    /** liefert die allgemeinen Konfigurationsinformationen zu einem Plugin<br>
-     *  Body: String - Name des Plugins<br>
-     *  @return  [PluginGeneralInfo](https://build.letto.at/pluginuhr/open/javadoc/at/letto/plugins/dto/PluginGeneralInfo.html)
-     *  */
+    /**
+     * liefert die allgemeinen Konfigurationsinformationen zu einem Plugin<br>
+     * Body: String - Name des Plugins<br>
+     *
+     * @return HTTP-Antwort mit den allgemeinen Informationen des angefragten Plugins
+     *
+     * @param plugintyp Name des registrierten Plugin-Typs
+     */
     @PostMapping(Endpoint.getPluginGeneralInfo)
     public ResponseEntity<PluginGeneralInfo> pluginGeneralInfo(@RequestBody String plugintyp) {
         return apiController.pluginGeneralInfo(plugintyp);
     }
 
     /**
-     * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren Javascript - Bearbeitung
+     * Rendern des Plugin-Images, Aufbau eines DTOs zur späteren JavaScript - Bearbeitung
      * @param r    LoadPluginRequestDto:<br>
      *   r.typ       String: Typ des Plugins<br>
      *   r.name      String: Name des Plugins in der Frage<br>
