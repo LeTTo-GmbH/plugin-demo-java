@@ -105,7 +105,7 @@ rd    proxy /s /q
 mkdir proxy
 set "proxyFile=%dir%\proxy\%endpoint%.conf"
 echo location /%endpoint%/ { >%proxyFile%
-echo      resolver 127.0.0.11; >>%proxyFile%
+echo      resolver 127.0.0.11 valid=5s ipv6=off; >>%proxyFile%
 echo      set $%endpoint%path     letto-%endpoint%.nw-letto:8080; >>%proxyFile%
 echo      proxy_set_header   Host $host; >>%proxyFile%
 echo      proxy_set_header   X-Real-IP $remote_addr; >>%proxyFile%
