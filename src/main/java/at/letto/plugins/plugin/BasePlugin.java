@@ -28,6 +28,9 @@ public abstract class BasePlugin implements PluginService {
     // ---------------------------------------------------------------------------------------------------------------------
     //        Eigenschaften
     // ---------------------------------------------------------------------------------------------------------------------
+    /** Maximale Breite und Höhe eines Plugin-Bildes in Pixel, schützt vor zu großem Speicherbedarf */
+    public static final int MAX_IMAGE_SIZE = 2000;
+
     /** Name des Elements */
     @Setter protected String name;
 
@@ -542,6 +545,9 @@ public abstract class BasePlugin implements PluginService {
         params = HTMLtool.XMLToString(params);
         for (MatchResult m: findMatches("\\s*\"(.*)\"", params))
             params = m.group(1);
+        if (width<1 || height<1 || width>MAX_IMAGE_SIZE || height>MAX_IMAGE_SIZE)
+            return errorMessageImage("Ungültige Bildgröße "+width+"x"+height+
+                    "\nerlaubt sind 1 bis "+MAX_IMAGE_SIZE+" Pixel je Seite");
         try {
             BufferedImage bi = new BufferedImage(width,height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = bi.createGraphics();

@@ -7,8 +7,12 @@ import at.letto.plugins.plugin.PluginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Vector;
 
@@ -80,8 +84,7 @@ public class ApiController {
     public ResponseEntity<String> getHtml(
             @RequestBody PluginRequestDto r) {
         //String result = pluginService.getHTML(r.getTyp(),r.getName(),r.getConfig(),r.getParams(),r.getQ());
-        String result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        String result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .getHTML(r.getParams(),r.getQ());
         return ResponseEntity.ok(result);
     }
@@ -97,8 +100,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.getAngabe)
     public ResponseEntity<String> getAngabe(@RequestBody PluginRequestDto r) {
-        String result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        String result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .getAngabe(r.getParams());
         return ResponseEntity.ok(result);
     }
@@ -114,8 +116,7 @@ public class ApiController {
     @PostMapping(Endpoint.generateDatasets)
     public ResponseEntity<PluginDatasetListDto> generateDatasets(@RequestBody PluginRequestDto r) {
         PluginDatasetListDto result = new PluginDatasetListDto(
-                pluginConfiguration
-                        .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+                createPluginService(r.getTyp(),r.getName(),r.getConfig())
                         .generateDatasets()
         );
         return ResponseEntity.ok(result);
@@ -134,8 +135,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.getMaxima)
     public ResponseEntity<String> getMaxima(@RequestBody PluginRequestDto r) {
-        String result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        String result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .getMaxima(r.getParams(),r.getQ(),r.getPluginMaximaCalcMode());
         return ResponseEntity.ok(result);
     }
@@ -152,8 +152,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.getImage)
     public ResponseEntity<ImageBase64Dto> getImage(@RequestBody PluginRequestDto r) {
-        ImageBase64Dto result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        ImageBase64Dto result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .getImageDto(r.getParams(),r.getQ());
         return ResponseEntity.ok(result);
     }
@@ -171,8 +170,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.getImageTemplates)
     public ResponseEntity<Vector<String[]>> getImageTemplates(@RequestBody PluginRequestDto r) {
-        Vector<String[]> result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        Vector<String[]> result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .getImageTemplates();
         return ResponseEntity.ok(result);
     }
@@ -190,8 +188,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.parserPlugin)
     public ResponseEntity<CalcErgebnisDto> parserPlugin(@RequestBody PluginParserRequestDto r) {
-        CalcErgebnisDto result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        CalcErgebnisDto result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .parserPlugin(r.getVars(),r.getCp(),r.getP());
         return ResponseEntity.ok(result);
     }
@@ -209,8 +206,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.parserPluginEinheit)
     public ResponseEntity<String> parserPluginEinheit(@RequestBody PluginEinheitRequestDto r) {
-        String result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        String result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .parserPluginEinheit(r.getP());
         return ResponseEntity.ok(result);
     }
@@ -231,8 +227,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.score)
     public ResponseEntity<PluginScoreInfoDto> score(@RequestBody PluginScoreRequestDto r) {
-        PluginScoreInfoDto result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        PluginScoreInfoDto result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .score(r.getPluginDto(),r.getAntwort(),r.getToleranz(),r.getVarsQuestion(),r.getAnswerDto(), r.getGrade());
         return ResponseEntity.ok(result);
     }
@@ -247,8 +242,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.getVars)
     public ResponseEntity<Vector<String>> getVars(@RequestBody PluginRequestDto r) {
-        Vector<String> result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        Vector<String> result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .getVars();
         return ResponseEntity.ok(result);
     }
@@ -266,8 +260,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.modifyAngabe)
     public ResponseEntity<String> modifyAngabe(@RequestBody PluginAngabeRequestDto r) {
-        String result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        String result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .modifyAngabe(r.getText(),r.getQ());
         return ResponseEntity.ok(result);
     }
@@ -285,8 +278,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.modifyAngabeTextkomplett)
     public ResponseEntity<String> modifyAngabeTextkomplett(@RequestBody PluginAngabeRequestDto r) {
-        String result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        String result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .modifyAngabeTextkomplett(r.getText(),r.getQ());
         return ResponseEntity.ok(result);
     }
@@ -305,8 +297,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.updatePluginstringJavascript)
     public ResponseEntity<String> updatePluginstringJavascript(@RequestBody PluginUpdateJavascriptRequestDto r) {
-        String result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        String result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .updatePluginstringJavascript(r.getPluginDef(),r.getJsResult());
         return ResponseEntity.ok(result);
     }
@@ -324,8 +315,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.loadPluginDto)
     public ResponseEntity<PluginDto> loadPluginDto(@RequestBody LoadPluginRequestDto r) {
-        PluginDto result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        PluginDto result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .loadPluginDto(r.getParams(),r.getQ(),r.getNr());
         return ResponseEntity.ok(result);
     }
@@ -343,8 +333,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.renderLatex)
     public ResponseEntity<PluginRenderDto> renderLatex(@RequestBody PluginRenderLatexRequestDto r) {
-        PluginRenderDto result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        PluginRenderDto result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .renderLatex(r.getPluginDto(),r.getAnswer(),r.getMode());
         return ResponseEntity.ok(result);
     }
@@ -367,8 +356,7 @@ public class ApiController {
      */
     @PostMapping(Endpoint.renderPluginResult)
     public ResponseEntity<PluginRenderDto> renderPluginResult(@RequestBody PluginRenderResultRequestDto r) {
-        PluginRenderDto result = pluginConfiguration
-                .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+        PluginRenderDto result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                 .renderPluginResult(r.isTex(),r.getPluginDto(),r.getAntwort(),r.getToleranz(),r.getVarsQuestion(),r.getAnswerDto(),r.getGrade());
         return ResponseEntity.ok(result);
     }
@@ -395,11 +383,11 @@ public class ApiController {
     @PostMapping(Endpoint.configurationInfo)
     //public ResponseEntity<PluginConfigurationInfoDto> configurationInfo(@RequestBody PluginConfigurationInfoRequestDto r) {
     public ResponseEntity<PluginConfigurationInfoDto> configurationInfo(@RequestBody PluginConfigurationInfoRequestDto r) {
-        String configurationID = r.getConfigurationID();
-        String typ             = r.getTyp();
         PluginConfigurationInfoDto result = pluginConfiguration.configurationInfo(r.getTyp(),r.getName(),r.getConfig(),r.getConfigurationID(),r.getTimeout());
+        // die ID aus dem Ergebnis verwenden, da sie bei fehlender Request-ID von der Verbindung erzeugt wird
         result.setConfigurationUrl(pluginConfiguration.getBaseUriExtern()+Endpoint.iframeConfig+
-                "?typ="+typ+"&configurationID="+configurationID);
+                "?typ="+URLEncoder.encode(r.getTyp()==null?"":r.getTyp(), StandardCharsets.UTF_8)+
+                "&configurationID="+URLEncoder.encode(result.getConfigurationID()==null?"":result.getConfigurationID(), StandardCharsets.UTF_8));
         return ResponseEntity.ok(result);
     }
 
@@ -451,16 +439,31 @@ public class ApiController {
         PluginConfigurationConnection conn = pluginConfiguration.getConfigurationConnection(typ, configurationID);
         if (conn != null) {
             // Lade das Plugin mit der Konfiguration aus den Request-Parametern
-            PluginService pluginService = pluginConfiguration.createPluginService(r.getTyp(),conn.getName(),r.getConfig());
+            PluginService pluginService = createPluginService(r.getTyp(),conn.getName(),r.getConfig());
             // aktualisiere die Verbindung, damit dann LeTTo die Konfiguration wieder korrekt abrufen kann
             conn.changeConfig(r.getConfig(), pluginService);
             // erzeuge das PluginDto welches dann zum Rendern des Plugins verwendet wird
-            PluginDto result = pluginConfiguration
-                    .createPluginService(r.getTyp(),r.getName(),r.getConfig())
+            PluginDto result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
                     .loadPluginDto(r.getParams(),conn.pluginQuestionDto,r.getNr());
             return ResponseEntity.ok(result);
         }
-        return null;
+        return ResponseEntity.notFound().build();
+    }
+
+    /**
+     * Erzeugt eine Instanz des angeforderten Plugins.
+     *
+     * @param typ    Typ des Plugins
+     * @param name   Name des Plugins in der Frage
+     * @param config Konfigurationsstring des Plugins
+     * @return       Plugin-Instanz
+     * @throws ResponseStatusException mit Status 404, wenn der Typ nicht registriert ist oder das Plugin nicht erzeugt werden kann
+     */
+    private PluginService createPluginService(String typ, String name, String config) {
+        PluginService pluginService = pluginConfiguration.createPluginService(typ, name, config);
+        if (pluginService == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Plugin vom Typ '"+typ+"' kann nicht erzeugt werden");
+        return pluginService;
     }
 
 }
