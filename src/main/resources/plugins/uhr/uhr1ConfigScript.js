@@ -83,9 +83,9 @@ function configPluginUhr1(dtoString) {
                 <div class="configpane" id="leftPane">
                     <!-- Konfigurationsbereich -->
                     <h1>Uhr-Plugin</h1>  
-                    <input type="text" id="data1" value="${plugin.config}"/>   
+                    <input type="text" id="data1"/>
                     <button id="sendbutton">OK</button> <br>
-                    vars: <input typ="text" value="${dto.params['vars']}" size="40" readonly/><br>
+                    vars: <input type="text" id="configVars" size="40" readonly/><br>
                     
                 </div>
                 <div class="configresizer" id="resizerLeft"></div>
@@ -105,19 +105,32 @@ function configPluginUhr1(dtoString) {
             </div>`
             );
 
+        // Werte erst nach dem Rendern setzen, damit Anführungszeichen oder HTML-Zeichen das Formular nicht zerstören
+        $('#data1').val(plugin.config ?? '');
+        $('#configVars').val(dto.params['vars'] ?? '');
+
         // Vorschau
         vorschau();
 
-        // Help eintragen
+        // Help eintragen - der Hilfetext ist HTML aus den Hilfe-Dateien des Plugins (helpfiles) und wird daher als HTML eingefügt
         if (dto.params['help']!=null) {
             const helpElement = document.getElementById('configPluginHelp');
             helpElement.innerHTML = dto.params['help'];
         }
 
+        // Wiki nur über http(s) einbinden, damit keine javascript:-URLs ausgeführt werden können
         if (dto.params['wikiurl']!=null) {
-            const wikiElement = document.getElementById('configPluginWiki');
-            wikiElement.style.height = '75vh';
-            wikiElement.innerHTML = '<iframe src="'+dto.params['wikiurl']+'"></iframe>';
+            let wikiUrl = null;
+            try {
+                wikiUrl = new URL(dto.params['wikiurl'], window.location.href);
+            } catch (error) {}
+            if (wikiUrl!=null && (wikiUrl.protocol==='http:' || wikiUrl.protocol==='https:')) {
+                const wikiElement = document.getElementById('configPluginWiki');
+                wikiElement.style.height = '75vh';
+                const wikiFrame = document.createElement('iframe');
+                wikiFrame.src = wikiUrl.href;
+                wikiElement.replaceChildren(wikiFrame);
+            }
         }
 
         // Resizer
