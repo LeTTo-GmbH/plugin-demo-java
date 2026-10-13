@@ -35,7 +35,6 @@ call mvn clean -DinteractiveMode=false -DskipTests
 rem erzeuge die JavaDOC
 call mvn javadoc:javadoc
 rem kopiere die JavaDOC ins static-Verzeichnis am Webserver
-rmdir src\main\resources\static\%urlpath% /s /q
 rmdir src\main\resources\static\%urlpath%\open\javadoc /s /q
 xcopy target\reports\apidocs src\main\resources\static\%urlpath%\open\javadoc /E /S /Y /I
 echo bilde den Spring-Boot-Server
