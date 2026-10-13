@@ -61,12 +61,14 @@ public class ApiController {
      *
      * @param plugintyp Typ des Plugins (z.B. Wsr) mit dem das Plugin auch in LeTTo angesprochen wird
      * @return          liefert die allgemeinen Konfigurationsinformationen zu einem Plugin
-     *
+     * @throws ResponseStatusException mit Status 404, wenn der Typ nicht registriert ist
      */
     @PostMapping(Endpoint.getPluginGeneralInfo)
     public ResponseEntity<PluginGeneralInfo> pluginGeneralInfo(
             @RequestBody String plugintyp) {
         PluginGeneralInfo result = pluginConfiguration.getPluginGeneralInfo(plugintyp);
+        if (result == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Plugin-Typ '"+plugintyp+"' ist nicht registriert");
         return ResponseEntity.ok(result);
     }
 
