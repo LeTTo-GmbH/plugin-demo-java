@@ -4,7 +4,7 @@ jar=plugin.jar
 logfile=/log/start.log
 date=$(date)
 
-if [ $debug == "true" ] ; then
+if [ "$debug" == "true" ] ; then
   echo debug mode on
   echo "$date : Plugin-Service start in debugging-mode" >>$logfile
   java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5080 $JAVA_OPTS -jar $jar

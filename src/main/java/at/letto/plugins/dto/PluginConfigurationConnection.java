@@ -58,7 +58,7 @@ public class PluginConfigurationConnection {
                 config,
                 "plugintag",
                 800,600,  // Größe des Editier-Fensters
-                configurationID,
+                this.configurationID,
                 "",// error-Message
                 new PluginDto(),
                 "",

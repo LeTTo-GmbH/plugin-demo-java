@@ -24,6 +24,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,7 +37,7 @@ public class PluginConfiguration {
     /**
      * Logger für Meldungen dieser Klasse.
      */
-    private Logger logger = LoggerFactory.getLogger(StartupConfiguration.class);
+    private Logger logger = LoggerFactory.getLogger(PluginConfiguration.class);
 
     /**
      * Name des Plugin-Services.
@@ -402,8 +403,9 @@ public class PluginConfiguration {
             info.setTyp(typ);
             info.setPluginType(classname);
             plugins.put(typ, info);
-        } catch (NoClassDefFoundError e) {
-        } catch (Exception e) {
+            logger.info("Plugin registriert: "+typ+" -> "+classname);
+        } catch (NoClassDefFoundError | Exception e) {
+            logger.error("Plugin "+typ+" ("+classname+") kann nicht registriert werden", e);
         }
     }
 
@@ -460,7 +462,11 @@ public class PluginConfiguration {
                 Constructor<?> constr = c.getConstructor(String.class, String.class);
                 PluginService pi = (PluginService) constr.newInstance(name, params);
                 return pi;
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+                // Fehler im Konstruktor des Plugins kommen als InvocationTargetException und stehen in getCause()
+                Throwable cause = ex instanceof InvocationTargetException && ex.getCause()!=null ? ex.getCause() : ex;
+                logger.error("Plugin "+typ+" kann nicht erzeugt werden", cause);
+            }
         }
         return null;
     }

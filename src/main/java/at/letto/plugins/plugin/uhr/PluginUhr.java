@@ -50,8 +50,8 @@ public class PluginUhr extends BasePlugin {
 		configurationMode = PluginConfigurationInfoDto.CONFIGMODE_JAVASCRIPT;   // Konfigurations-Mode für die Konfiguration des Plugins
 		wikiHelp          = "Plugins";  		// Namen der Wiki-Seite wenn eine Doku am LeTTo-Wiki vorliegt
 		helpUrl			  = "";    // Hilfe-URL für die Beschreibung des Plugins
-		width  			  = 400;   // Breite des zu erzeugenden Bildes
-		height 			  = 400;   // Höhe des zu erzeugenden Bildes
+		width  			  = 500;   // Breite des zu erzeugenden Bildes
+		height 			  = 500;   // Höhe des zu erzeugenden Bildes
 		imageWidthProzent = 100;   // Größe des Bildes in Prozent
 		math 			  = false; // True wenn das Plugin CalcErgebnis und VarHash als JSON verarbeiten kann
 		cacheable 		  = true;  // Plugin ist stateless und liefert bei gleicher Angabe immer das gleiche Verhalten
@@ -72,7 +72,7 @@ public class PluginUhr extends BasePlugin {
 			for (String p:pa) {
 				if ((m=Pattern.compile("^\\s*[wW](\\d+)\\s*$").matcher(p)).find()) {
 					this.imageWidthProzent = Integer.parseInt(m.group(1));
-					if (imageWidthProzent<0)   imageWidthProzent=1;
+					if (imageWidthProzent<1)   imageWidthProzent=1;
 					if (imageWidthProzent>100) imageWidthProzent=100;
 				}
 				switch(p.trim().replaceAll("\\s+","")) {
@@ -113,7 +113,7 @@ public class PluginUhr extends BasePlugin {
 				case "blue"  -> bgcolor = Color.blue;
 				case "gray"  -> bgcolor = Color.gray;
 				case "yellow"-> bgcolor = Color.yellow;
-				default -> configMessage = "bgcolor "+color+" not allowed";
+				default -> configMessage("bgcolor "+color+" not allowed");
 			}
 		}
 	}
@@ -160,8 +160,7 @@ public class PluginUhr extends BasePlugin {
 	 */
 	@Override
 	public void parseDrawParams(String params, PluginQuestionDto q, PluginImageResultDto pluginImageResultDto) {
-		this.width=500;
-		this.height=500;
+		// ohne size-Parameter bleibt die im Konstruktor gesetzte Größe
 		for (String p:params.split(",")) {
 			Matcher m;
 			if ((m= Pattern.compile("^size=(\\d+)x(\\d+)$").matcher(p)).find()) {
@@ -239,20 +238,21 @@ public class PluginUhr extends BasePlugin {
 	 */
 	@Override
 	public PluginScoreInfoDto score(PluginDto pluginDto, String antwort, ToleranzDto toleranz, VarHashDto varsQuestion, PluginAnswerDto pluginAnswerDto, double grade){
-		String ze = pluginAnswerDto.getZe();
-		String answerText = pluginAnswerDto.getAnswerText().trim();
+		String ze = pluginAnswerDto!=null && pluginAnswerDto.getZe()!=null ? pluginAnswerDto.getZe() : "";
+		String answerText = pluginAnswerDto!=null && pluginAnswerDto.getAnswerText()!=null ? pluginAnswerDto.getAnswerText().trim() : "";
 		PluginScoreInfoDto info = new PluginScoreInfoDto(
 				new CalcErgebnisDto(antwort,null, CALCERGEBNISTYPE.STRING),ze,0.,grade,Score.FALSCH,"",""
 		);
     	try {
-			double richtig = 0;
+			// ohne gültige Musterlösung bleibt die Antwort falsch
+			Double richtig = null;
 			if (answerText.matches("^\".*\"$")) {
 				richtig = Datum.parseTime(answerText.substring(1,answerText.length()-1));
 			} else if (answerText.matches("^\\d+(\\.\\d*)?$")) {
 				richtig = Double.parseDouble(answerText);
 			}
 			double eingabe = Datum.parseTime(antwort);
-			if (PluginToolsMath.equals(richtig,eingabe,toleranz))
+			if (richtig!=null && PluginToolsMath.equals(richtig,eingabe,toleranz))
 				info =  new PluginScoreInfoDto(new CalcErgebnisDto(antwort,null, CALCERGEBNISTYPE.STRING),ze,grade,grade, Score.OK,"","");
 		} catch (Exception ex) { }
 		info.setHtmlScoreInfo("Wert:"+antwort);
