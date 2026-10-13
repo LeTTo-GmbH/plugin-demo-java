@@ -31,6 +31,8 @@
         <lombok.version>1.18.48</lombok.version>
         <!-- springdoc 3.0.x ist für Spring Boot 4.0.x, 3.1.x für Spring Boot 4.1.x -->
         <springdoc.version>3.0.3</springdoc.version>
+        <!-- Version wie in springdoc 3.0.3 -->
+        <therapi.version>0.15.0</therapi.version>
     </properties>
     <dependencies>
         <dependency>
@@ -73,6 +75,12 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
+        <!-- JavaDoc zur Laufzeit lesen, springdoc übernimmt sie als Beschreibung in die Swagger-Doku -->
+        <dependency>
+            <groupId>com.github.therapi</groupId>
+            <artifactId>therapi-runtime-javadoc</artifactId>
+            <version>${therapi.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -88,7 +96,17 @@
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
                         </path>
+                        <!-- speichert die JavaDoc beim Kompilieren für therapi-runtime-javadoc -->
+                        <path>
+                            <groupId>com.github.therapi</groupId>
+                            <artifactId>therapi-runtime-javadoc-scribe</artifactId>
+                            <version>${therapi.version}</version>
+                        </path>
                     </annotationProcessorPaths>
+                    <compilerArgs>
+                        <!-- nur die eigenen Klassen verarbeiten -->
+                        <arg>-Ajavadoc.packages=at.letto.plugins</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
