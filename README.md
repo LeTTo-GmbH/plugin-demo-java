@@ -34,6 +34,10 @@ https://github.com/LeTTo-GmbH/plugin-demo-java.git
 | src/main/resources/plugins/uhr/uhr1ConfigScript.js       | Konfigurationsdialog   | JavaScript     |
 | src/main/resources/plugins/uhr/Uhr1.html                 | Hilfetext              | HTML           |
 
+# Hilfeseite des Plugin-Services
+* Unter /&lt;endpoint&gt;/, /&lt;endpoint&gt;/index.html und /&lt;endpoint&gt;/help liefert der Service eine Hilfeseite mit Links zu Swagger-UI und JavaDoc
+* Die Seite liegt in src/main/resources/help/index.html, die Platzhalter {{servicepath}}, {{name}} und {{version}} werden vom HelpController ersetzt
+
 # Builden des Plugins
 * unter Windows mit dem Script 
   >build\build.bat

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{name}} - Hilfe</title>
+    <style>
+        body { font-family: sans-serif; max-width: 52em; margin: 2em auto; padding: 0 1em; line-height: 1.5; color: #222; }
+        h1 { margin-bottom: 0.2em; }
+        .version { color: #666; margin-top: 0; }
+        code { background: #f2f2f2; padding: 0.1em 0.3em; border-radius: 3px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 0.4em 0.6em; text-align: left; vertical-align: top; }
+        th { background: #f2f2f2; }
+        .links a { display: inline-block; margin: 0.3em 0.8em 0.3em 0; padding: 0.5em 1em; border: 1px solid #36c; border-radius: 4px; color: #36c; text-decoration: none; }
+        .links a:hover { background: #36c; color: #fff; }
+    </style>
+</head>
+<body>
+<h1>{{name}}</h1>
+<p class="version">Version {{version}}</p>
+
+<p>
+    Dieser Dienst ist ein <b>Plugin-Service für LeTTo</b>. Er stellt Fragetypen (Plugins) bereit, die LeTTo in Fragen
+    einbinden kann: Das Plugin liefert die Darstellung im Browser (HTML, JavaScript, Bilder), einen Konfigurationsdialog
+    für Lehrende und die Bewertung der Schülereingaben.
+</p>
+<p>
+    Als Beispiel enthält der Dienst das Plugin <b>Uhr1</b>: Es zeigt ein Uhrblatt, auf dem eine Uhrzeit eingestellt wird,
+    und vergleicht die Eingabe mit der Musterlösung. Es dient nur zur Veranschaulichung und ist nicht für den Unterricht gedacht.
+</p>
+
+<h2>Dokumentation</h2>
+<div class="links">
+    <a href="{{servicepath}}/swagger-ui.html">Swagger-UI (REST-API)</a>
+    <a href="{{servicepath}}/open/javadoc/index.html">JavaDoc</a>
+    <a href="{{servicepath}}/v3/api-docs">OpenAPI-Beschreibung (JSON)</a>
+</div>
+
+<h2>Schnittstellen</h2>
+<table>
+    <tr><th>Pfad</th><th>Beschreibung</th></tr>
+    <tr><td><code>/open/...</code></td><td>Interne API zwischen LeTTo und dem Plugin, nur im Docker-Netzwerk erreichbar</td></tr>
+    <tr><td><code>{{servicepath}}/api/open/...</code></td><td>Öffentliche API, z.B. für die Vorschau im Konfigurationsdialog</td></tr>
+    <tr><td><code>{{servicepath}}/open/confighttp</code></td><td>Konfigurationsdialog im iframe-Modus</td></tr>
+    <tr><td><code>{{servicepath}}/open/info</code></td><td>Informationen über den laufenden Dienst</td></tr>
+</table>
+
+<h2>Quellen</h2>
+<p>
+    Quellcode und Anleitung zum Erstellen eigener Plugins:
+    <a href="https://github.com/LeTTo-GmbH/plugin-demo-java">github.com/LeTTo-GmbH/plugin-demo-java</a>
+</p>
+</body>
+</html>
