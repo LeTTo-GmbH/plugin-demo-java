@@ -20,11 +20,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.SpringVersion;
 import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.web.client.RestClient;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.http.HttpClient;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -133,13 +136,13 @@ public class PluginConfiguration {
     /**
      * HTTP-Client für authentifizierte Anfragen an den Setup-Service.
      */
-    @Getter private WebClient webClientSetupUser;
+    @Getter private RestClient restClientSetupUser;
 
     /**
      * Builder zum Erzeugen von HTTP-Clients.
      */
     @Autowired
-    private WebClient.Builder   webClientBuilder;
+    private RestClient.Builder  restClientBuilder;
 
     /**
      * Spring-Anwendungskontext.
@@ -206,8 +209,11 @@ public class PluginConfiguration {
         uriExtern       = baseUriExtern + Endpoint.EXTERN_API;
         uriGetPluginDto = baseUriExtern + Endpoint.EXTERN_OPEN+Endpoint.reloadPluginDto;
 
-        // WebClient zum Setup-Service
-        webClientSetupUser = webClientBuilder
+        // RestClient zum Setup-Service
+        // HTTP/1.1 ohne h2c-Upgrade und gepufferter Body mit Content-Length statt chunked, wie zuvor beim WebClient
+        restClientSetupUser = restClientBuilder
+                .requestFactory(new BufferingClientHttpRequestFactory(new JdkClientHttpRequestFactory(
+                        HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build())))
                 .baseUrl(setupServiceUri)
                 .defaultHeaders(h -> h.setBasicAuth(userUserName, userUserPassword))
                 .build();
@@ -252,24 +258,25 @@ public class PluginConfiguration {
         //hier kommt die REST-Anfrage an den Server
         RegisterServiceResultDto result=null;
         try {
-            result = getWebClientSetupUser()
+            result = getRestClientSetupUser()
                     .post()
                     .uri("/config/auth/user/registerplugin")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(configServiceDto)
+                    .body(configServiceDto)
                     .retrieve()
                     .onStatus(
-                            // Predicate: use a lambda that calls isError()
                             status -> status.isError(),
-                            // Fehler-Handler: lies den Body als String (oder DTO) und erzeuge ein Mono<Throwable>
-                            resp -> resp.bodyToMono(String.class)
-                                    .flatMap(body -> Mono.error(new RuntimeException("Remote error: " + body)))
+                            // Fehler-Handler: Body der Fehlerantwort in die Exception übernehmen
+                            (request, resp) -> {
+                                String body = new String(resp.getBody().readAllBytes(), StandardCharsets.UTF_8);
+                                throw new RuntimeException("Remote error: " + body);
+                            }
                     )
                     // Erfolgsfall: parse als DTO
-                    .bodyToMono(RegisterServiceResultDto.class)
-                    .block();
+                    .body(RegisterServiceResultDto.class);
         } catch (RuntimeException e) {
-            logger.error(e.getMessage());
+            // bei Verbindungsfehlern steht die eigentliche Ursache in getCause()
+            logger.error(e.getMessage()+(e.getCause()!=null ? " - "+e.getCause() : ""));
         }
 
         if (result==null) {

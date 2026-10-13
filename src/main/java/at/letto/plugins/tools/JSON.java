@@ -1,10 +1,14 @@
 package at.letto.plugins.tools;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.SerializableString;
-import com.fasterxml.jackson.core.io.CharacterEscapes;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.SerializableString;
+import tools.jackson.core.io.CharacterEscapes;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,19 +66,23 @@ public class JSON {
         }
     }
     /**
-     * Gemeinsam verwendeter Jackson-Mapper, bei Bedarf initialisiert.
+     * Gemeinsam verwendeter Jackson-3-Mapper (wie Spring Boot 4).<br>
+     * Reihenfolge der Properties, null für primitive Typen und unbekannte Properties verhalten sich wie in Jackson 2,
+     * damit JSON-Ausgaben (z.B. für Bild-Dateinamen) unverändert bleiben.
      */
-    private static ObjectMapper mapper = null;
+    private static final ObjectMapper mapper = JsonMapper.builder(
+                    JsonFactory.builder().characterEscapes(new HTMLCharacterEscapes()).build())
+            .disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+            .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+            .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .build();
 
     /**
-     * Initialisiert bei Bedarf den gemeinsam verwendeten Jackson-Mapper.
+     * Liefert den gemeinsam verwendeten Jackson-Mapper.
      *
      * @return Mapper mit der konfigurierten Zeichenmaskierung
      */
     private static ObjectMapper getMapper() {
-        if (mapper!=null) return mapper;
-        mapper = new ObjectMapper();
-        mapper.getFactory().setCharacterEscapes(new HTMLCharacterEscapes());
         return mapper;
     }
 
@@ -112,7 +120,7 @@ public class JSON {
         try {
             T erg = getMapper().readValue(json, tClass);
             return erg;
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
 //            System.out.println("JSON kann nicht in Klasse "+tClass.toString()+" geparst werden!!");
             //e.printStackTrace();
             return null;
@@ -131,7 +139,7 @@ public class JSON {
         try {
             T erg = getMapper().readValue(json, typeRef);
             return erg;
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
 //            System.out.println("JSON kann nicht in Klasse "+typeRef.getType().toString()+" geparst werden!!");
             // e.printStackTrace();
             return null;
@@ -150,7 +158,7 @@ public class JSON {
         try {
             Object erg = getMapper().readValue(json, Class.forName(tClass));
             return erg;
-        } catch (JsonProcessingException | ClassNotFoundException e) {
+        } catch (JacksonException | ClassNotFoundException e) {
 //            System.out.println("JSON kann nicht in Klasse "+tClass+" geparst werden!!");
             // e.printStackTrace();
             return null;
