@@ -23,6 +23,7 @@ https://github.com/LeTTo-GmbH/plugin-demo-java.git
   * Registriere die Pluginklasse in der StartupConfiguration mit Name und vollständigem Klassennamen
   * Erstelle ein Verzeichnis für die Java-Script und HTML-Resourcen in src/main/resources/plugins
   * Programmiere das Plugin in der erstellten Pluginklasse und den HTML und JS-Dateien um JS-Resourcen-Verzeichnis
+  * In den Hilfe-Dateien des Plugins (helpfiles) wird der Platzhalter {{servicepath}} durch den Endpoint-Pfad ersetzt, z.B. für Links zur Swagger-UI
 * Entferne das Uhr-Plugin aus der Plugin-Registrierung in der Startup-Configuration
 
 # Dateien des Uhr Plugins:

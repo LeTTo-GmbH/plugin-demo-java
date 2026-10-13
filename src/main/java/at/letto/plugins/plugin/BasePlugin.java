@@ -1,5 +1,6 @@
 package at.letto.plugins.plugin;
 
+import at.letto.plugins.config.Endpoint;
 import at.letto.plugins.dto.*;
 import at.letto.plugins.enums.*;
 import at.letto.plugins.tools.*;
@@ -254,7 +255,8 @@ public abstract class BasePlugin implements PluginService {
                     else sb.append( "\n"+s );
                 }
             }
-            return sb.toString().trim();
+            // Platzhalter für den Endpoint-Pfad, damit Links nach einer Umbenennung mit setpluginname.bat stimmen
+            return sb.toString().trim().replace("{{servicepath}}", Endpoint.servicepath);
         } catch (Exception | Error e) {
             return "Hilfe Resource "+name+" für das Plugin wurde nicht gefunden!";
         }
