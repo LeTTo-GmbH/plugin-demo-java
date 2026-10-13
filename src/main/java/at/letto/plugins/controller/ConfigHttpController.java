@@ -6,6 +6,7 @@ import at.letto.plugins.dto.JavascriptLibrary;
 import at.letto.plugins.dto.PluginConfigDto;
 import at.letto.plugins.dto.PluginConfigurationConnection;
 import at.letto.plugins.tools.JSON;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +25,10 @@ import org.springframework.web.util.HtmlUtils;
  * von wo LeTTo sie über getConfiguration abholt.
  */
 @RestController
+@Tag(name = "Config Http Controller",
+        description = "Konfigurationsdialog des Plugins im iframe-Modus (CONFIGMODE_URL) " +
+                "[JavaDoc](" + Endpoint.open + "/javadoc/at/letto/plugins/controller/ConfigHttpController.html)"
+)
 public class ConfigHttpController {
 
     /**

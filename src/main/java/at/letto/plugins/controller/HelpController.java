@@ -3,6 +3,7 @@ package at.letto.plugins.controller;
 import at.letto.plugins.config.Endpoint;
 import at.letto.plugins.config.PluginConfiguration;
 import at.letto.plugins.tools.PluginResource;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
  * {{servicepath}}, {{name}} und {{version}} werden beim Laden ersetzt.
  */
 @RestController
+@Tag(name = "Help Controller",
+        description = "Hilfeseite des Plugin-Services " +
+                "[JavaDoc](" + Endpoint.open + "/javadoc/at/letto/plugins/controller/HelpController.html)"
+)
 public class HelpController {
 
     /**

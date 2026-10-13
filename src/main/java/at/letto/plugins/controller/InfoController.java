@@ -5,6 +5,7 @@ import at.letto.plugins.config.PluginConfiguration;
 import at.letto.plugins.dto.ServiceInfoDTO;
 import at.letto.plugins.tools.ServerStatus;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
  * REST-Endpunkte zur Erreichbarkeit, Version und Laufzeitinformation des Plugin-Services.
  */
 @RestController
+@Tag(name = "Info Controller",
+        description = "Erreichbarkeit, Version und Informationen über den laufenden Plugin-Service " +
+                "[JavaDoc](" + Endpoint.open + "/javadoc/at/letto/plugins/controller/InfoController.html)"
+)
 public class InfoController {
 
     /**

@@ -11,9 +11,12 @@ import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -49,13 +52,15 @@ public class OpenApiConfig {
     }
 
     /**
-     * Ergänzt bei Request body und Responses, die ein DTO verwenden, einen Link zum Schema des DTOs.
+     * Sortiert die Schemas alphabetisch und ergänzt bei Request body und Responses,
+     * die ein DTO verwenden, einen Link zum Schema des DTOs.
      *
      * @return Customizer, der nach dem Erzeugen der OpenAPI-Beschreibung ausgeführt wird
      */
     @Bean
     public OpenApiCustomizer schemaLinkCustomizer() {
         return openApi -> {
+            sortSchemas(openApi);
             keepReferenceDescriptions(openApi);
             if (openApi.getPaths() == null) return;
             openApi.getPaths().values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> {
@@ -67,6 +72,19 @@ public class OpenApiConfig {
                             response.setDescription(withSchemaLinks(response.getDescription(), response.getContent())));
             }));
         };
+    }
+
+    /**
+     * Sortiert die Schemas alphabetisch, da die Swagger-UI sie in der Reihenfolge der OpenAPI-Beschreibung anzeigt.<br>
+     * Die Felder innerhalb eines Schemas behalten die Reihenfolge aus dem Code.
+     *
+     * @param openApi OpenAPI-Beschreibung mit allen Schemas
+     */
+    private static void sortSchemas(OpenAPI openApi) {
+        if (openApi.getComponents() == null || openApi.getComponents().getSchemas() == null) return;
+        Map<String, Schema> sorted = new TreeMap<>(String.CASE_INSENSITIVE_ORDER.thenComparing(Comparator.naturalOrder()));
+        sorted.putAll(openApi.getComponents().getSchemas());
+        openApi.getComponents().setSchemas(sorted);
     }
 
     /**
