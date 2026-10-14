@@ -14,7 +14,8 @@ RUN apt-get -y update && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     apt-get install -y nano less dos2unix && \
     apt-get install -y htop iputils-ping && \
-    localedef -i en_US -f UTF-8 en_US.UTF-8
+    localedef -i en_US -f UTF-8 en_US.UTF-8 && \
+    localedef -i de_DE -f UTF-8 de_DE.UTF-8
 
 # Bereinige das Image
 RUN apt-get clean && \
