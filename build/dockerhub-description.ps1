@@ -1,4 +1,4 @@
-# Lädt DOCKERHUB.md als Beschreibung (Overview) des Docker-Hub-Repositories hoch.
+﻿# Lädt DOCKERHUB.md als Beschreibung (Overview) des Docker-Hub-Repositories hoch.
 # Benötigt einen Docker-Hub Personal Access Token mit Scope "Read & Write" für lettohub.
 #   powershell -ExecutionPolicy Bypass -File build\dockerhub-description.ps1 -User <dockerhub-user>
 # Der Token wird aus $env:DOCKERHUB_TOKEN gelesen oder interaktiv abgefragt.
