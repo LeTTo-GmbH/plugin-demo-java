@@ -36,7 +36,7 @@ public class PluginRenderResultRequestDto {
     /** Referenz auf VarHash, wird dynamisch nachgeladen */
     private VarHashDto varsQuestion;
 
-    /** Antwort des Schülers */
+    /** korrekte Antwort und Informationen für den Scorer des Plugins (Musterlösung, nicht die Antwort des Schülers) */
     private PluginAnswerDto answerDto;
 
     /** Maximale Punktanzahl für die richtige Antwort */

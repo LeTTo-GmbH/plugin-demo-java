@@ -71,7 +71,9 @@ public class PluginGeneralInfo {
     /** Plugin benötigt zur Berechnung und Darstellung den VarHash der cvars - Konstante und Datensätze */
     private boolean useCVars= true;
 
-    /** Plugin benötigt zur Berechnung und Darstellung den Varhash aller Maxima-Berechnungen ohne eingesetzte Datensatz-Variable */
+    /** Plugin benötigt zur Berechnung und Darstellung den Varhash aller Maxima-Berechnungen ohne eingesetzte Datensatz-Variable.<br>
+     *  Entspricht {@code useMaximaVars} in BasePlugin und PluginConfigurationInfoDto. Der Feldname ist Teil der REST-Schnittstelle
+     *  und wird vom LeTTo-Server unter diesem Namen gelesen – nicht umbenennen. */
     private boolean useVarsMaxima=true;
 
     /** Plugin benötigt zur Berechnung und Darstellung den Varhash aller Datensätze und Maxima-Ergebnisse mit eingesetzten Werten kombiniert in einem Hash */

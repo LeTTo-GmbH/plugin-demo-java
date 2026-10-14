@@ -27,7 +27,9 @@ public class PluginRenderLatexRequestDto {
     /** Inhalt des Antwortfeldes welches der Schüler eingegeben hat */
     private String answer;
 
-    /** Druckmode */
+    /** Druckmode.<br>
+     *  Der LeTTo-Server übergibt hier derzeit {@code TexPrintMode.toString()}; da diese Klasse kein eigenes toString() hat,
+     *  ist der Wert nur ein Objekt-Bezeichner (z.B. {@code at.letto.tools.tex.TexPrintMode@6d06d69c}) und kann vom Plugin nicht ausgewertet werden. */
     private String mode;
 
 }

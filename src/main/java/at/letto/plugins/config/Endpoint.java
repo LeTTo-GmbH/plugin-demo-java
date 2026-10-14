@@ -20,7 +20,9 @@ public class Endpoint {
      */
     public static final String LOCAL_API    = "/open";
     /**
-     * Basis der authentifizierten externen API.
+     * Basis der authentifizierten externen API.<br>
+     * Wird bei der Registrierung als externe URI ({@code uriExtern}) an das Setup-Service gemeldet.
+     * Ein Controller für eine authentifizierte externe API ist in diesem Demo nicht implementiert.
      */
     public static final String EXTERN_API   = servicepath+"/auth/user";
     /**

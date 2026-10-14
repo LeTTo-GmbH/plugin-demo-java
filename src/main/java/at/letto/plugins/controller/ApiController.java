@@ -160,6 +160,25 @@ public class ApiController {
     }
 
     /**
+     * Liefert eine öffentliche URL auf das gerenderte Bild.<br>
+     * Das Bild wird im Image-Service des Plugins gespeichert. Der LeTTo-Server ruft diesen Endpoint vor {@code image} auf
+     * und verwendet das Base64-Bild nur, wenn hier keine URL geliefert wird.
+     * @param r    PluginRequestDto:<br>
+     *   r.typ     String: Typ des Plugins<br>
+     *   r.name    String: Name des Plugins in der Frage<br>
+     *   r.config  String: Konfigurationsstring des Plugins<br>
+     *   r.params  String: Plugin-Parameter<br>
+     *   r.q       PluginQuestionDto: Frage wo das Plugin eingebettet ist<br>
+     * @return     Bild-URL mit Bildinformationen und gegebenenfalls einer Fehlermeldung
+     */
+    @PostMapping(Endpoint.getImageUrl)
+    public ResponseEntity<ImageUrlDto> getImageUrl(@RequestBody PluginRequestDto r) {
+        ImageUrlDto result = createPluginService(r.getTyp(),r.getName(),r.getConfig())
+                .getImageUrl(r.getParams(),r.getQ());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
      * Liefert eine Liste aller möglichen Varianten von Bildern in String-Arrays
      * @param r    PluginRequestDto:<br>
      *   r.typ     String: Typ des Plugins<br>
