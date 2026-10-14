@@ -83,6 +83,15 @@ public interface PluginService {
     void setName(String name);
 
     /**
+     * Setzt den Typ des Plugins, unter dem es registriert ist.<br>
+     * Wird von der PluginConfiguration nach dem Erzeugen des Plugins aufgerufen; der Typ fließt in
+     * {@link #getTag()}, die Bildbeschreibung (Dateiname der Plugin-Bilder) und das ImageInfoDto ein.
+     *
+     * @param typ Typ des Plugins, z.B. Uhr1
+     */
+    void setTyp(String typ);
+
+    /**
      * Liefert den Namen des Plugins.
      *
      * @return Liefert den Namen des Plugins

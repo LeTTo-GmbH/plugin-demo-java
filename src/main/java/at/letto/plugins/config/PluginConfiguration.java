@@ -403,6 +403,7 @@ public class PluginConfiguration {
             Class<?> c = Class.forName(classname);
             Constructor<?> constr = c.getConstructor(String.class, String.class);
             PluginService pi = (PluginService) constr.newInstance("", "");
+            pi.setTyp(typ);
             PluginGeneralInfo info = pi.getPluginGeneralInfo();
             info.setTyp(typ);
             info.setPluginType(classname);
@@ -466,6 +467,7 @@ public class PluginConfiguration {
                 Class<?> c = Class.forName(info.getPluginType());
                 Constructor<?> constr = c.getConstructor(String.class, String.class);
                 PluginService pi = (PluginService) constr.newInstance(name, params);
+                pi.setTyp(typ);
                 pi.setImageService(pluginImageService);
                 return pi;
             } catch (Exception ex) {

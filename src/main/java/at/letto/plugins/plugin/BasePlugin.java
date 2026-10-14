@@ -50,8 +50,8 @@ public abstract class BasePlugin implements PluginService {
     /** Konfigurationsstring des Elements */
     protected String config;
 
-    /** Typ des Plugins */
-    protected String typ;
+    /** Typ des Plugins, wird von der PluginConfiguration nach dem Erzeugen gesetzt */
+    @Setter protected String typ;
 
     /** Breite des zu erzeugenden Bildes */
     protected int width  = 400;
